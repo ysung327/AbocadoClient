@@ -1,23 +1,32 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View } from "react-native"
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native"
 import { Card, Button } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { withNavigation } from 'react-navigation';
 
-export default class TypeItem extends Component {
+class TypeItem extends Component {
     constructor(props) {
         super(props);
     }
 
+    onPress = () => {
+        this.props.navigation.navigate('typeAdd', {isEdit: true, id: this.props.item.id, day: this.props.item.day, title: this.props.item.title})
+    }
+    
     render() {
         return (
-            <Card containerStyle={styles.container} wrapperStyle={{padding:0}}>         
-                <View style={styles.day}>
-                  <Text style={styles.content}>{this.props.item.day}</Text>
-                </View>
-                <View style={styles.title}>
-                  <Text style={styles.text}>{this.props.item.title}</Text>
-                </View>
-            </Card>
+            <TouchableOpacity onPress={this.onPress}>
+                <Card 
+                containerStyle={styles.container} 
+                wrapperStyle={{padding:0}}>         
+                    <View style={styles.day}>
+                        <Text style={styles.content}>{this.props.item.day}</Text>
+                    </View>
+                    <View style={styles.title}>
+                        <Text style={styles.text}>{this.props.item.title}</Text>
+                    </View>
+                </Card>
+            </TouchableOpacity>
         )
     }
 }
@@ -50,3 +59,5 @@ const styles = StyleSheet.create({
         fontSize: 17,
     },
 })
+
+export default withNavigation(TypeItem);

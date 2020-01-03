@@ -49,14 +49,6 @@ export default class VacationList extends Component {
     return result
   };
 
-  _renderListHeader = () => {
-    return(
-      <View style={{flex:1, flexDirection: "row", alignContent: "flex-end"}}>
-        <Button title="+"/>
-      </View>
-    )
-  }
-
   render() {
     return (
         <FlatList
@@ -65,7 +57,7 @@ export default class VacationList extends Component {
           keyExtractor={(item, index) => item.id}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingLeft: 0, paddingRight: 0 }}
+          contentContainerStyle={{ marginVertical: 0, paddingLeft: 0, paddingRight: 0 }}
         />
     );
   }

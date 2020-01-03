@@ -49,12 +49,12 @@ export default class VacationTypeDetail extends Component {
   };
 
   onPress = () => {
-    this.props.navigation.navigate('typeAdd', { type: this.state.type })
+    this.props.navigation.navigate('typeAdd', {id: null, day: null, title: null})
   }
 
     render() {
         return (
-          <View>
+          <View style={{ flex: 1, justifyContent: 'space-between' }}>
             <FlatList
               data={this.state.data}
               renderItem={this._renderItem}

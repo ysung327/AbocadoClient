@@ -16,16 +16,15 @@ const TypeStack = createStackNavigator(
     },
     typeAdd: {
       screen: VacationTypeAdd,
+      navigationOptions: {
+        gestureResponseDistance: { vertical: 1000 },
+      },
     },
   },
   {
     mode: 'modal',
     headerMode: 'none',
-    cardStyle:{
-      backgroundColor:"transparent",
-      opacity:1,
-      height : "50%",
-    }
+    transparentCard: true,
   }
 );
 
