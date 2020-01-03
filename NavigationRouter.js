@@ -5,13 +5,34 @@ import { createMaterialBottomTabNavigator } from 'react-navigation-material-bott
 import HomeScreen from './HomeScreen';
 import VacationTypeDetail from './Vacation/components/VacationTypeDetail';
 import VacationDetailView from './Vacation/components/VacationDetailView';
+import VacationTypeAdd from './Vacation/components/VacationTypeAdd';
 import VacationView from './Vacation/components/VacationView';
 
 
-const VacationStack = createSwitchNavigator(
+const TypeStack = createStackNavigator(
+  {
+    typeDetail: {
+      screen: VacationTypeDetail,
+    },
+    typeAdd: {
+      screen: VacationTypeAdd,
+    },
+  },
+  {
+    mode: 'modal',
+    headerMode: 'none',
+    cardStyle:{
+      backgroundColor:"transparent",
+      opacity:1,
+      height : "50%",
+    }
+  }
+);
+
+const VacationStack = createStackNavigator(
     {
     Home: HomeScreen,
-    Type: VacationTypeDetail,
+    Type: TypeStack,
     Detail: VacationDetailView
     },
     {

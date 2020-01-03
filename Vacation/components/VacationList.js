@@ -16,7 +16,7 @@ export default class VacationList extends Component {
   }
 
   fetchDataFromApi = ()  => {
-    const url = "http://testabocado.ml:8000/vacations/";
+    const url = "http://ysung327.pythonanywhere.com/vacations/";
 
     this.setState({ loading: true });
 

@@ -12,7 +12,7 @@ export default class VacationDetailView extends Component {
   }
 
   async fetchDataFromApi(pk) {
-    let url = "http://testabocado.ml:8000/vacations/" + pk + "/";
+    let url = "http://ysung327.pythonanywhere.com/vacations/" + pk + "/";
 
     this.setState({ loading: true });
 
@@ -42,9 +42,9 @@ export default class VacationDetailView extends Component {
 
   _renderItem = ({item}) => {
     return (
-      <Card style={{flex: 1, flexDirection: 'row'}}>
+      <Card containerStyle={{ flexDirection: 'row' }}>
         <Text style={{flex: 1, fontSize: 20}}>{item.day}</Text>
-        <Text style={{flex: 3, fontSize: 17}}>{item.title}</Text>
+        <Text style={{flex: 1, fontSize: 17}}>{item.title}</Text>
       </Card>
     )
   }
@@ -52,7 +52,7 @@ export default class VacationDetailView extends Component {
   render() {
       return (
         <View style={{ flex: 1 }}>
-          <Card containerStyle={styles.card} wrapperStyle={{padding:0}}>
+          <Card containerStyle={styles.card}>
             <View style={styles.day}>
               <Text style={styles.content}>{this.state.data.day} 일</Text>
             </View>
@@ -70,15 +70,13 @@ export default class VacationDetailView extends Component {
               </View>
             </View>
           </Card>
-          <View style={{ flex: 1, flexDirection: 'column' }}>
-            <FlatList
-              data={this.state.data.detail}
-              renderItem={this._renderItem}
-              keyExtractor={(item, index) => item.id}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingLeft: 0, paddingRight: 0 }}
-            />
-          </View>
+          <FlatList
+            data={this.state.data.detail}
+            renderItem={this._renderItem}
+            keyExtractor={(item, index) => item.id}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingLeft: 0, paddingRight: 0 }}
+          />
         </View>
       )
   }
@@ -87,8 +85,6 @@ export default class VacationDetailView extends Component {
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    padding: 0,
-    width: 310,
     flexDirection: 'column',
     justifyContent: 'space-around',
     backgroundColor: 'white',

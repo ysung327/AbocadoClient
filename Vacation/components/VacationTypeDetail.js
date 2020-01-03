@@ -1,94 +1,70 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList } from 'react-native';
 import { Card, Button } from 'react-native-elements'
-import { withNavigation } from 'react-navigation';
+import TypeItem from './TypeItem';
 
-class VacationType extends Component {
-  
-  onPressANN = () => {
-    this.props.navigation.navigate('Type', {type_of_detail : 'ANN'})
-  }
-  onPressCON = () => {
-    this.props.navigation.navigate('Type', {type_of_detail : 'CON'})
-  }
-  onPressPR = () => {
-    this.props.navigation.navigate('Type', {type_of_detail : 'PR'})
-  }
-  onPressRE = () => {
-    this.props.navigation.navigate('Type', {type_of_detail : 'RE'})
-  }
-  onPressPE = () => {
-    this.props.navigation.navigate('Type', {type_of_detail : 'PE'})
+export default class VacationTypeDetail extends Component {
+    constructor(props) {
+        super(props);
+        this.state  = {
+            loading: false,
+            data: [],
+            type: this.props.navigation.getParam('type_of_detail', 'default')
+        }
+    }
+
+    componentDidMount() {
+        this.fetchDataFromApi(this.state.type);
+    }
+
+    fetchDataFromApi = (type_of_detail)  => {
+        const url = "http://ysung327.pythonanywhere.com/vacations/type/";
+
+        this.setState({ loading: true });
+
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type_of_detail: type_of_detail,
+            })
+        })
+        .then(res => res.json())
+        .then(res => {
+            this.setState({
+                data: res,
+            });
+        console.log(this.state.data)
+        })
+        .catch((error) => {
+        console.log(error);
+        });
+    };
+
+  _renderItem = ({item}) => {
+    return <TypeItem item={item}/>
+  };
+
+  onPress = () => {
+    this.props.navigation.navigate('typeAdd', { type: this.state.type })
   }
 
-  render() {
-      return (
-        <View style={styles.container}>
-            <View style={styles.column1}>
-              <Card containerStyle={styles.card}>
-                <TouchableOpacity onPress={this.onPressANN}>
-                  <Text style={styles.text}>연가</Text>
-                </TouchableOpacity>
-              </Card>
-            </View>
-            <View style={styles.column2}>
-              <View style={styles.row}>
-                <Card containerStyle={styles.card}>
-                  <TouchableOpacity onPress={this.onPressCON}>
-                    <Text style={styles.text}>위로</Text>
-                  </TouchableOpacity>
-                </Card>
-                <Card containerStyle={styles.card}>
-                  <TouchableOpacity onPress={this.onPressPR}>
-                    <Text style={styles.text}>포상</Text>
-                  </TouchableOpacity>
-                </Card>             
-              </View>
-              <View style={styles.row}>
-                <Card containerStyle={styles.card}>
-                  <TouchableOpacity onPress={this.onPressRE}>
-                    <Text style={styles.text}>보상</Text>
-                  </TouchableOpacity>
-                </Card>
-                <Card containerStyle={styles.card}>
-                  <TouchableOpacity onPress={this.onPressPE}>
-                    <Text style={styles.text}>청원</Text>
-                  </TouchableOpacity>
-                </Card>             
-              </View>
-            </View>
-        </View>
-      )
+    render() {
+        return (
+          <View>
+            <FlatList
+              data={this.state.data}
+              renderItem={this._renderItem}
+              keyExtractor={(item, index) => item.id}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingLeft: 0, paddingRight: 0 }}
+            />
+            <Button title="+" onPress={this.onPress}/>
+          </View>
+
+        )
     }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  column1: {
-    flex: 1,
-  },
-  column2: {
-    flex: 2,
-    flexDirection: 'column',
-  },
-  row: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  card: {
-    flex: 1,
-    justifyContent: 'center',
-    margin: 0,
-  },
-  text: {
-    fontSize: 25,
-    textAlign: 'center',
-  }
-})
-
-export default withNavigation(VacationType);
