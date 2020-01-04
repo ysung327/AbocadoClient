@@ -8,7 +8,6 @@ import VacationDetailView from './Vacation/components/VacationDetailView';
 import VacationTypeAdd from './Vacation/components/VacationTypeAdd';
 import VacationView from './Vacation/components/VacationView';
 
-
 const TypeStack = createStackNavigator(
   {
     typeDetail: {

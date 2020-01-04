@@ -9,12 +9,11 @@ export default class VacationTypeDetail extends Component {
         this.state  = {
             loading: false,
             data: [],
-            type: this.props.navigation.getParam('type_of_detail', 'default')
         }
     }
 
     componentDidMount() {
-        this.fetchDataFromApi(this.state.type);
+        this.fetchDataFromApi(this.props.navigation.getParam('type_of_detail', 'default'));
     }
 
     fetchDataFromApi = (type_of_detail)  => {
@@ -44,27 +43,26 @@ export default class VacationTypeDetail extends Component {
         });
     };
 
-  _renderItem = ({item}) => {
+    _renderItem = ({item}) => {
     return <TypeItem item={item}/>
-  };
-
-  onPress = () => {
-    this.props.navigation.navigate('typeAdd', {id: null, day: null, title: null})
-  }
+    };
+    
+    onPress = () => {
+      this.props.navigation.navigate('typeAdd', {isEdit: false, id: null, day: null, title: null})
+    }
 
     render() {
         return (
-          <View style={{ flex: 1, justifyContent: 'space-between' }}>
-            <FlatList
-              data={this.state.data}
-              renderItem={this._renderItem}
-              keyExtractor={(item, index) => item.id}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingLeft: 0, paddingRight: 0 }}
-            />
-            <Button title="+" onPress={this.onPress}/>
-          </View>
-
+            <View style={{ flex: 1 }}>
+                <FlatList
+                    data={this.state.data}
+                    renderItem={this._renderItem}
+                    keyExtractor={(item, index) => item.id}
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ paddingLeft: 0, paddingRight: 0 }}
+                />
+                <Button title="+" onPress={this.onPress}/>
+            </View>
         )
     }
 }

@@ -12,7 +12,7 @@ class TypeItem extends Component {
     onPress = () => {
         this.props.navigation.navigate('typeAdd', {isEdit: true, id: this.props.item.id, day: this.props.item.day, title: this.props.item.title})
     }
-    
+
     render() {
         return (
             <TouchableOpacity onPress={this.onPress}>

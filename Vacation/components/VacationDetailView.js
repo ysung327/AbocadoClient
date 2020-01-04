@@ -42,9 +42,9 @@ export default class VacationDetailView extends Component {
 
   _renderItem = ({item}) => {
     return (
-      <Card containerStyle={{ flexDirection: 'row' }}>
+      <Card style={{flex: 1, flexDirection: 'row'}}>
         <Text style={{flex: 1, fontSize: 20}}>{item.day}</Text>
-        <Text style={{flex: 1, fontSize: 17}}>{item.title}</Text>
+        <Text style={{flex: 3, fontSize: 17}}>{item.title}</Text>
       </Card>
     )
   }

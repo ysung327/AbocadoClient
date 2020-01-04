@@ -4,14 +4,16 @@ import { Card, Button, Input, Icon } from 'react-native-elements'
 
 export default class VacationTypeAdd extends Component {
     constructor(props) {
-        super(props);
-        this.state = {
-            modalHeight : '30%',
-            isEdit : this.props.navigation.getParam('isEdit', 'default'),
-            id : this.props.navigation.getParam('id', 'default'),
-            day : this.props.navigation.getParam('day', 'default'),
-            title : this.props.navigation.getParam('title', 'default'),
-        }
+      super(props);
+      this.state = {
+        modalHeight : '30%',
+        isEdit : this.props.navigation.getParam('isEdit', 'default'),
+        id : this.props.navigation.getParam('id', 'default'),
+        day : this.props.navigation.getParam('day', 'default'),
+        title : this.props.navigation.getParam('title', 'default'),
+        dayTemp: null,
+        titleTemp: null,
+      }
     }
 
     componentWillMount () {
@@ -40,6 +42,14 @@ export default class VacationTypeAdd extends Component {
         this.setState({
             modalHeight: '30%',
         })
+    }
+
+    _onDayEditted = () => {
+        this.setState({day: this.state.dayTemp})
+    }
+
+    _onTitleEditted = () => {
+        this.setState({title: this.state.titleTemp})
     }
 
     _onPress = () => {
@@ -80,17 +90,27 @@ export default class VacationTypeAdd extends Component {
                             <Input
                             keyboardType='number-pad'
                             placeholder={day}
+                            onChangeText={(text) => {
+                                this.setState({dayTemp: text})
+                                console.log(this.state.dayTemp)
+                            }}
+                            onEndEditing={this._onDayEditted}
                             leftIcon={
                                 <Icon
                                 type='material-community'
                                 name='calendar-today'
-                                size={24}
+                                size={24} 
                                 color='black'
                                 />
                             }
                             />
                             <Input
                             placeholder={title}
+                            onChangeText={(text) => {
+                                this.setState({titleTemp: text})
+                                console.log(this.state.titleTemp)
+                            }}
+                            onEndEditing={this._onTitleEditted}
                             leftIcon={
                                 <Icon
                                 type='material-community'
@@ -101,13 +121,13 @@ export default class VacationTypeAdd extends Component {
                             }
                             />
                         </View>
-                        <Button title='추가' />
+                        <Button title='추가' onPress={this._onPress}/>
                     </View>
                 </View>
             </ScrollView>
         )
-        }
     }
+}
 
 const styles = StyleSheet.create({
     container: {

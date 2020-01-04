@@ -43,20 +43,24 @@ export default class VacationInfo extends Component {
         <View style={styles.column2}>
           <View style={styles.row1}>
             <Card containerStyle={styles.card1}>
+              <View>
                 <Text style={[styles.title, styles.text]}>나간 휴가</Text>
                 <Text style={[styles.detail, styles.text]}>{this.state.data.gone} 일</Text>
+              </View>
             </Card>
             <Card containerStyle={styles.card1}>
+              <View>
                 <Text style={[styles.title, styles.text]}>남은 휴가</Text>
                 <Text style={[styles.detail, styles.text]}>{this.state.data.left} 일</Text>
+              </View>
             </Card>
           </View>
-          <View style={styles.row2}>
-            <Card containerStyle={styles.card2}>
+          <Card containerStyle={[styles.card2, styles.row2]}>
+              <View>
                 <Text style={[styles.title, styles.text]}>나간 휴가</Text>
                 <Text style={[styles.detail, styles.text]}>{this.state.data.gone} 일</Text>
-            </Card>
-          </View>
+              </View>
+          </Card>
         </View>
       </View>
     )
@@ -69,13 +73,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   card1: {
-    flex: 1,
     marginHorizontal: 0,
   },
   card2: {
-    flex: 1,
     marginHorizontal: 0,
-    marginVertical: 0,
+    marginVertical: 7,
   },
   column1: {
     flex: 1,
@@ -88,12 +90,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   row1: {
-    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'stretch',
+    justifyContent: 'space-between',
   },
   row2: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
   },
