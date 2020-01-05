@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ScrollView, Keyboard, TouchableOpacity } from "react-native"
+import { StyleSheet, Text, View, ScrollView, Keyboard, TouchableOpacity, Alert } from "react-native"
 import { Card, Button, Input, Icon } from 'react-native-elements'
 
 export default class VacationTypeAdd extends Component {
     constructor(props) {
-      super(props);
-      this.state = {
-        modalHeight : '30%',
-        isEdit : this.props.navigation.getParam('isEdit', 'default'),
-        id : this.props.navigation.getParam('id', 'default'),
-        day : this.props.navigation.getParam('day', 'default'),
-        title : this.props.navigation.getParam('title', 'default'),
-        dayTemp: null,
-        titleTemp: null,
-      }
+        super(props);
+        this.state = {
+            modalHeight : '30%',
+            isEdit : this.props.navigation.getParam('isEdit', 'default'),
+            type_of_detail : this.props.navigation.getParam('type_of_detail', 'default'),
+            id : this.props.navigation.getParam('id', 'default'),
+            day : this.props.navigation.getParam('day', 'default'),
+            title : this.props.navigation.getParam('title', 'default'),
+            dayTemp: null,
+            titleTemp: null,
+        }
     }
 
     componentWillMount () {
@@ -44,17 +45,12 @@ export default class VacationTypeAdd extends Component {
         })
     }
 
-    _onDayEditted = () => {
-        this.setState({day: this.state.dayTemp})
-    }
-
-    _onTitleEditted = () => {
-        this.setState({title: this.state.titleTemp})
-    }
-
     _onPress = () => {
         if(this.state.isEdit) {
             this.editData(this.state.id)
+        }
+        else {
+            this.addData()
         }
     }
 
@@ -73,6 +69,44 @@ export default class VacationTypeAdd extends Component {
                 title: this.state.title,
             })
         })
+        .then(
+            Alert.alert(
+                '휴가가 수정되었습니다.',
+                '휴가가 수정되었습니다.',
+                [
+                    {text: '확인', onPress: () => console.log('OK Pressed')},
+                ],
+                {cancelable: false},
+            )
+        )
+    };
+
+    addData = ()  => {
+        const url = "http://ysung327.pythonanywhere.com/vacations/detail/add/";
+
+        this.setState({ loading: true });
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type_of_detail: this.state.type_of_detail,
+                day: this.state.day,
+                title: this.state.title,
+            })
+        })
+        .then(
+            Alert.alert(
+                '휴가가 추가되었습니다.',
+                '휴가가 추가되었습니다.',
+                [
+                    {text: '확인', onPress: () => console.log('OK Pressed')},
+                ],
+                {cancelable: false},
+            )
+        )
     };
 
     render() {
@@ -90,11 +124,9 @@ export default class VacationTypeAdd extends Component {
                             <Input
                             keyboardType='number-pad'
                             placeholder={day}
-                            onChangeText={(text) => {
-                                this.setState({dayTemp: text})
-                                console.log(this.state.dayTemp)
-                            }}
-                            onEndEditing={this._onDayEditted}
+                            onChangeText={(text) => this.setState({dayTemp: text})}
+                            value={this.state.dayTemp}
+                            onEndEditing={() => this.setState({day: this.state.dayTemp})}
                             leftIcon={
                                 <Icon
                                 type='material-community'
@@ -106,11 +138,9 @@ export default class VacationTypeAdd extends Component {
                             />
                             <Input
                             placeholder={title}
-                            onChangeText={(text) => {
-                                this.setState({titleTemp: text})
-                                console.log(this.state.titleTemp)
-                            }}
-                            onEndEditing={this._onTitleEditted}
+                            onChangeText={(text) => {this.setState({titleTemp: text})}}
+                            value={this.state.titleTemp}
+                            onEndEditing={() => this.setState({title: this.state.titleTemp})}
                             leftIcon={
                                 <Icon
                                 type='material-community'

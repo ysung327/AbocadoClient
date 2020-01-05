@@ -9,11 +9,12 @@ export default class VacationTypeDetail extends Component {
         this.state  = {
             loading: false,
             data: [],
+            type_of_detail: this.props.navigation.getParam('type_of_detail', 'default')
         }
     }
 
     componentDidMount() {
-        this.fetchDataFromApi(this.props.navigation.getParam('type_of_detail', 'default'));
+        this.fetchDataFromApi(this.state.type_of_detail);
     }
 
     fetchDataFromApi = (type_of_detail)  => {
@@ -48,7 +49,7 @@ export default class VacationTypeDetail extends Component {
     };
     
     onPress = () => {
-      this.props.navigation.navigate('typeAdd', {isEdit: false, id: null, day: null, title: null})
+        this.props.navigation.navigate('typeAdd', {isEdit: false, type_of_detail: this.state.type_of_detail, id: null, day: null, title: null})
     }
 
     render() {
