@@ -1,26 +1,30 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, FlatList } from 'react-native';
 import { Card, Button } from 'react-native-elements'
-import TypeItem from './TypeItem';
 
 export default class VacationTypeDetail extends Component {
     constructor(props) {
         super(props);
         this.state  = {
-            loading: false,
             data: [],
-            type_of_detail: this.props.navigation.getParam('type_of_detail', 'default')
+            type_of_detail: this.props.navigation.getParam('type_of_detail', 'default'),
+            uploaded: false,
         }
     }
 
     componentDidMount() {
         this.fetchDataFromApi(this.state.type_of_detail);
     }
+    
+    componentDidUpdate() {
+        if (this.state.uploaded == true) {
+            this.fetchDataFromApi(this.state.type_of_detail)
+            this.setState({uploaded: false})
+        }
+    }
 
     fetchDataFromApi = (type_of_detail)  => {
         const url = "http://ysung327.pythonanywhere.com/vacations/type/";
-
-        this.setState({ loading: true });
 
         fetch(url, {
             method: 'PUT',
@@ -45,11 +49,48 @@ export default class VacationTypeDetail extends Component {
     };
 
     _renderItem = ({item}) => {
-    return <TypeItem item={item}/>
-    };
-    
-    onPress = () => {
-        this.props.navigation.navigate('typeAdd', {isEdit: false, type_of_detail: this.state.type_of_detail, id: null, day: null, title: null})
+        return (
+            <TouchableOpacity 
+                onPress={()=>this.props.navigation.navigate(
+                    'typeAdd',
+                    {
+                        onUpload: this.onUpload, 
+                        isEdit: true,
+                        id: item.id, 
+                        day: item.day, 
+                        title: item.title
+                    }
+                )}>
+                <Card 
+                containerStyle={styles.itemContainer} 
+                wrapperStyle={{padding:0}}>         
+                    <View style={styles.itemDay}>
+                        <Text style={styles.itemContent}>{item.day}</Text>
+                    </View>
+                    <View style={styles.itemTitle}>
+                        <Text style={styles.itemText}>{item.title}</Text>
+                    </View>
+                </Card>
+            </TouchableOpacity>
+        )
+    }
+
+    _btnPress = () => {
+        this.props.navigation.navigate(
+            'typeAdd',
+            {
+                onUpload: this.onUpload, 
+                isEdit: false, 
+                type_of_detail: this.state.type_of_detail, 
+                id: null, 
+                day: null, 
+                title: null
+            }
+        )
+    }
+
+    onUpload = () => {
+        this.setState({ uploaded: true })
     }
 
     render() {
@@ -62,8 +103,37 @@ export default class VacationTypeDetail extends Component {
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={{ paddingLeft: 0, paddingRight: 0 }}
                 />
-                <Button title="+" onPress={this.onPress}/>
+                <Button title="+" onPress={this._btnPress}/>
             </View>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    itemContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        backgroundColor: 'white',
+        borderWidth: 0.3,
+        borderColor: 'gray',
+        borderRadius: 5,
+    },
+
+    itemDay:{
+        flex: 1,
+        alignItems: 'center',
+    },
+
+    itemContent: {
+        fontSize: 25,
+    },
+
+    itemTitle: {
+        flex: 3,
+        alignItems: 'center',
+    },
+
+    itemText: {
+        fontSize: 17,
+    },
+})

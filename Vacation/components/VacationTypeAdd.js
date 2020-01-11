@@ -45,7 +45,13 @@ export default class VacationTypeAdd extends Component {
         })
     }
 
-    _onPress = () => {
+    goBack = () => {
+        this.props.navigation.goBack()
+        this.props.navigation.state.params.onUpload()
+        
+    }
+
+    _pressAdd = () => {
         if(this.state.isEdit) {
             this.editData(this.state.id)
         }
@@ -54,10 +60,13 @@ export default class VacationTypeAdd extends Component {
         }
     }
 
+    _pressDelete = () => {
+        this.deleteData(this.state.id)
+    }
+
     editData = (id)  => {
         const url = "http://ysung327.pythonanywhere.com/vacations/detail/" + id + '/';
 
-        this.setState({ loading: true });
         fetch(url, {
             method: 'PUT',
             headers: {
@@ -69,22 +78,26 @@ export default class VacationTypeAdd extends Component {
                 title: this.state.title,
             })
         })
-        .then(
-            Alert.alert(
-                '휴가가 수정되었습니다.',
-                '휴가가 수정되었습니다.',
-                [
-                    {text: '확인', onPress: () => console.log('OK Pressed')},
-                ],
-                {cancelable: false},
-            )
+        
+        this.goBack()
+    };
+
+    deleteData = (id)  => {
+        const url = "http://ysung327.pythonanywhere.com/vacations/detail/" + id + '/';
+
+        fetch(
+          url,
+          {
+            method: 'DELETE',
+          }
         )
+        
+        this.goBack()
     };
 
     addData = ()  => {
         const url = "http://ysung327.pythonanywhere.com/vacations/detail/add/";
 
-        this.setState({ loading: true });
         fetch(url, {
             method: 'PUT',
             headers: {
@@ -97,16 +110,8 @@ export default class VacationTypeAdd extends Component {
                 title: this.state.title,
             })
         })
-        .then(
-            Alert.alert(
-                '휴가가 추가되었습니다.',
-                '휴가가 추가되었습니다.',
-                [
-                    {text: '확인', onPress: () => console.log('OK Pressed')},
-                ],
-                {cancelable: false},
-            )
-        )
+        
+        this.goBack()
     };
 
     render() {
@@ -120,6 +125,9 @@ export default class VacationTypeAdd extends Component {
             contentContainerStyle={styles.container}>
                 <View style={[styles.modalContainer, {height: this.state.modalHeight}]}>
                     <View style={styles.innerContainer}>
+                        { this.state.isEdit == true &&
+                            <Button title='삭제' onPress={this._pressDelete}/>
+                        }
                         <View style={styles.input}>
                             <Input
                             keyboardType='number-pad'
@@ -151,7 +159,7 @@ export default class VacationTypeAdd extends Component {
                             }
                             />
                         </View>
-                        <Button title='추가' onPress={this._onPress}/>
+                        <Button title='추가' onPress={this._pressAdd}/>
                     </View>
                 </View>
             </ScrollView>
