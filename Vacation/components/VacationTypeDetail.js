@@ -61,9 +61,7 @@ export default class VacationTypeDetail extends Component {
                         title: item.title
                     }
                 )}>
-                <Card 
-                containerStyle={styles.itemContainer} 
-                wrapperStyle={{padding:0}}>         
+                <Card wrapperStyle={styles.itemContainer}>         
                     <View style={styles.itemDay}>
                         <Text style={styles.itemContent}>{item.day}</Text>
                     </View>
@@ -113,10 +111,6 @@ const styles = StyleSheet.create({
     itemContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        backgroundColor: 'white',
-        borderWidth: 0.3,
-        borderColor: 'gray',
-        borderRadius: 5,
     },
 
     itemDay:{

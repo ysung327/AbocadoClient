@@ -11,6 +11,10 @@ export default class VacationDetailView extends Component {
       }
   }
 
+  componentWillMount() {
+      this.fetchDataFromApi(this.props.navigation.getParam('id', 'default'));
+  }
+  
   async fetchDataFromApi(pk) {
     let url = "http://ysung327.pythonanywhere.com/vacations/" + pk + "/";
 
@@ -22,11 +26,17 @@ export default class VacationDetailView extends Component {
       data: responseJson,
       loading : false
     });
-    console.log(this.state.data)
   }
 
-  componentWillMount() {
-      this.fetchDataFromApi(this.props.navigation.getParam('id', 'default'));
+  deleteData = (id)  => {
+      const url = "http://ysung327.pythonanywhere.com/vacations/detail/" + id + '/';
+      fetch( url, { method: 'DELETE' })
+      this.goBack()
+  };
+
+  goBack = () => {
+      this.props.navigation.goBack()
+      this.props.navigation.state.params.onUpload()
   }
 
   getdDay = () => {
@@ -42,16 +52,20 @@ export default class VacationDetailView extends Component {
 
   _renderItem = ({item}) => {
     return (
-      <Card style={{flex: 1, flexDirection: 'row'}}>
-        <Text style={{flex: 1, fontSize: 20}}>{item.day}</Text>
-        <Text style={{flex: 3, fontSize: 17}}>{item.title}</Text>
+      <Card wrapperStyle={styles.detailCard}>
+          <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 20 }}>{item.day}</Text>
+          </View>
+          <View style={{ flex: 3 }}>
+              <Text style={{ fontSize: 17 }}>{item.title}</Text>
+          </View>
       </Card>
     )
   }
 
   render() {
       return (
-        <View style={{ flex: 1 }}>
+        <View>
           <Card containerStyle={styles.card}>
             <View style={styles.day}>
               <Text style={styles.content}>{this.state.data.day} 일</Text>
@@ -75,7 +89,6 @@ export default class VacationDetailView extends Component {
             renderItem={this._renderItem}
             keyExtractor={(item, index) => item.id}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingLeft: 0, paddingRight: 0 }}
           />
         </View>
       )
@@ -84,13 +97,15 @@ export default class VacationDetailView extends Component {
 
 const styles = StyleSheet.create({
   card: {
-    flex: 1,
-    flexDirection: 'column',
     justifyContent: 'space-around',
     backgroundColor: 'white',
     borderWidth: 0.3,
     borderColor: 'gray',
-    marginRight: 3,
+  },
+
+  detailCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
 
   day:{

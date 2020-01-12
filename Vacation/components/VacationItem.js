@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native"
 import { Card, Button } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import HomeScreen from '../../HomeScreen'
 import { withNavigation } from 'react-navigation';
 
 class VacationItem extends Component {

@@ -47,8 +47,7 @@ export default class VacationTypeAdd extends Component {
 
     goBack = () => {
         this.props.navigation.goBack()
-        this.props.navigation.state.params.onUpload()
-        
+        this.props.navigation.state.params.onUpload()    
     }
 
     _pressAdd = () => {
@@ -84,14 +83,7 @@ export default class VacationTypeAdd extends Component {
 
     deleteData = (id)  => {
         const url = "http://ysung327.pythonanywhere.com/vacations/detail/" + id + '/';
-
-        fetch(
-          url,
-          {
-            method: 'DELETE',
-          }
-        )
-        
+        fetch( url, { method: 'DELETE' })
         this.goBack()
     };
 

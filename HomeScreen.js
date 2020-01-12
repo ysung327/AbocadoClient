@@ -6,15 +6,22 @@ import VacationType from './Vacation/components/VacationType';
 
 const { height } = Dimensions.get('window');
 export default class HomeScreen extends Component {
-  state = {
-    screenHeight: height,
-  };
+  constructor(props) {
+    super(props)
+    this.state = {
+        screenHeight: height,
+        uploaded: false,
+    }
+    this.onUpload = this.onUpload.bind(this);
+  }
 
   onContentSizeChange = (contentWidth, contentHeight) => {
     this.setState({ screenHeight: contentHeight });
-    //console.log(contentHeight)
-    //console.log(height)
   };
+  
+  onUpload = () => {
+      this.setState({ uploaded: true })
+  }
 
   render() {
     const scrollEnabled = this.state.screenHeight > (height - 60);
@@ -35,7 +42,7 @@ export default class HomeScreen extends Component {
             <View style={styles.listHeader}>
               <Button title="+"/>
             </View>
-            <VacationList/>
+            <VacationList uploaded={this.state.uploaded}/>
           </View>
           <View style={styles.vacationType}>
             <VacationType/>

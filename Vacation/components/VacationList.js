@@ -15,6 +15,12 @@ export default class VacationList extends Component {
     this.fetchDataFromApi();
   }
 
+  componentDidUpdate() {
+      if (this.state.uploaded == true) {
+          this.fetchDataFromApi(this.state.type_of_detail)
+          this.setState({uploaded: false})
+      }
+    }
   fetchDataFromApi = ()  => {
     const url = "http://ysung327.pythonanywhere.com/vacations/";
 
