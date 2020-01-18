@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, FlatList } from 'react-native';
-import { Card, Button } from 'react-native-elements'
+import { Card, Button, Icon } from 'react-native-elements'
 
 export default class VacationDetailView extends Component {
   constructor(props) {
@@ -8,11 +8,12 @@ export default class VacationDetailView extends Component {
       this.state  = {
         loading: false,
         data: [],
+        pk : this.props.navigation.getParam('id', 'default'),
       }
   }
 
   componentWillMount() {
-      this.fetchDataFromApi(this.props.navigation.getParam('id', 'default'));
+      this.fetchDataFromApi(this.state.pk);
   }
   
   async fetchDataFromApi(pk) {
@@ -28,11 +29,15 @@ export default class VacationDetailView extends Component {
     });
   }
 
-  deleteData = (pk)  => {
-      const url = "http://ysung327.pythonanywhere.com/vacations/" + pk + '/';
-      fetch( url, { method: 'DELETE' })
-      this.goBack()
-  };
+  deleteData = ()  => {
+    const url = "http://ysung327.pythonanywhere.com/vacations/" + this.state.pk + '/';
+    fetch( url, { method: 'DELETE' })
+    this.goBack()
+  }
+
+  addDetail =() => {
+    this.props.navigation.navigate('addDetail', {pk : this.state.pk})
+  }
 
   goBack = () => {
       this.props.navigation.goBack()
@@ -67,6 +72,12 @@ export default class VacationDetailView extends Component {
       return (
         <View>
           <Card containerStyle={styles.card}>
+            <View style={styles.deleteIcon}>
+              <Icon
+                name='delete'
+                onPress={this.deleteData}
+              />
+            </View>
             <View style={styles.day}>
               <Text style={styles.content}>{this.state.data.day} 일</Text>
             </View>
@@ -84,6 +95,12 @@ export default class VacationDetailView extends Component {
               </View>
             </View>
           </Card>
+          <View style={styles.addIcon}>
+            <Icon
+              name='add_box'
+              onPress={this.addDetail}
+            />
+          </View>
           <FlatList
             data={this.state.data.detail}
             renderItem={this._renderItem}
@@ -101,6 +118,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderWidth: 0.3,
     borderColor: 'gray',
+  },
+
+  deleteIcon: {
+    alignItems: 'flex-end'
+  },
+
+  addIcon: {
+    alignItems: 'flex-end'
   },
 
   detailCard: {
