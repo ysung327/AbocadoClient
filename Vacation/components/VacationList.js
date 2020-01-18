@@ -8,6 +8,7 @@ export default class VacationList extends Component {
       this.state  = {
         loading: false,
         data: [],
+        uploaded: false,
       }
     }
 
@@ -16,11 +17,16 @@ export default class VacationList extends Component {
   }
 
   componentDidUpdate() {
-      if (this.state.uploaded == true) {
-          this.fetchDataFromApi(this.state.type_of_detail)
-          this.setState({uploaded: false})
-      }
+    if (this.state.uploaded == true) {
+        this.fetchDataFromApi()
+        this.setState({uploaded: false})
     }
+  }
+
+  onUpload = () => {
+    this.setState({ uploaded: true })
+  }
+
   fetchDataFromApi = ()  => {
     const url = "http://ysung327.pythonanywhere.com/vacations/";
 
@@ -44,6 +50,7 @@ export default class VacationList extends Component {
     <VacationItem 
     dday={this._getDday(item.start_date)}
     item={item}
+    onUpload={this.onUpload}
     />)
   };
 

@@ -28,8 +28,8 @@ export default class VacationDetailView extends Component {
     });
   }
 
-  deleteData = (id)  => {
-      const url = "http://ysung327.pythonanywhere.com/vacations/detail/" + id + '/';
+  deleteData = (pk)  => {
+      const url = "http://ysung327.pythonanywhere.com/vacations/" + pk + '/';
       fetch( url, { method: 'DELETE' })
       this.goBack()
   };
