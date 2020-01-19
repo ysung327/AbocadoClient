@@ -5,7 +5,6 @@ import HomeScreen from './HomeScreen';
 import VacationTypeDetail from './Vacation/components/VacationTypeDetail';
 import VacationDetailView from './Vacation/components/VacationDetailView';
 import VacationTypeAdd from './Vacation/components/VacationTypeAdd';
-import VacationDetailAdd from './Vacation/components/VacationDetailAdd';
 import VacationView from './Vacation/components/VacationView';
 
 const TypeStack = createStackNavigator(
@@ -27,30 +26,12 @@ const TypeStack = createStackNavigator(
   }
 );
 
-const DetailStack = createStackNavigator(
-  {
-    Detail: {
-      screen: VacationDetailView,
-    },
-    addDetail: {
-      screen: VacationDetailAdd,
-      navigationOptions: {
-        gestureResponseDistance: { vertical: 1000 },
-      },
-    },
-  },
-  {
-    mode: 'modal',
-    headerMode: 'none',
-    transparentCard: true,
-  }
-)
 
 const VacationStack = createStackNavigator(
     {
     Home: HomeScreen,
     Type: TypeStack,
-    Detail: DetailStack
+    Detail: VacationDetailView
     },
     {
       initialRouteName : 'Home',
