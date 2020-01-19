@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, FlatList, Modal, Dimensions } from 'react-native';
 import { Card, Button, Icon } from 'react-native-elements'
 
-const { height } = Dimensions.get('window');
+const { height } = Dimensions.get('window')
+var selected = []
 
 export default class VacationDetailView extends Component {
   constructor(props) {
@@ -14,6 +15,7 @@ export default class VacationDetailView extends Component {
         modalVisible: false,
         pk : this.props.navigation.getParam('id', 'default'),
         screenHeight: height,
+        itemChecked: []
       }
   }
 
@@ -84,6 +86,14 @@ export default class VacationDetailView extends Component {
       return dDay
   }
 
+  selectItem = (item) => {
+      item.is_used = !item.is_used
+      if(item.is_used){
+          selected.push(item.id)
+      } 
+      //this.setState({itemChecked: selected});
+  }
+
   _renderDetail = ({item}) => {
     return (
       <Card wrapperStyle={styles.detailCard}>
@@ -97,10 +107,12 @@ export default class VacationDetailView extends Component {
     )
   }
 
-  _renderUnusedDetail = ({item, index}) => {
+  _renderUnusedDetail = ({item}) => {
+    const isSelected = item.is_used;
+    const viewStyle = isSelected ? styles.selected : null
     return (
-      <TouchableOpacity>
-          <Card containerStyle={styles.innerContainer} wrapperStyle={styles.detailCard}>
+      <TouchableOpacity onPress={this.selectItem({item})}>
+          <Card containerStyle={[styles.innerContainer, {viewStyle}]} wrapperStyle={styles.detailCard}>
               <View style={{ flex: 1 }}>
                   <Text style={{ fontSize: 20 }}>{item.day}</Text>
               </View>
@@ -130,7 +142,7 @@ export default class VacationDetailView extends Component {
                     contentContainerStyle={styles.contentContainer}
                     data={this.state.modalData}
                     renderItem={this._renderUnusedDetail}
-                    keyExtractor={(item, index) => index}
+                    keyExtractor={(item, index) => item.id}
                     showsVerticalScrollIndicator={false}
                 />
                 <Button
@@ -195,6 +207,10 @@ const styles = StyleSheet.create({
   
   innerContainer: {
     margin: 0,
+  },
+
+  selected: {
+    backgroundColor: 'gray',
   },
 
   modal: {
