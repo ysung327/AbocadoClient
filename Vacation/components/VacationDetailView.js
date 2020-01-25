@@ -23,7 +23,7 @@ export default class VacationDetailView extends Component {
     this.setState({ screenHeight: contentHeight });
   }
 
-  componentWillMount() {
+  componentDidMount() {
       this.fetchDataFromApi(this.state.pk)
       this.fetchModalFromApi()
   }
@@ -86,12 +86,21 @@ export default class VacationDetailView extends Component {
       return dDay
   }
 
-  selectItem = (item) => {
-      item.is_used = !item.is_used
-      if(item.is_used){
-          selected.push(item.id)
-      } 
-      //this.setState({itemChecked: selected});
+  selectItem = (index) => {
+    let i = this.state.itemChecked.indexOf(index)
+    let temp = []
+    console.log(index)
+    console.log(i)
+    if (i == -1) {
+      temp = this.state.itemChecked.concat(index)
+    }
+    else {
+      temp = this.state.itemChecked.splice(i, 1)
+    }
+    this.setState({
+      itemChecked : temp
+    })
+    console.log(this.state.itemChecked)
   }
 
   _renderDetail = ({item}) => {
@@ -108,10 +117,12 @@ export default class VacationDetailView extends Component {
   }
 
   _renderUnusedDetail = ({item}) => {
-    const isSelected = item.is_used;
-    const viewStyle = isSelected ? styles.selected : null
+    let viewStyle = null
+    if (this.state.itemChecked.indexOf(item.id) != -1) {
+      viewStyle = styles.selected
+    }
     return (
-      <TouchableOpacity onPress={this.selectItem({item})}>
+      <TouchableOpacity onPress={() => this.selectItem(item.id)}>
           <Card containerStyle={[styles.innerContainer, {viewStyle}]} wrapperStyle={styles.detailCard}>
               <View style={{ flex: 1 }}>
                   <Text style={{ fontSize: 20 }}>{item.day}</Text>
@@ -125,72 +136,71 @@ export default class VacationDetailView extends Component {
   }
 
   render() {
-      return (
-        <View style={styles.container}>
-          <Modal
-              animationType="slide"
-              transparent={true}
-              visible={this.state.modalVisible}
-              onRequestClose={() => {
-                this.setModalVisible(false)
-              }
-          }>
-            <View style={styles.modal}>
-              <View style={[styles.modalInside, {height: this.state.screenHeight*0.9}]}>
-                <Text style={{fontSize: 20, textAlign: 'center', marginVertical: 10,}}>추가할 휴가를 터치해보세요!</Text>
-                <FlatList
-                    contentContainerStyle={styles.contentContainer}
-                    data={this.state.modalData}
-                    renderItem={this._renderUnusedDetail}
-                    keyExtractor={(item, index) => item.id}
-                    showsVerticalScrollIndicator={false}
-                />
-                <Button
-                  title={'완료'}
-                  onPress={()=>this.setModalVisible(false)}
-                />
-              </View>
-            </View>
-
-          </Modal>
-          <Card containerStyle={styles.card}>
-            <View style={styles.deleteIcon}>
-              <Icon
-                name='delete'
-                onPress={this.deleteData}
-              />
-            </View>
-            <View style={styles.day}>
-              <Text style={styles.content}>{this.state.data.day} 일</Text>
-            </View>
-            <View style={styles.dday}>
-              { this.getdDay() }
-            </View>
-            <View style={styles.info}>
-              <View style={styles.date}>
-                <Text style={styles.text}>출발</Text>
-                <Text style={styles.text}>{this.state.data.start_date}</Text>
-              </View>
-              <View style={styles.date}>
-                <Text style={styles.text}>복귀</Text>
-                <Text style={styles.text}>{this.state.data.end_date}</Text>
-              </View>
-            </View>
-          </Card>
-          <View style={styles.addIcon}>
-            <Icon
-              name='add'
-              onPress={this.addDetail}
+    return (
+      <View style={styles.container}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            this.setModalVisible(false)
+          }
+        }>
+        <View style={styles.modal}>
+          <View style={[styles.modalInside, {height: this.state.screenHeight*0.9}]}>
+            <Text style={{fontSize: 20, textAlign: 'center', marginVertical: 10,}}>추가할 휴가를 터치해보세요!</Text>
+            <FlatList
+              contentContainerStyle={styles.contentContainer}
+              data={this.state.modalData}
+              renderItem={this._renderUnusedDetail}
+              keyExtractor={(item) => item.id}
+              showsVerticalScrollIndicator={false}
+            />
+            <Button
+              title={'완료'}
+              onPress={()=>this.setModalVisible(false)}
             />
           </View>
-          <FlatList
-            data={this.state.data.detail}
-            renderItem={this._renderDetail}
-            keyExtractor={(item, index) => item.id}
-            showsVerticalScrollIndicator={false}
+        </View>
+        </Modal>
+        <Card containerStyle={styles.card}>
+          <View style={styles.deleteIcon}>
+            <Icon
+              name='delete'
+              onPress={this.deleteData}
+            />
+          </View>
+          <View style={styles.day}>
+            <Text style={styles.content}>{this.state.data.day} 일</Text>
+          </View>
+          <View style={styles.dday}>
+            { this.getdDay() }
+          </View>
+          <View style={styles.info}>
+            <View style={styles.date}>
+              <Text style={styles.text}>출발</Text>
+              <Text style={styles.text}>{this.state.data.start_date}</Text>
+            </View>
+            <View style={styles.date}>
+              <Text style={styles.text}>복귀</Text>
+              <Text style={styles.text}>{this.state.data.end_date}</Text>
+            </View>
+          </View>
+        </Card>
+        <View style={styles.addIcon}>
+          <Icon
+            name='add'
+            onPress={this.addDetail}
           />
         </View>
-      )
+        <FlatList
+          data={this.state.data.detail}
+          renderItem={this._renderDetail}
+          keyExtractor={(item, index) => item.id}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+    )
   }
 }
 
