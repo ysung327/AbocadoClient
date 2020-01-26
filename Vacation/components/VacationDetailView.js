@@ -11,6 +11,10 @@ export default class VacationDetailView extends Component {
         loading: false,
         data: [],
         modalData: [],
+        conData: [],
+        prData: [],
+        peData: [],
+        reData: [],
         modalVisible: false,
         pk : this.props.navigation.getParam('id', 'default'),
         screenHeight: height,
@@ -42,17 +46,36 @@ export default class VacationDetailView extends Component {
 
   fetchModalFromApi = ()  => {
     const url = "http://ysung327.pythonanywhere.com/vacations/detail/";
-
+    let modalData = []
+    let _conData =[]
+    let _prData = []
+    let _reData = []
+    let _peData = []
     fetch(url)
     .then(res => res.json())
     .then(res => {
-          this.setState({
-            modalData: res,
-          });
+      modalData = res
+      for(let i in modalData) {
+        if(modalData[i].type_of_detail === "CON") {
+          _conData.push(modalData[i])
+        } else if(modalData[i].type_of_detail === "PR") {
+          _prData.push(modalData[i])
+        } else if(modalData[i].type_of_detail === "RE") {
+          _reData.push(modalData[i])
+        } else if(modalData[i].type_of_detail === "PE") {
+          _peData.push(modalData[i])
+        }
+      }
+      this.setState({
+        conData: _conData,
+        reData: _reData,
+        prData: _prData,
+        peData: _peData
+      })
     })
     .catch((error) => {
-          console.log(error);
-    });
+      console.log(error);
+    })
   }
 
   deleteVacation = ()  => {
@@ -201,13 +224,46 @@ export default class VacationDetailView extends Component {
         <View style={styles.modal}>
           <View style={[styles.modalInside, {height: this.state.screenHeight*0.9}]}>
             <Text style={{fontSize: 20, textAlign: 'center', marginVertical: 10,}}>추가할 휴가를 터치해보세요!</Text>
-            <FlatList
+            <View>
+              <Text>위로</Text>
+              <FlatList
               contentContainerStyle={styles.contentContainer}
-              data={this.state.modalData}
+              data={this.state.conData}
               renderItem={this._renderUnusedDetail}
               keyExtractor={(item) => item.id}
               showsVerticalScrollIndicator={false}
             />
+            </View>
+            <View>
+              <Text>포상</Text>
+              <FlatList
+              contentContainerStyle={styles.contentContainer}
+              data={this.state.prData}
+              renderItem={this._renderUnusedDetail}
+              keyExtractor={(item) => item.id}
+              showsVerticalScrollIndicator={false}
+            />
+            </View>
+            <View>
+              <Text>보상</Text>
+              <FlatList
+              contentContainerStyle={styles.contentContainer}
+              data={this.state.reData}
+              renderItem={this._renderUnusedDetail}
+              keyExtractor={(item) => item.id}
+              showsVerticalScrollIndicator={false}
+            />
+            </View>
+            <View>
+              <Text>청원</Text>
+              <FlatList
+              contentContainerStyle={styles.contentContainer}
+              data={this.state.peData}
+              renderItem={this._renderUnusedDetail}
+              keyExtractor={(item) => item.id}
+              showsVerticalScrollIndicator={false}
+            />
+            </View>
             <Button
               title={'완료'}
               onPress={() => this.sendDetail()}
