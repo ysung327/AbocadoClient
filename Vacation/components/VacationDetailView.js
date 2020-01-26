@@ -3,7 +3,6 @@ import { StyleSheet, View, Text, TouchableOpacity, FlatList, Modal, Dimensions }
 import { Card, Button, Icon } from 'react-native-elements'
 
 const { height } = Dimensions.get('window')
-var selected = []
 
 export default class VacationDetailView extends Component {
   constructor(props) {
@@ -56,13 +55,30 @@ export default class VacationDetailView extends Component {
     });
   }
 
-  deleteData = ()  => {
+  deleteVacation = ()  => {
     const url = "http://ysung327.pythonanywhere.com/vacations/" + this.state.pk + '/';
     fetch( url, { method: 'DELETE' })
     this.goBack()
   }
 
-  addDetail =() => {
+  deleteDetail = (id)  => {
+    const url = "http://ysung327.pythonanywhere.com/vacations/detail/" + id + '/';
+    fetch(url, {
+      method: 'PUT',
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          vacation: null,
+          is_used: false,
+      })
+    })
+    this.fetchDataFromApi(this.state.pk)
+    this.fetchModalFromApi()
+  }
+
+  showAdd =() => {
     this.setModalVisible(true)
   }
 
@@ -73,6 +89,30 @@ export default class VacationDetailView extends Component {
   goBack = () => {
       this.props.navigation.goBack()
       this.props.navigation.state.params.onUpload()
+  }
+
+  sendDetail = () => {
+    this.setModalVisible(false)
+    const detail = this.state.itemChecked
+    console.log(detail)
+    for (let i of detail) {
+      console.log(i)
+      let url = "http://ysung327.pythonanywhere.com/vacations/detail/" + i + '/';
+      fetch(url, {
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            vacation: this.state.pk,
+            is_used: true,
+        })
+      })
+    }
+    this.setModalVisible(false)
+    this.fetchDataFromApi(this.state.pk)
+    this.fetchModalFromApi()
   }
 
   getdDay = () => {
@@ -87,20 +127,24 @@ export default class VacationDetailView extends Component {
   }
 
   selectItem = (index) => {
-    let i = this.state.itemChecked.indexOf(index)
+    const itemChecked = this.state.itemChecked;
+    let i = itemChecked.indexOf(index)
     let temp = []
-    console.log(index)
-    console.log(i)
+    console.log("id: " + index)
+    console.log("i: " + i)
     if (i == -1) {
-      temp = this.state.itemChecked.concat(index)
+      temp = itemChecked.concat(index)
+      this.setState({
+        itemChecked: temp
+      })
+      console.log(this.state.itemChecked)
     }
     else {
-      temp = this.state.itemChecked.splice(i, 1)
+      this.setState({
+        itemChecked: [...itemChecked.slice(0,i), ...itemChecked.slice(i+1)]
+      })
+      console.log(this.state.itemChecked)
     }
-    this.setState({
-      itemChecked : temp
-    })
-    console.log(this.state.itemChecked)
   }
 
   _renderDetail = ({item}) => {
@@ -112,18 +156,26 @@ export default class VacationDetailView extends Component {
           <View style={{ flex: 3 }}>
               <Text style={{ fontSize: 17 }}>{item.title}</Text>
           </View>
+          <View style={{ flex: 1 }}>
+            <Icon
+              name='delete'
+              onPress={() => this.deleteDetail(item.id)}
+            />
+          </View>
       </Card>
     )
   }
 
+  changeBackground = (id) => {
+    if (this.state.itemChecked.indexOf(id) != -1) {
+      return true
+    } else false
+  }
+
   _renderUnusedDetail = ({item}) => {
-    let viewStyle = null
-    if (this.state.itemChecked.indexOf(item.id) != -1) {
-      viewStyle = styles.selected
-    }
     return (
-      <TouchableOpacity onPress={() => this.selectItem(item.id)}>
-          <Card containerStyle={[styles.innerContainer, {viewStyle}]} wrapperStyle={styles.detailCard}>
+      <TouchableOpacity onPress={()=>this.selectItem(item.id)}>
+          <Card containerStyle={[styles.innerContainer, this.changeBackground(item.id) ? {backgroundColor: 'gray'} : null]} wrapperStyle={styles.detailCard}>
               <View style={{ flex: 1 }}>
                   <Text style={{ fontSize: 20 }}>{item.day}</Text>
               </View>
@@ -158,7 +210,7 @@ export default class VacationDetailView extends Component {
             />
             <Button
               title={'완료'}
-              onPress={()=>this.setModalVisible(false)}
+              onPress={() => this.sendDetail()}
             />
           </View>
         </View>
@@ -167,7 +219,7 @@ export default class VacationDetailView extends Component {
           <View style={styles.deleteIcon}>
             <Icon
               name='delete'
-              onPress={this.deleteData}
+              onPress={this.deleteVacation}
             />
           </View>
           <View style={styles.day}>
@@ -190,13 +242,13 @@ export default class VacationDetailView extends Component {
         <View style={styles.addIcon}>
           <Icon
             name='add'
-            onPress={this.addDetail}
+            onPress={this.showAdd}
           />
         </View>
         <FlatList
           data={this.state.data.detail}
           renderItem={this._renderDetail}
-          keyExtractor={(item, index) => item.id}
+          keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
         />
       </View>
@@ -217,10 +269,6 @@ const styles = StyleSheet.create({
   
   innerContainer: {
     margin: 0,
-  },
-
-  selected: {
-    backgroundColor: 'gray',
   },
 
   modal: {
