@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, FlatList, Modal, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList, Modal, Dimensions, ScrollView } from 'react-native';
 import { Card, Button, Icon } from 'react-native-elements'
+import CalendarPicker from 'react-native-calendar-picker'
 
 const { height } = Dimensions.get('window')
 
@@ -8,6 +9,7 @@ export default class VacationDetailView extends Component {
   constructor(props) {
       super(props);
       this.state  = {
+        pk : this.props.navigation.getParam('id', 'default'),
         loading: false,
         data: [],
         modalData: [],
@@ -16,9 +18,10 @@ export default class VacationDetailView extends Component {
         peData: [],
         reData: [],
         modalVisible: false,
-        pk : this.props.navigation.getParam('id', 'default'),
+        isDatePickerVisible: false,
         screenHeight: height,
-        itemChecked: []
+        itemChecked: [],
+        start_date: new Date(),
       }
   }
 
@@ -40,8 +43,10 @@ export default class VacationDetailView extends Component {
     const responseJson = await response.json();
     this.setState({
       data: responseJson,
+      start_date: responseJson.start_date,
       loading : false
     });
+    console.log(this.state.start_date)
   }
 
   fetchModalFromApi = ()  => {
@@ -70,7 +75,7 @@ export default class VacationDetailView extends Component {
         conData: _conData,
         reData: _reData,
         prData: _prData,
-        peData: _peData
+        peData: _peData,
       })
     })
     .catch((error) => {
@@ -84,6 +89,25 @@ export default class VacationDetailView extends Component {
     this.goBack()
   }
 
+  changeVacationDetail = ()  => {
+    const url = "http://ysung327.pythonanywhere.com/vacations/" + this.state.pk + '/';
+    fetch(url, {
+      method: 'PUT',
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          start_date : this.state.start_date,
+          //day: null,
+      })
+    })
+    setTimeout(() => {
+      this.fetchDataFromApi(this.state.pk)
+      this.fetchModalFromApi()
+    }, 300)
+  }
+
   deleteDetail = (id)  => {
     const url = "http://ysung327.pythonanywhere.com/vacations/detail/" + id + '/';
     fetch(url, {
@@ -93,20 +117,43 @@ export default class VacationDetailView extends Component {
           'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+          vacationID : this.state.pk,
           vacation: null,
           is_used: false,
       })
     })
-    this.fetchDataFromApi(this.state.pk)
-    this.fetchModalFromApi()
+    setTimeout(() => {
+      this.fetchDataFromApi(this.state.pk)
+      this.fetchModalFromApi()
+    }, 300)
   }
 
-  showAdd =() => {
+  showAdd = () => {
     this.setModalVisible(true)
   }
 
-  setModalVisible(visible) {
-    this.setState({modalVisible: visible});
+  showDatePicker = () => {
+    this.setDatePickerVisible(true)
+  }
+
+  hideDatePicker = () => {
+    this.setDatePickerVisible(false)
+  }
+
+  setModalVisible = (visible) => {
+    this.setState({modalVisible: visible})
+  }
+  
+  setDatePickerVisible = (visible) =>{
+    this.setState({isDatePickerVisible: visible})
+  }
+
+  handleConfirm = (date) => {
+    this.setState({
+      start_date: date,
+    })
+    console.log(this.state.start_date)
+    this.hideDatePicker()
   }
 
   goBack = () => {
@@ -115,11 +162,12 @@ export default class VacationDetailView extends Component {
   }
 
   sendDetail = () => {
-    this.setModalVisible(false)
     const detail = this.state.itemChecked
-    console.log(detail)
+    this.setState({
+      itemChecked : []
+    })
     for (let i of detail) {
-      console.log(i)
+      //console.log(i)
       let url = "http://ysung327.pythonanywhere.com/vacations/detail/" + i + '/';
       fetch(url, {
         method: 'PUT',
@@ -128,25 +176,17 @@ export default class VacationDetailView extends Component {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+            vacationID : this.state.pk,
             vacation: this.state.pk,
             is_used: true,
         })
       })
     }
     this.setModalVisible(false)
-    this.fetchDataFromApi(this.state.pk)
-    this.fetchModalFromApi()
-  }
-
-  getdDay = () => {
-      let dDay = []
-      let dday = this.props.navigation.getParam('dday', 'default')
-      if(dday < 0) {
-        dday = dday * -1
-        dDay.push(<Text style={styles.content}>D+{dday}</Text>)
-      }
-      else dDay.push(<Text style={styles.content}>D-{dday}</Text>)
-      return dDay
+    setTimeout(() => {
+      this.fetchDataFromApi(this.state.pk)
+      this.fetchModalFromApi()
+    }, 300)
   }
 
   selectItem = (index) => {
@@ -168,6 +208,17 @@ export default class VacationDetailView extends Component {
       })
       console.log(this.state.itemChecked)
     }
+  }
+
+  getdDay = () => {
+    let dDay = []
+    let dday = this.props.navigation.getParam('dday', 'default')
+    if(dday < 0) {
+      dday = dday * -1
+      dDay.push(<Text style={styles.content}>D+{dday}</Text>)
+    }
+    else dDay.push(<Text style={styles.content}>D-{dday}</Text>)
+    return dDay
   }
 
   _renderDetail = ({item}) => {
@@ -213,6 +264,7 @@ export default class VacationDetailView extends Component {
   render() {
     return (
       <View style={styles.container}>
+      
         <Modal
           animationType="slide"
           transparent={true}
@@ -221,56 +273,77 @@ export default class VacationDetailView extends Component {
             this.setModalVisible(false)
           }
         }>
-        <View style={styles.modal}>
-          <View style={[styles.modalInside, {height: this.state.screenHeight*0.9}]}>
-            <Text style={{fontSize: 20, textAlign: 'center', marginVertical: 10,}}>추가할 휴가를 터치해보세요!</Text>
-            <View>
-              <Text>위로</Text>
-              <FlatList
-              contentContainerStyle={styles.contentContainer}
-              data={this.state.conData}
-              renderItem={this._renderUnusedDetail}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={false}
-            />
+          <View style={styles.modal}>
+            <View style={[styles.modalInside, {height: this.state.screenHeight*0.9}]}>
+              <Text style={{fontSize: 20, textAlign: 'center', marginVertical: 10,}}>추가할 휴가를 터치해보세요!</Text>
+              <ScrollView>
+                <View>
+                  <Text style={styles.typeTitle}>연가</Text>
+                </View>
+                <View>
+                  <Text style={styles.typeTitle}>위로</Text>
+                  <FlatList
+                  contentContainerStyle={styles.contentContainer}
+                  data={this.state.conData}
+                  renderItem={this._renderUnusedDetail}
+                  keyExtractor={(item) => item.id}
+                  showsVerticalScrollIndicator={false}
+                />
+                </View>
+                <View>
+                  <Text style={styles.typeTitle}>포상</Text>
+                  <FlatList
+                  contentContainerStyle={styles.contentContainer}
+                  data={this.state.prData}
+                  renderItem={this._renderUnusedDetail}
+                  keyExtractor={(item) => item.id}
+                  showsVerticalScrollIndicator={false}
+                />
+                </View>
+                <View>
+                  <Text style={styles.typeTitle}>보상</Text>
+                  <FlatList
+                  contentContainerStyle={styles.contentContainer}
+                  data={this.state.reData}
+                  renderItem={this._renderUnusedDetail}
+                  keyExtractor={(item) => item.id}
+                  showsVerticalScrollIndicator={false}
+                />
+                </View>
+                <View>
+                  <Text style={styles.typeTitle}>청원</Text>
+                    <FlatList
+                    contentContainerStyle={styles.contentContainer}
+                    data={this.state.peData}
+                    renderItem={this._renderUnusedDetail}
+                    keyExtractor={(item) => item.id}
+                    showsVerticalScrollIndicator={false}
+                  />
+                </View>
+              </ScrollView>
+              <Button
+                title={'완료'}
+                onPress={() => this.sendDetail()}
+              />
             </View>
-            <View>
-              <Text>포상</Text>
-              <FlatList
-              contentContainerStyle={styles.contentContainer}
-              data={this.state.prData}
-              renderItem={this._renderUnusedDetail}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={false}
-            />
-            </View>
-            <View>
-              <Text>보상</Text>
-              <FlatList
-              contentContainerStyle={styles.contentContainer}
-              data={this.state.reData}
-              renderItem={this._renderUnusedDetail}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={false}
-            />
-            </View>
-            <View>
-              <Text>청원</Text>
-              <FlatList
-              contentContainerStyle={styles.contentContainer}
-              data={this.state.peData}
-              renderItem={this._renderUnusedDetail}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={false}
-            />
-            </View>
-            <Button
-              title={'완료'}
-              onPress={() => this.sendDetail()}
-            />
           </View>
-        </View>
         </Modal>
+
+
+        <View>
+          <Modal
+            animationType="fade"
+            transparent={false}
+            visible={this.state.isDatePickerVisible}
+            onRequestClose={() => {
+              this.hideDatePicker()
+            }
+          }>
+            <CalendarPicker/>
+          </Modal>
+        </View>
+
+
         <Card containerStyle={styles.card}>
           <View style={styles.deleteIcon}>
             <Icon
@@ -285,10 +358,10 @@ export default class VacationDetailView extends Component {
             { this.getdDay() }
           </View>
           <View style={styles.info}>
-            <View style={styles.date}>
+            <TouchableOpacity style={styles.date} onPress={()=>this.showDatePicker()}>
               <Text style={styles.text}>출발</Text>
               <Text style={styles.text}>{this.state.data.start_date}</Text>
-            </View>
+            </TouchableOpacity>
             <View style={styles.date}>
               <Text style={styles.text}>복귀</Text>
               <Text style={styles.text}>{this.state.data.end_date}</Text>
@@ -394,5 +467,11 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 17,
   },
+
+  typeTitle: {
+    fontSize: 15, 
+    fontWeight: 'bold',
+    textAlign: 'center'
+  }
 })
 
