@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import { StyleSheet, FlatList, View, Button } from 'react-native';
-import VacationItem from './VacationItem';
+import VacationItem from './VacationItem'
+import { Card, Icon } from 'react-native-elements'
+import { withNavigation } from 'react-navigation'
 
-export default class VacationList extends Component {
+class VacationList extends Component {
   constructor(props) {
       super(props);
       this.state  = {
         loading: false,
         data: [],
+        newVacationId: null,
         uploaded: false,
       }
     }
@@ -18,8 +21,8 @@ export default class VacationList extends Component {
 
   componentDidUpdate() {
     if (this.state.uploaded == true) {
-        this.fetchDataFromApi()
-        this.setState({uploaded: false})
+      this.fetchDataFromApi()
+      this.setState({uploaded: false})
     }
   }
 
@@ -37,36 +40,49 @@ export default class VacationList extends Component {
     .then(res => {
           this.setState({
             data: res,
-          });
+          })
           //console.log(this.state.data)
     })
     .catch((error) => {
           console.log(error);
-    });
-  };
+    })
+  }
 
   _renderItem = ({item}) => {
     return (
-    <VacationItem 
-    dday={this._getDday(item.start_date)}
-    item={item}
-    onUpload={this.onUpload}
+    <VacationItem
+      item={item}
+      onUpload={this.onUpload}
     />)
-  };
+  }
 
-  _getDday = (start_date) => { //휴가출발까지 남은 날짜 계산
-    var now = new Date()
-    var dday = new Date(start_date)
-    var gap = now.getTime() - dday.getTime()
-    var result = Math.floor(gap / (1000 * 60 * 60 * 24)) * -1
-    return result
-  };
+  _onPress = () => {
+    const url = "http://ysung327.pythonanywhere.com/vacations/"
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(res => res.json())
+    .then(res => {
+      this.setState({
+        newVacationId: res.id
+      })
+      console.log(res)
+    })
+    setTimeout(() => {
+      this.props.navigation.navigate('Detail', {onUpload: this.props.onUpload, id : this.state.newVacationId})
+    }, 300)
+  }
 
-  _renderListHeader = () => {
+  getListFooter = () => {
     return(
-      <View style={{flex:1, flexDirection: "row", alignContent: "flex-end"}}>
-        <Button title="+"/>
-      </View>
+      <Icon
+        name='add'
+        onPress={this._onPress}
+      />
     )
   }
 
@@ -79,8 +95,10 @@ export default class VacationList extends Component {
           horizontal={true}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ paddingLeft: 0, paddingRight: 0 }}
+          ListFooterComponent={this.getListFooter}
         />
     );
   }
 }
 
+export default withNavigation(VacationList)

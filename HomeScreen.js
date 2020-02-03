@@ -35,9 +35,6 @@ export default class HomeScreen extends Component {
             <VacationInfo/>
           </View>
           <View style={styles.vacationList}>
-            <View style={styles.listHeader}>
-              <Button title="+"/>
-            </View>
             <VacationList/>
           </View>
           <View style={styles.vacationType}>
@@ -54,12 +51,6 @@ export default class HomeScreen extends Component {
 const styles = StyleSheet.create({
   vacationList: {
     flex: 1,
-  },
-
-  listHeader: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginRight: 30,
   },
 
   vacationInfo: {

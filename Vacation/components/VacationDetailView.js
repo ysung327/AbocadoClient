@@ -1,125 +1,126 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, FlatList, Modal, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList, Modal, Dimensions, ScrollView} from 'react-native';
 import { Card, Button, Icon } from 'react-native-elements'
 import CalendarPicker from 'react-native-calendar-picker'
+import NumericInput from 'react-native-numeric-input'
+import moment from 'moment'
 
 const { height } = Dimensions.get('window')
+const today = new Date()
 
 export default class VacationDetailView extends Component {
   constructor(props) {
-      super(props);
-      this.state  = {
-        pk : this.props.navigation.getParam('id', 'default'),
-        loading: false,
-        data: [],
-        modalData: [],
-        conData: [],
-        prData: [],
-        peData: [],
-        reData: [],
-        modalVisible: false,
-        isDatePickerVisible: false,
-        screenHeight: height,
-        itemChecked: [],
-        start_date: new Date(),
-      }
+    super(props);
+    this.state = {
+      pk: this.props.navigation.getParam('id', 'default'),
+      loading: false,
+      data: [],
+      detail: [],
+      modalData: [],
+      conData: [],
+      prData: [],
+      peData: [],
+      reData: [],
+      isDetailAddVisible: false,
+      isDatePickerVisible: false,
+      isDayPickerVisible: false,
+      screenHeight: height,
+      itemChecked: [],
+      annual: null,
+      start_date: null,
+      end_date: null,
+      day: null,
+    }
   }
 
   onContentSizeChange = (contentWidth, contentHeight) => {
-    this.setState({ screenHeight: contentHeight });
+    this.setState({
+      screenHeight: contentHeight
+    });
   }
 
   componentDidMount() {
-      this.fetchDataFromApi(this.state.pk)
-      this.fetchModalFromApi()
+    this.fetchDataFromApi(this.state.pk)
+    this.fetchModalFromApi()
+    console.log(this.state.pk)
   }
-  
+
   async fetchDataFromApi(pk) {
-    let url = "http://ysung327.pythonanywhere.com/vacations/" + pk + "/";
+    let url = "http://ysung327.pythonanywhere.com/vacations/" + pk + "/"
 
-    this.setState({ loading: true });
+    this.setState({
+      loading: true
+    })
 
-    const response = await fetch(url);
-    const responseJson = await response.json();
+    const response = await fetch(url)
+    const responseJson = await response.json()
+    const _detail = responseJson.detail
+
     this.setState({
       data: responseJson,
+      detail: _detail,
+      annual: responseJson.annual,
       start_date: responseJson.start_date,
-      loading : false
-    });
-    console.log(this.state.start_date)
+      end_date: responseJson.end_date,
+      day: responseJson.day,
+      loading: false
+    })
   }
 
-  fetchModalFromApi = ()  => {
+  fetchModalFromApi = () => {
     const url = "http://ysung327.pythonanywhere.com/vacations/detail/";
     let modalData = []
-    let _conData =[]
+    let _conData = []
     let _prData = []
     let _reData = []
     let _peData = []
     fetch(url)
-    .then(res => res.json())
-    .then(res => {
-      modalData = res
-      for(let i in modalData) {
-        if(modalData[i].type_of_detail === "CON") {
-          _conData.push(modalData[i])
-        } else if(modalData[i].type_of_detail === "PR") {
-          _prData.push(modalData[i])
-        } else if(modalData[i].type_of_detail === "RE") {
-          _reData.push(modalData[i])
-        } else if(modalData[i].type_of_detail === "PE") {
-          _peData.push(modalData[i])
+      .then(res => res.json())
+      .then(res => {
+        modalData = res
+        for (let i in modalData) {
+          if (modalData[i].type_of_detail === "CON") {
+            _conData.push(modalData[i])
+          } else if (modalData[i].type_of_detail === "PR") {
+            _prData.push(modalData[i])
+          } else if (modalData[i].type_of_detail === "RE") {
+            _reData.push(modalData[i])
+          } else if (modalData[i].type_of_detail === "PE") {
+            _peData.push(modalData[i])
+          }
         }
-      }
-      this.setState({
-        conData: _conData,
-        reData: _reData,
-        prData: _prData,
-        peData: _peData,
+        this.setState({
+          conData: _conData,
+          reData: _reData,
+          prData: _prData,
+          peData: _peData,
+        })
       })
-    })
-    .catch((error) => {
-      console.log(error);
-    })
+      .catch((error) => {
+        console.log(error);
+      })
   }
 
-  deleteVacation = ()  => {
+  deleteVacation = () => {
     const url = "http://ysung327.pythonanywhere.com/vacations/" + this.state.pk + '/';
-    fetch( url, { method: 'DELETE' })
+    fetch(url, {
+      method: 'DELETE'
+    })
     this.goBack()
   }
 
-  changeVacationDetail = ()  => {
-    const url = "http://ysung327.pythonanywhere.com/vacations/" + this.state.pk + '/';
-    fetch(url, {
-      method: 'PUT',
-      headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-          start_date : this.state.start_date,
-          //day: null,
-      })
-    })
-    setTimeout(() => {
-      this.fetchDataFromApi(this.state.pk)
-      this.fetchModalFromApi()
-    }, 300)
-  }
-
-  deleteDetail = (id)  => {
+  deleteDetail = (id) => {
     const url = "http://ysung327.pythonanywhere.com/vacations/detail/" + id + '/';
     fetch(url, {
       method: 'PUT',
       headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-          vacationID : this.state.pk,
-          vacation: null,
-          is_used: false,
+        vacationID: this.state.pk,
+        vacation: null,
+        is_used: false,
       })
     })
     setTimeout(() => {
@@ -128,8 +129,12 @@ export default class VacationDetailView extends Component {
     }, 300)
   }
 
-  showAdd = () => {
-    this.setModalVisible(true)
+  showDetailAdd = () => {
+    this.setDetailAddVisible(true)
+  }
+  
+  hideDetailAdd = () => {
+    this.setDetailAddVisible(false)
   }
 
   showDatePicker = () => {
@@ -139,32 +144,42 @@ export default class VacationDetailView extends Component {
   hideDatePicker = () => {
     this.setDatePickerVisible(false)
   }
+  
+  showDayPicker = () => {
+    this.setDayPickerVisible(true)
+  }
 
-  setModalVisible = (visible) => {
-    this.setState({modalVisible: visible})
+  hideDayPicker = () => {
+    this.setDayPickerVisible(false)
+  }
+
+  setDetailAddVisible = (visible) => {
+    this.setState({
+      isDetailAddVisible: visible
+    })
+  }
+
+  setDatePickerVisible = (visible) => {
+    this.setState({
+      isDatePickerVisible: visible
+    })
   }
   
-  setDatePickerVisible = (visible) =>{
-    this.setState({isDatePickerVisible: visible})
-  }
-
-  handleConfirm = (date) => {
+  setDayPickerVisible = (visible) => {
     this.setState({
-      start_date: date,
+      isDayPickerVisible: visible
     })
-    console.log(this.state.start_date)
-    this.hideDatePicker()
   }
 
   goBack = () => {
-      this.props.navigation.goBack()
-      this.props.navigation.state.params.onUpload()
+    this.props.navigation.goBack()
+    this.props.navigation.state.params.onUpload()
   }
 
   sendDetail = () => {
     const detail = this.state.itemChecked
     this.setState({
-      itemChecked : []
+      itemChecked: []
     })
     for (let i of detail) {
       //console.log(i)
@@ -172,17 +187,16 @@ export default class VacationDetailView extends Component {
       fetch(url, {
         method: 'PUT',
         headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            vacationID : this.state.pk,
-            vacation: this.state.pk,
-            is_used: true,
+          vacation: this.state.pk,
+          is_used: true,
         })
       })
     }
-    this.setModalVisible(false)
+    this.hideDetailAdd()
     setTimeout(() => {
       this.fetchDataFromApi(this.state.pk)
       this.fetchModalFromApi()
@@ -190,35 +204,36 @@ export default class VacationDetailView extends Component {
   }
 
   selectItem = (index) => {
-    const itemChecked = this.state.itemChecked;
+    const itemChecked = this.state.itemChecked
     let i = itemChecked.indexOf(index)
     let temp = []
-    console.log("id: " + index)
-    console.log("i: " + i)
+    //console.log("id: " + index)
+    //console.log("i: " + i)
     if (i == -1) {
       temp = itemChecked.concat(index)
       this.setState({
         itemChecked: temp
       })
-      console.log(this.state.itemChecked)
-    }
-    else {
+      //console.log(this.state.itemChecked)
+    } else {
       this.setState({
-        itemChecked: [...itemChecked.slice(0,i), ...itemChecked.slice(i+1)]
+        itemChecked: [...itemChecked.slice(0, i), ...itemChecked.slice(i + 1)]
       })
-      console.log(this.state.itemChecked)
+      //console.log(this.state.itemChecked)
     }
   }
 
   getdDay = () => {
-    let dDay = []
-    let dday = this.props.navigation.getParam('dday', 'default')
-    if(dday < 0) {
-      dday = dday * -1
-      dDay.push(<Text style={styles.content}>D+{dday}</Text>)
+    let dday = []
+    if(this.state.data.start_date!=null) {
+      if(this.state.data.dDay<0) {
+        let dDay = this.state.data.dDay * -1
+        dday.push(<Text style={styles.content}>휴가까지 {dDay}일 남았습니다.</Text>)
+      }
+      else dday.push(<Text style={styles.content}>휴가가 {this.state.data.dDay}일 지났습니다.</Text>)
     }
-    else dDay.push(<Text style={styles.content}>D-{dday}</Text>)
-    return dDay
+    else dday.push(<Text style={styles.content}>휴가날짜를 정해주세요!</Text>)
+    return dday
   }
 
   _renderDetail = ({item}) => {
@@ -261,24 +276,147 @@ export default class VacationDetailView extends Component {
     )
   }
 
+  sendDate = () => {
+    if(typeof this.state.start_date != 'string' && this.state.start_date != null) {
+      var obj1 = this.state.start_date.toObject()
+      var obj2 = this.state.end_date.toObject()
+      var start_date = null
+      var end_date = null
+      //console.log(obj1, obj2)
+
+      start_date = obj1.years + '-' + (obj1.months+1) + '-' + obj1.date
+      end_date = obj2.years + '-' + (obj2.months+1) + '-' + obj2.date
+      //console.log(start_date, end_date)
+
+      const url = "http://ysung327.pythonanywhere.com/vacations/" + this.state.pk + '/'
+      fetch(url, {
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            start_date : start_date,
+            end_date: end_date,
+        })
+      })
+    }
+    this.hideDatePicker()
+    setTimeout(() => {
+      this.fetchDataFromApi(this.state.pk)
+    }, 300)
+  }
+
+  onDateChange = (date, type) => {
+    if (type === 'END_DATE') {
+      this.setState({
+        end_date: date,
+      })
+    } else {
+      this.setState({
+        start_date: date,
+        end_date: null
+      })
+    }
+    //console.log(this.state.start_date, this.state.end_date)
+  }
+
+  sendDay = (value) => {
+    const url = "http://ysung327.pythonanywhere.com/vacations/" + this.state.pk + '/'
+    this.setState({
+      day: value
+    })
+    console.log(this.state.day)
+    fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        day : this.state.day
+      })
+    })
+  }
+
+  sendAnnual = (value) => {
+    const url = "http://ysung327.pythonanywhere.com/vacations/" + this.state.pk + '/'
+    this.setState({
+      annual: value
+    })
+    //console.log(this.state.annual)
+    fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        annual : this.state.annual
+      })
+    })
+  }
+
+  getEmptyList = () => {
+    return (
+      <View>
+        <Text>상세내용을 저장해보세요!</Text>
+      </View>
+    )
+  }
+  
+  getListFooter = () => {
+    return (
+      <View>
+        <Button
+          title='추가'
+          onPress={this.showDetailAdd}/>
+      </View>
+    )
+  }
+
+  getListHeader = () => {
+    if (this.state.annual != null) {
+      return (
+        <Card wrapperStyle={styles.detailCard}>
+          <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 20 }}>연가</Text>
+          </View>
+          <View style={{ flex: 3 }}>
+              <Text style={{ fontSize: 17 }}>{this.state.annual}</Text>
+          </View>
+        </Card>
+      )
+    }
+    return null
+  }
+
   render() {
     return (
       <View style={styles.container}>
-      
         <Modal
           animationType="slide"
           transparent={true}
-          visible={this.state.modalVisible}
-          onRequestClose={() => {
-            this.setModalVisible(false)
-          }
-        }>
+          visible={this.state.isDetailAddVisible}
+          onRequestClose={() => this.hideDetailAdd()}
+        >
           <View style={styles.modal}>
             <View style={[styles.modalInside, {height: this.state.screenHeight*0.9}]}>
               <Text style={{fontSize: 20, textAlign: 'center', marginVertical: 10,}}>추가할 휴가를 터치해보세요!</Text>
               <ScrollView>
-                <View>
-                  <Text style={styles.typeTitle}>연가</Text>
+                <View style={styles.day}>
+                  <NumericInput 
+                    value={this.state.annual}
+                    initValue={this.state.annual}
+                    onChange={value => this.sendAnnual(value)}
+                    step={1}
+                    minValue={0}
+                    valueType='integer'
+                    rounded
+                    type='up-down'
+                    textColor='#B0228C' 
+                    iconStyle={{ color: 'white' }}
+                    upDownButtonsBackgroundColor='#E56B70'/>
                 </View>
                 <View>
                   <Text style={styles.typeTitle}>위로</Text>
@@ -330,18 +468,66 @@ export default class VacationDetailView extends Component {
         </Modal>
 
 
-        <View>
-          <Modal
-            animationType="fade"
-            transparent={false}
-            visible={this.state.isDatePickerVisible}
-            onRequestClose={() => {
-              this.hideDatePicker()
-            }
-          }>
-            <CalendarPicker/>
-          </Modal>
-        </View>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={this.state.isDatePickerVisible}
+          onRequestClose={() => this.hideDatePicker()}
+        >              
+          <View style={styles.modal}>
+            <View style={[styles.modalInside, {height: this.state.screenHeight*0.7}]}>
+              <CalendarPicker
+                allowRangeSelection={true}
+                startFromMonday={true}
+                selectedStartDate={this.state.start_date}
+                selectedEndDate={this.state.end_date}
+                initialDate={(this.state.start_date!=null) ? this.state.start_date : moment().format()}
+                selectedRangeStyle={styles.selectedRangeStyle}
+                onDateChange={this.onDateChange}
+              />
+              <Button 
+                title={'완료'}
+                onPress={() => this.sendDate()}
+              />
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={this.state.isDayPickerVisible}
+          onRequestClose={() => this.hideDayPicker()}
+        >              
+          <View style={styles.dayPicker}>
+            <View style={[styles.dayPickerInside, {height: this.state.screenHeight*0.7}]}>
+              <Text style={styles.text}>
+                이번휴가는 얼마나 나가는지 정해보세요!
+              </Text>
+              <View style={{ alignContent: 'center' }}>
+                <NumericInput 
+                  value={this.state.day}
+                  initValue={this.state.day}
+                  onChange={value => this.sendDay(value)}
+                  step={1}
+                  minValue={0}
+                  valueType='integer'
+                  rounded
+                  type='up-down'
+                  textColor='#B0228C' 
+                  iconStyle={{ color: 'white' }}
+                  upDownButtonsBackgroundColor='#E56B70'/>
+              </View>
+              <Button 
+                title={'완료'}
+                onPress={() => {
+                  this.hideDayPicker()
+                  this.fetchDataFromApi(this.state.pk)
+                }}
+              />
+            </View>
+          </View>
+        </Modal>
 
 
         <Card containerStyle={styles.card}>
@@ -351,34 +537,31 @@ export default class VacationDetailView extends Component {
               onPress={this.deleteVacation}
             />
           </View>
-          <View style={styles.day}>
-            <Text style={styles.content}>{this.state.data.day} 일</Text>
-          </View>
+          <TouchableOpacity style={styles.day} onPress={this.showDayPicker}>
+            <Text style={styles.text}>{(this.state.data.day!=null) ? this.state.data.day + '일' : '이번엔 몇 나갈까?'}</Text>
+          </TouchableOpacity>
           <View style={styles.dday}>
             { this.getdDay() }
           </View>
-          <View style={styles.info}>
-            <TouchableOpacity style={styles.date} onPress={()=>this.showDatePicker()}>
+          <TouchableOpacity style={styles.info} onPress={()=>this.showDatePicker()}>
+            <View style={styles.date}>
               <Text style={styles.text}>출발</Text>
-              <Text style={styles.text}>{this.state.data.start_date}</Text>
-            </TouchableOpacity>
+              <Text style={styles.text}>{(this.state.data.start_date!=null) ? this.state.data.start_date : '-'}</Text>
+            </View>
             <View style={styles.date}>
               <Text style={styles.text}>복귀</Text>
-              <Text style={styles.text}>{this.state.data.end_date}</Text>
+              <Text style={styles.text}>{(this.state.data.end_date!=null) ? this.state.data.end_date : '-'}</Text>
             </View>
-          </View>
+          </TouchableOpacity>
         </Card>
-        <View style={styles.addIcon}>
-          <Icon
-            name='add'
-            onPress={this.showAdd}
-          />
-        </View>
         <FlatList
-          data={this.state.data.detail}
+          data={this.state.detail}
           renderItem={this._renderDetail}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
+          ListHeaderComponent={this.getListHeader}
+          ListEmptyComponent={this.getEmptyList}
+          ListFooterComponent={this.getListFooter}
         />
       </View>
     )
@@ -417,6 +600,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
 
+  dayPicker: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor : 'rgba(0,0,0,0.2)',
+  },
+
+  dayPickerInside: {
+    borderRadius: 10,
+    borderWidth: 0.3,
+    width: '80%',
+    backgroundColor: 'white',
+  },
+
   card: {
     justifyContent: 'space-around',
     backgroundColor: 'white',
@@ -426,11 +623,6 @@ const styles = StyleSheet.create({
 
   deleteIcon: {
     alignItems: 'flex-end'
-  },
-
-  addIcon: {
-    alignItems: 'flex-end',
-    marginRight: 20,
   },
 
   detailCard: {
@@ -472,6 +664,9 @@ const styles = StyleSheet.create({
     fontSize: 15, 
     fontWeight: 'bold',
     textAlign: 'center'
+  },
+
+  selectedRangeStyle: {
+    backgroundColor: 'gray'
   }
 })
-

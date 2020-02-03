@@ -11,16 +11,16 @@ class VacationItem extends Component {
   }
 
   onPress = () => {
-    this.props.navigation.navigate('Detail', {onUpload: this.props.onUpload, id : this.props.item.id, dday : this.props.dday})
+    this.props.navigation.navigate('Detail', {onUpload: this.props.onUpload, id : this.props.item.id})
   }
 
   render() {
-    let dDay = []
-    if(this.props.dday<0) {
-      let dday = this.props.dday * -1
-      dDay.push(<Text style={styles.content}>D+{dday}</Text>)
+    let dday = []
+    if(this.props.item.dDay<0) {
+      let dDay = this.props.item.dDay * -1
+      dday.push(<Text style={styles.content}>휴가까지 {dDay}일 남았습니다.</Text>)
     }
-    else dDay.push(<Text style={styles.content}>D-{this.props.dday}</Text>)
+    else dday.push(<Text style={styles.content}>휴가가 {this.props.item.dDay}일 지났습니다.</Text>)
 
     return (
         <TouchableOpacity onPress={this.onPress}>
@@ -29,7 +29,7 @@ class VacationItem extends Component {
               <Text style={styles.content}>{this.props.item.day} 일</Text>
             </View>
             <View style={styles.dday}>
-              {dDay}
+              {dday}
             </View>
             <View style={styles.info}>
               <View style={styles.date}>

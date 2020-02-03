@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text} from 'react-native';
 import { Card, Button } from 'react-native-elements'
+import { withNavigation } from 'react-navigation'
 
-export default class VacationInfo extends Component {
+class VacationInfo extends Component {
   constructor(props) {
       super(props);
       this.state  = {
@@ -113,4 +114,4 @@ const styles = StyleSheet.create({
 })
 
 
-
+export default withNavigation(VacationInfo)
