@@ -17,11 +17,20 @@ class VacationInfo extends Component {
   }
 
   fetchDataFromApi = ()  => {
-    const url = "http://ysung327.pythonanywhere.com/vacations/info";
+    const url = "http://ysung327.pythonanywhere.com/vacations/info/";
 
     this.setState({ loading: true });
 
-    fetch(url)
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },        
+      body: JSON.stringify({
+        user_name: 'ysung327'
+      })
+    })
     .then(res => res.json())
     .then(res => {
           this.setState({
