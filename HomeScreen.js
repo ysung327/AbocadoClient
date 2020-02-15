@@ -9,6 +9,8 @@ export default class HomeScreen extends Component {
   constructor(props) {
     super(props)
     this.state = {
+        token: this.props.navigation.getParam('token', 'default'),
+        user: this.props.navigation.getParam('user', 'default'),
         screenHeight: height,
     }
   }
@@ -35,7 +37,7 @@ export default class HomeScreen extends Component {
             <VacationInfo/>
           </View>
           <View style={styles.vacationList}>
-            <VacationList/>
+            <VacationList token={this.state.token} user={this.state.user}/>
           </View>
           <View style={styles.vacationType}>
             <VacationType/>

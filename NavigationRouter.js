@@ -4,6 +4,8 @@ import { createMaterialBottomTabNavigator } from 'react-navigation-material-bott
 import HomeScreen from './HomeScreen';
 import VacationTypeDetail from './Vacation/components/VacationTypeDetail';
 import VacationDetailView from './Vacation/components/VacationDetailView';
+import Login from './User/components/Login';
+import Register from './User/components/Register';
 
 
 const VacationStack = createStackNavigator(
@@ -21,6 +23,34 @@ const VacationStack = createStackNavigator(
     }
 )
 
-const Root = createAppContainer(VacationStack);
+const UserStack = createStackNavigator(
+  {
+  Login: Login,
+  Register: Register
+  },
+  {
+    initialRouteName : 'Login',
+    headerMode: 'none',
+    defaultNavigationOptions: {
+        headerVisible: false,
+    }
+  }
+)
+
+const Stack = createStackNavigator(
+  {
+  Vacation: VacationStack,
+  Auth: UserStack,
+  },
+  {
+    initialRouteName : 'Auth',
+    headerMode: 'none',
+    defaultNavigationOptions: {
+        headerVisible: false,
+    }
+  }
+)
+
+const Root = createAppContainer(Stack);
 
 export default Root
