@@ -3,6 +3,7 @@ import { StyleSheet, FlatList, View, Button } from 'react-native';
 import VacationItem from './VacationItem'
 import { Card, Icon } from 'react-native-elements'
 import { withNavigation } from 'react-navigation'
+import axios from 'axios'
 
 class VacationList extends Component {
   constructor(props) {
@@ -16,12 +17,12 @@ class VacationList extends Component {
     }
 
   componentDidMount() {
-    this.fetchDataFromApi();
+    this.getVacationList();
   }
 
   componentDidUpdate() {
     if (this.state.uploaded == true) {
-      this.fetchDataFromApi()
+      this.getVacationList()
       this.setState({uploaded: false})
     }
   }
@@ -30,12 +31,22 @@ class VacationList extends Component {
     this.setState({ uploaded: true })
   }
 
-  fetchDataFromApi = ()  => {
+  getVacationList = ()  => {
     const url = "http://ysung327.pythonanywhere.com/vacations/";
 
     this.setState({ loading: true });
 
-    fetch(url)
+    let config = {
+      headers: {
+        "Authorization": "Token ${this.props.token}"
+      },
+      body: JSON.stringify({
+        user: this.props.user
+      })
+    }
+    
+    axios
+    .post(url, config)
     .then(res => res.json())
     .then(res => {
           this.setState({
@@ -57,7 +68,7 @@ class VacationList extends Component {
   }
 
   _onPress = () => {
-    const url = "http://ysung327.pythonanywhere.com/vacations/"
+    const url = "http://ysung327.pythonanywhere.com/vacations/create/"
     fetch(url, {
       method: 'POST',
       headers: {
@@ -65,7 +76,7 @@ class VacationList extends Component {
         'Content-Type': 'application/json',
       },        
       body: JSON.stringify({
-        user_name: 'ysung327'
+        user: this.props.user
       })
     })
     .then(res => res.json())

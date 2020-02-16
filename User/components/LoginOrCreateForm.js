@@ -93,7 +93,7 @@ class LoginOrCreateForm extends Component {
                 axios.defaults.headers.common.Authorization = `Token ${token}`;
                 
                 // Navigate to the home screen
-                this.props.navigation.navigate('Vacation', {toke: token, user: user})
+                this.props.navigation.navigate('Vacation', {token: token, user: user})
             })
             .catch(error => console.log(error));
     }

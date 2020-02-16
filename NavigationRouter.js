@@ -43,7 +43,7 @@ const Stack = createStackNavigator(
   Auth: UserStack,
   },
   {
-    initialRouteName : 'Auth',
+    initialRouteName : 'Vacation',
     headerMode: 'none',
     defaultNavigationOptions: {
         headerVisible: false,

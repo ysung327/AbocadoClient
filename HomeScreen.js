@@ -5,11 +5,12 @@ import VacationInfo from './Vacation/components/VacationInfo';
 import VacationType from './Vacation/components/VacationType';
 
 const { height } = Dimensions.get('window');
+const token = "36be266afee56c23c07676bd414d25f4a402fad6"
 export default class HomeScreen extends Component {
   constructor(props) {
     super(props)
     this.state = {
-        token: this.props.navigation.getParam('token', 'default'),
+        token: token,
         user: this.props.navigation.getParam('user', 'default'),
         screenHeight: height,
     }
@@ -23,7 +24,7 @@ export default class HomeScreen extends Component {
 
   render() {
     const scrollEnabled = this.state.screenHeight > (height - 60);
-    //console.log(scrollEnabled)
+    console.log(this.state.token)
     return (
       <View style={{ flex: 1, justifyContent: 'flex-start', marginHorizontal: 5 }}>
         <ScrollView
@@ -34,7 +35,7 @@ export default class HomeScreen extends Component {
           showsVerticalScrollIndicator={false}>
 
           <View style={styles.vacationInfo}>
-            <VacationInfo/>
+            <VacationInfo token={this.state.token} user={this.state.user}/>
           </View>
           <View style={styles.vacationList}>
             <VacationList token={this.state.token} user={this.state.user}/>
