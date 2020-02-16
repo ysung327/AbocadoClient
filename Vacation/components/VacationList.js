@@ -36,17 +36,17 @@ class VacationList extends Component {
 
     this.setState({ loading: true });
 
-    let config = {
+    fetch(url, {
+      method: 'POST',
       headers: {
-        "Authorization": "Token ${this.props.token}"
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Token ' + this.props.token,
       },
       body: JSON.stringify({
-        user: this.props.user
+        user: this.props.user,
       })
-    }
-    
-    axios
-    .post(url, config)
+    })
     .then(res => res.json())
     .then(res => {
           this.setState({
