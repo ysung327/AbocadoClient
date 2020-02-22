@@ -64,6 +64,8 @@ class VacationList extends Component {
     <VacationItem
       item={item}
       onUpload={this.onUpload}
+      token={this.props.token}
+      user={this.props.user}
     />)
   }
 

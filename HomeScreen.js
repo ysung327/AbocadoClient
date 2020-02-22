@@ -41,7 +41,7 @@ export default class HomeScreen extends Component {
             <VacationList token={this.state.token} user={this.state.user}/>
           </View>
           <View style={styles.vacationType}>
-            <VacationType/>
+            <VacationType token={this.state.token} user={this.state.user}/>
           </View>
         </ScrollView>
       </View>

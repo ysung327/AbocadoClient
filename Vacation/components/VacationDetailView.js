@@ -13,6 +13,8 @@ export default class VacationDetailView extends Component {
     super(props);
     this.state = {
       pk: this.props.navigation.getParam('id', 'default'),
+      token: this.props.navigation.getParam('token', 'default'),
+      user: this.props.navigation.getParam('user', 'default'),
       loading: false,
       data: [],
       detail: [],
@@ -52,7 +54,17 @@ export default class VacationDetailView extends Component {
       loading: true
     })
 
-    const response = await fetch(url)
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Token ' + this.state.token,
+      },        
+      body: JSON.stringify({
+        user: this.props.user
+      })
+    })
     const responseJson = await response.json()
     const _detail = responseJson.detail
 
@@ -74,37 +86,53 @@ export default class VacationDetailView extends Component {
     let _prData = []
     let _reData = []
     let _peData = []
-    fetch(url)
-      .then(res => res.json())
-      .then(res => {
-        modalData = res
-        for (let i in modalData) {
-          if (modalData[i].type_of_detail === "CON") {
-            _conData.push(modalData[i])
-          } else if (modalData[i].type_of_detail === "PR") {
-            _prData.push(modalData[i])
-          } else if (modalData[i].type_of_detail === "RE") {
-            _reData.push(modalData[i])
-          } else if (modalData[i].type_of_detail === "PE") {
-            _peData.push(modalData[i])
-          }
+    fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Token ' + this.state.token,
+      },        
+      body: JSON.stringify({
+        user: this.props.user
+      })
+    })
+    .then(res => res.json())
+    .then(res => {
+      modalData = res
+      for (let i in modalData) {
+        if (modalData[i].type_of_detail === "CON") {
+          _conData.push(modalData[i])
+        } else if (modalData[i].type_of_detail === "PR") {
+          _prData.push(modalData[i])
+        } else if (modalData[i].type_of_detail === "RE") {
+          _reData.push(modalData[i])
+        } else if (modalData[i].type_of_detail === "PE") {
+          _peData.push(modalData[i])
         }
-        this.setState({
-          conData: _conData,
-          reData: _reData,
-          prData: _prData,
-          peData: _peData,
-        })
+      }
+      this.setState({
+        conData: _conData,
+        reData: _reData,
+        prData: _prData,
+        peData: _peData,
       })
-      .catch((error) => {
-        console.log(error);
-      })
+    })
+    .catch((error) => {
+      console.log(error);
+    })
   }
 
   deleteVacation = () => {
     const url = "http://ysung327.pythonanywhere.com/vacations/" + this.state.pk + '/';
     fetch(url, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'Authorization': 'Token ' + this.state.token,
+      },
+      body: JSON.stringify({
+        user: this.state.user,
+      })
     })
     this.goBack()
   }
@@ -116,11 +144,13 @@ export default class VacationDetailView extends Component {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
+        'Authorization': 'Token ' + this.state.token,
       },
       body: JSON.stringify({
         vacationID: this.state.pk,
         vacation: null,
         is_used: false,
+        user: this.state.user,
       })
     })
     setTimeout(() => {
@@ -177,11 +207,11 @@ export default class VacationDetailView extends Component {
   }
 
   sendDetail = () => {
-    const detail = this.state.itemChecked
+    const newDetail = this.state.itemChecked
     this.setState({
       itemChecked: []
     })
-    for (let i of detail) {
+    for (let i of newDetail) {
       //console.log(i)
       let url = "http://ysung327.pythonanywhere.com/vacations/detail/" + i + '/';
       fetch(url, {
@@ -189,10 +219,12 @@ export default class VacationDetailView extends Component {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
+          'Authorization': 'Token ' + this.state.token,
         },
         body: JSON.stringify({
           vacation: this.state.pk,
           is_used: true,
+          user: this.state.user,
         })
       })
     }
@@ -294,10 +326,12 @@ export default class VacationDetailView extends Component {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
+            'Authorization': 'Token ' + this.state.token,
         },
         body: JSON.stringify({
             start_date : start_date,
             end_date: end_date,
+            user: this.state.user,
         })
       })
     }
@@ -332,9 +366,11 @@ export default class VacationDetailView extends Component {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
+        'Authorization': 'Token ' + this.state.token,
       },
       body: JSON.stringify({
-        day : this.state.day
+        day : this.state.day,
+        user : this.state.user,
       })
     })
   }
@@ -350,9 +386,11 @@ export default class VacationDetailView extends Component {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
+        'Authorization': 'Token ' + this.state.token,
       },
       body: JSON.stringify({
-        annual : this.state.annual
+        annual : this.state.annual,
+        user : this.state.user,
       })
     })
   }

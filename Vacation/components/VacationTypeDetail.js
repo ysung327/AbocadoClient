@@ -10,6 +10,8 @@ export default class VacationTypeDetail extends Component {
         this.state  = {
             data: [],
             type_of_detail: this.props.navigation.getParam('type_of_detail', 'default'),
+            token: this.props.navigation.getParam('token', 'default'),
+            user: this.props.navigation.getParam('user', 'default'),
             id: null,
             day: null,
             title: null,
@@ -33,9 +35,11 @@ export default class VacationTypeDetail extends Component {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
+                'Authorization': 'Token ' + this.state.token,
             },
             body: JSON.stringify({
                 type_of_detail: type_of_detail,
+                user: this.props.user
             })
         })
         .then(res => res.json())
@@ -91,24 +95,26 @@ export default class VacationTypeDetail extends Component {
         this.setDetailVisible(false)
     }
 
-    changeDetail = (id) => {
-        const url = "http://ysung327.pythonanywhere.com/vacations/detail/" + id + '/';
+    editDetail = (id) => {
+        const url = "http://ysung327.pythonanywhere.com/vacations/detail/edit/";
 
         fetch(url, {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
+                'Authorization': 'Token ' + this.state.token,
             },
             body: JSON.stringify({
                 day: this.state.dayTemp,
                 title: this.state.titleTemp,
+                user: this.props.user
             })
         })
     }
 
     goBackfromDetail = (id) => {
-        this.changeDetail(id)
+        this.editDetail(id)
         this.setState({
             dayTemp: null,
             titleTemp: null,
@@ -121,7 +127,7 @@ export default class VacationTypeDetail extends Component {
     }
 
     goBackfromAdd= (id) => {
-        this.changeDetail(id)
+        this.editDetail(id)
         this.setState({
             dayTemp: null,
             titleTemp: null,
@@ -146,9 +152,11 @@ export default class VacationTypeDetail extends Component {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
+                'Authorization': 'Token ' + this.state.token,
             },
             body: JSON.stringify({
                 type_of_detail: this.state.type_of_detail,
+                user: this.props.user
             })
         })
         .then(res => res.json())
@@ -161,8 +169,16 @@ export default class VacationTypeDetail extends Component {
     }
 
     deleteDetail = (id)  => {
-        const url = "http://ysung327.pythonanywhere.com/vacations/detail/" + id + '/';
-        fetch( url, { method: 'DELETE' })
+        const url = "http://ysung327.pythonanywhere.com/vacations/detail/delete/";
+        fetch( url, { 
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Token ' + this.state.token,
+            },
+            body: JSON.stringify({
+                user: this.props.user
+            })
+        })
         setTimeout(() => {
             this.fetchDataFromApi(this.state.type_of_detail)
         }, 300)

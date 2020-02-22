@@ -6,19 +6,24 @@ import { withNavigation } from 'react-navigation';
 class VacationType extends Component {
   
   onPressANN = () => {
-    this.props.navigation.navigate('Type', {type_of_detail : 'ANN'})
+    this.props.navigation.navigate('Type', {type_of_detail : 'ANN',
+    token : this.props.token, user : this.props.user})
   }
   onPressCON = () => {
-    this.props.navigation.navigate('Type', {type_of_detail : 'CON'})
+    this.props.navigation.navigate('Type', {type_of_detail : 'CON',
+    token : this.props.token, user : this.props.user})
   }
   onPressPR = () => {
-    this.props.navigation.navigate('Type', {type_of_detail : 'PR'})
+    this.props.navigation.navigate('Type', {type_of_detail : 'PR',
+    token : this.props.token, user : this.props.user})
   }
   onPressRE = () => {
-    this.props.navigation.navigate('Type', {type_of_detail : 'RE'})
+    this.props.navigation.navigate('Type', {type_of_detail : 'RE',
+    token : this.props.token, user : this.props.user})
   }
   onPressPE = () => {
-    this.props.navigation.navigate('Type', {type_of_detail : 'PE'})
+    this.props.navigation.navigate('Type', {type_of_detail : 'PE',
+    token : this.props.token, user : this.props.user})
   }
 
   render() {

@@ -11,7 +11,8 @@ class VacationItem extends Component {
   }
 
   onPress = () => {
-    this.props.navigation.navigate('Detail', {onUpload: this.props.onUpload, id : this.props.item.id})
+    this.props.navigation.navigate('Detail', {onUpload: this.props.onUpload, 
+      id : this.props.item.id, token : this.props.token, user : this.props.user})
   }
 
   render() {
