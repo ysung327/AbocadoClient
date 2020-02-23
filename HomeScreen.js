@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Button, ScrollView, Dimensions } from 'react-native';
+import { StyleSheet, View, ScrollView, Dimensions } from 'react-native';
 import VacationList from './Vacation/components/VacationList';
 import VacationInfo from './Vacation/components/VacationInfo';
 import VacationType from './Vacation/components/VacationType';
 
 const { height } = Dimensions.get('window');
-const token = "36be266afee56c23c07676bd414d25f4a402fad6"
+const token = "e36ea705904910cd1a9bbc76f1d62b0de16bbfdc"
+const user = "ysung327"
 export default class HomeScreen extends Component {
   constructor(props) {
     super(props)
     this.state = {
         token: token,
-        user: this.props.navigation.getParam('user', 'default'),
+        user: user,
         screenHeight: height,
     }
   }

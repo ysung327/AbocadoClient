@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { StyleSheet, FlatList, View, Button } from 'react-native';
 import VacationItem from './VacationItem'
-import { Card, Icon } from 'react-native-elements'
+import { Icon } from 'react-native-elements'
 import { withNavigation } from 'react-navigation'
-import axios from 'axios'
 
 class VacationList extends Component {
   constructor(props) {
@@ -76,6 +75,7 @@ class VacationList extends Component {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
+        'Authorization': 'Token ' + this.props.token,
       },        
       body: JSON.stringify({
         user: this.props.user
@@ -89,7 +89,8 @@ class VacationList extends Component {
       console.log(res)
     })
     setTimeout(() => {
-      this.props.navigation.navigate('Detail', {onUpload: this.props.onUpload, id : this.state.newVacationId})
+      this.props.navigation.navigate('Detail', {onUpload: this.props.onUpload, 
+      id : this.state.newVacationId, token : this.props.token, user : this.props.user})
     }, 300)
   }
 

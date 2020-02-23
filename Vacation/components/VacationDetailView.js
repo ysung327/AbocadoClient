@@ -6,7 +6,6 @@ import NumericInput from 'react-native-numeric-input'
 import moment from 'moment'
 
 const { height } = Dimensions.get('window')
-const today = new Date()
 
 export default class VacationDetailView extends Component {
   constructor(props) {
@@ -62,7 +61,7 @@ export default class VacationDetailView extends Component {
         'Authorization': 'Token ' + this.state.token,
       },        
       body: JSON.stringify({
-        user: this.props.user
+        user: this.state.user
       })
     })
     const responseJson = await response.json()
@@ -94,7 +93,7 @@ export default class VacationDetailView extends Component {
         'Authorization': 'Token ' + this.state.token,
       },        
       body: JSON.stringify({
-        user: this.props.user
+        user: this.state.user
       })
     })
     .then(res => res.json())
@@ -150,7 +149,6 @@ export default class VacationDetailView extends Component {
         vacationID: this.state.pk,
         vacation: null,
         is_used: false,
-        user: this.state.user,
       })
     })
     setTimeout(() => {
@@ -224,7 +222,6 @@ export default class VacationDetailView extends Component {
         body: JSON.stringify({
           vacation: this.state.pk,
           is_used: true,
-          user: this.state.user,
         })
       })
     }

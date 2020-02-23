@@ -39,7 +39,7 @@ export default class VacationTypeDetail extends Component {
             },
             body: JSON.stringify({
                 type_of_detail: type_of_detail,
-                user: this.props.user
+                user: this.state.user
             })
         })
         .then(res => res.json())
@@ -96,7 +96,7 @@ export default class VacationTypeDetail extends Component {
     }
 
     editDetail = (id) => {
-        const url = "http://ysung327.pythonanywhere.com/vacations/detail/edit/";
+        const url = "http://ysung327.pythonanywhere.com/vacations/detail/" + id + "/";
 
         fetch(url, {
             method: 'PUT',
@@ -108,7 +108,6 @@ export default class VacationTypeDetail extends Component {
             body: JSON.stringify({
                 day: this.state.dayTemp,
                 title: this.state.titleTemp,
-                user: this.props.user
             })
         })
     }
@@ -126,21 +125,28 @@ export default class VacationTypeDetail extends Component {
         }, 300)
     }
 
-    goBackfromAdd= (id) => {
-        this.editDetail(id)
-        this.setState({
-            dayTemp: null,
-            titleTemp: null,
-            id: null,
-        })
-        this.hideAdd()
-        setTimeout(() => {
-            this.fetchDataFromApi(this.state.type_of_detail)
-        }, 300)
+    goBackfromAdd= () => {
+        if(this.state.dayTemp!=null || this.state.titleTemp!=null){
+            this.addDetail()
+            setTimeout(() => {
+                this.editDetail(this.state.id)
+            }, 100)
+            this.editDetail(this.state.id)
+            this.setState({
+                dayTemp: null,
+                titleTemp: null,
+                id: null,
+            })
+            this.hideAdd()
+            setTimeout(() => {
+                this.fetchDataFromApi(this.state.type_of_detail)
+            }, 300)
+        }
+        else console.log("입력하세요")
+
     }
 
     btnPressed = () => {
-        this.addDetail()
         this.showAdd()
     }
 
@@ -156,7 +162,7 @@ export default class VacationTypeDetail extends Component {
             },
             body: JSON.stringify({
                 type_of_detail: this.state.type_of_detail,
-                user: this.props.user
+                user: this.state.user
             })
         })
         .then(res => res.json())
@@ -169,15 +175,12 @@ export default class VacationTypeDetail extends Component {
     }
 
     deleteDetail = (id)  => {
-        const url = "http://ysung327.pythonanywhere.com/vacations/detail/delete/";
+        const url = "http://ysung327.pythonanywhere.com/vacations/detail/" + id + "/";
         fetch( url, { 
             method: 'DELETE',
             headers: {
                 'Authorization': 'Token ' + this.state.token,
             },
-            body: JSON.stringify({
-                user: this.props.user
-            })
         })
         setTimeout(() => {
             this.fetchDataFromApi(this.state.type_of_detail)
@@ -283,7 +286,7 @@ export default class VacationTypeDetail extends Component {
                                 />
                             }
                             />
-                            <Button title='완료' onPress={() => this.goBackfromAdd(this.state.id)}/>
+                            <Button title='완료' onPress={() => this.goBackfromAdd()}/>
                         </View>
                     </View>
                 </Modal>

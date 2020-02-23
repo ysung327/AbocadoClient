@@ -5,24 +5,8 @@ import { withNavigation } from 'react-navigation';
 
 class VacationType extends Component {
   
-  onPressANN = () => {
-    this.props.navigation.navigate('Type', {type_of_detail : 'ANN',
-    token : this.props.token, user : this.props.user})
-  }
-  onPressCON = () => {
-    this.props.navigation.navigate('Type', {type_of_detail : 'CON',
-    token : this.props.token, user : this.props.user})
-  }
-  onPressPR = () => {
-    this.props.navigation.navigate('Type', {type_of_detail : 'PR',
-    token : this.props.token, user : this.props.user})
-  }
-  onPressRE = () => {
-    this.props.navigation.navigate('Type', {type_of_detail : 'RE',
-    token : this.props.token, user : this.props.user})
-  }
-  onPressPE = () => {
-    this.props.navigation.navigate('Type', {type_of_detail : 'PE',
+  _onPress = (type) => {
+    this.props.navigation.navigate('Type', {type_of_detail : type,
     token : this.props.token, user : this.props.user})
   }
 
@@ -31,7 +15,7 @@ class VacationType extends Component {
         <View style={styles.container}>
             <View style={styles.column1}>
               <Card containerStyle={styles.card}>
-                <TouchableOpacity onPress={this.onPressANN}>
+                <TouchableOpacity onPress={()=>this._onPress('ANN')}>
                   <Text style={styles.text}>연가</Text>
                 </TouchableOpacity>
               </Card>
@@ -39,24 +23,24 @@ class VacationType extends Component {
             <View style={styles.column2}>
               <View style={styles.row}>
                 <Card containerStyle={styles.card}>
-                  <TouchableOpacity onPress={this.onPressCON}>
+                  <TouchableOpacity onPress={()=>this._onPress('CON')}>
                     <Text style={styles.text}>위로</Text>
                   </TouchableOpacity>
                 </Card>
                 <Card containerStyle={styles.card}>
-                  <TouchableOpacity onPress={this.onPressPR}>
+                  <TouchableOpacity onPress={()=>this._onPress('PR')}>
                     <Text style={styles.text}>포상</Text>
                   </TouchableOpacity>
                 </Card>             
               </View>
               <View style={styles.row}>
                 <Card containerStyle={styles.card}>
-                  <TouchableOpacity onPress={this.onPressRE}>
+                  <TouchableOpacity onPress={()=>this._onPress('RE')}>
                     <Text style={styles.text}>보상</Text>
                   </TouchableOpacity>
                 </Card>
                 <Card containerStyle={styles.card}>
-                  <TouchableOpacity onPress={this.onPressPE}>
+                  <TouchableOpacity onPress={()=>this._onPress('PE')}>
                     <Text style={styles.text}>청원</Text>
                   </TouchableOpacity>
                 </Card>             
