@@ -110,6 +110,10 @@ export default class VacationTypeDetail extends Component {
                 title: this.state.titleTemp,
             })
         })
+        .then(res => res.json())
+        .then(res => {
+            console.log(res)
+        })
     }
 
     goBackfromDetail = (id) => {
@@ -129,14 +133,13 @@ export default class VacationTypeDetail extends Component {
         if(this.state.dayTemp!=null || this.state.titleTemp!=null){
             this.addDetail()
             setTimeout(() => {
+                console.log(this.state.id)
                 this.editDetail(this.state.id)
-            }, 100)
-            this.editDetail(this.state.id)
-            this.setState({
-                dayTemp: null,
-                titleTemp: null,
-                id: null,
-            })
+                this.setState({
+                    dayTemp: null,
+                    titleTemp: null,
+                })
+            }, 150)
             this.hideAdd()
             setTimeout(() => {
                 this.fetchDataFromApi(this.state.type_of_detail)
