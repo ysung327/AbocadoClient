@@ -7,7 +7,7 @@ import moment from 'moment'
 
 const { height } = Dimensions.get('window')
 
-export default class VacationDetailView extends Component {
+export default class DetailScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -43,7 +43,7 @@ export default class VacationDetailView extends Component {
   componentDidMount() {
     this.fetchDataFromApi(this.state.pk)
     this.fetchModalFromApi()
-    console.log(this.state.pk)
+    console.log(this.state.user)
   }
 
   async fetchDataFromApi(pk) {

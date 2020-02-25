@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, ScrollView, Dimensions } from 'react-native';
-import VacationList from './Vacation/components/VacationList';
-import VacationInfo from './Vacation/components/VacationInfo';
-import VacationType from './Vacation/components/VacationType';
+import VacationList from '../components/VacationList';
+import VacationInfo from '../components/VacationInfo';
+import VacationType from '../components/VacationType';
 
 const { height } = Dimensions.get('window');
 const token = "e36ea705904910cd1a9bbc76f1d62b0de16bbfdc"

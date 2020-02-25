@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, FlatList, View, Button } from 'react-native';
 import VacationItem from './VacationItem'
 import { Icon } from 'react-native-elements'
-import { withNavigation } from 'react-navigation'
+import { Actions } from 'react-native-router-flux';
 
 class VacationList extends Component {
   constructor(props) {
@@ -89,7 +89,7 @@ class VacationList extends Component {
       console.log(res)
     })
     setTimeout(() => {
-      this.props.navigation.navigate('Detail', {onUpload: this.props.onUpload, 
+      Actions.detail({onUpload: this.props.onUpload, 
       id : this.state.newVacationId, token : this.props.token, user : this.props.user})
     }, 300)
   }
@@ -118,4 +118,4 @@ class VacationList extends Component {
   }
 }
 
-export default withNavigation(VacationList)
+export default VacationList

@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native"
 import { Card, Button } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/FontAwesome';
-import HomeScreen from '../../HomeScreen'
-import { withNavigation } from 'react-navigation';
+import { Actions } from 'react-native-router-flux';
 
 class VacationItem extends Component {
   constructor(props) {
@@ -11,7 +10,7 @@ class VacationItem extends Component {
   }
 
   onPress = () => {
-    this.props.navigation.navigate('Detail', {onUpload: this.props.onUpload, 
+    Actions.detail({onUpload: this.props.onUpload, 
       id : this.props.item.id, token : this.props.token, user : this.props.user})
   }
 
@@ -91,4 +90,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default withNavigation(VacationItem);
+export default VacationItem

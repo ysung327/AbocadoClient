@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
-import LoginOrCreateForm from './LoginOrCreateForm';
+import LoginOrCreateForm from '../components/LoginOrCreateForm';
 
 
-class Register extends Component {
+class LoginScreen extends Component {
     render() {
         return (
             <View style={{ flex: 1 }}>
-                <LoginOrCreateForm create/>
+                <LoginOrCreateForm />
             </View>
-        )
+        );
     }
 }
 
-export default Register;
+export default LoginScreen

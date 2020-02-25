@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text} from 'react-native';
 import { Card, Button } from 'react-native-elements'
-import { withNavigation } from 'react-navigation'
-import axios from 'axios'
 
 class VacationInfo extends Component {
   constructor(props) {
@@ -125,4 +123,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default withNavigation(VacationInfo)
+export default VacationInfo

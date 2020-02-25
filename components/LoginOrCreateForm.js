@@ -166,4 +166,4 @@ class LoginOrCreateForm extends Component {
     });
 
 
-export default withNavigation(LoginOrCreateForm)
+export default LoginOrCreateForm
