@@ -3,6 +3,7 @@ import { StyleSheet, View, ScrollView, Dimensions } from 'react-native';
 import VacationList from '../components/VacationList';
 import VacationInfo from '../components/VacationInfo';
 import VacationType from '../components/VacationType';
+import Duty from '../components/Duty';
 
 const { height } = Dimensions.get('window');
 const token = "e36ea705904910cd1a9bbc76f1d62b0de16bbfdc"
@@ -34,7 +35,9 @@ export default class HomeScreen extends Component {
           onContentSizeChange={this.onContentSizeChange}
           contentContainerStyle={{ flexGrow: 1}}
           showsVerticalScrollIndicator={false}>
-
+          <View style={styles.duty}>
+            <Duty token={this.state.token} user={this.state.user}/>
+          </View>
           <View style={styles.vacationInfo}>
             <VacationInfo token={this.state.token} user={this.state.user}/>
           </View>
@@ -53,6 +56,9 @@ export default class HomeScreen extends Component {
 
 
 const styles = StyleSheet.create({
+  duty: {
+    flex: 1,
+  },  
   vacationList: {
     flex: 1,
   },

@@ -10,7 +10,7 @@ class VacationType extends Component {
 
   _onPress = (type) => {
     console.log(type)
-    Actions.type_detail({type_detail: type,
+    Actions.type_detail({type_of_detail: type,
       token : this.props.token, user : this.props.user})
   }
 

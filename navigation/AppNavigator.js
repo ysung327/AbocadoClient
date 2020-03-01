@@ -22,7 +22,7 @@ const AppNavigator = () => (
   <Router>
     <Overlay key="overlay">
       <Stack hideNavBar key="root">
-        <Stack hideNavBar key="vacation">
+        <Stack key="vacation">
           <Scene key="home" component={HomeScreen}/>
           <Scene key="detail" component={DetailScreen}/>
           <Scene key="type_detail" component={TypeScreen}/>
