@@ -17,12 +17,13 @@ import TypeScreen from '../screens/TypeScreen';
 import DetailScreen from '../screens/DetailScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import Header from '../components/Header'
 
 const AppNavigator = () => (
   <Router>
     <Overlay key="overlay">
       <Stack hideNavBar key="root">
-        <Stack key="vacation">
+        <Stack navBar={Header} key="vacation">
           <Scene key="home" component={HomeScreen}/>
           <Scene key="detail" component={DetailScreen}/>
           <Scene key="type_detail" component={TypeScreen}/>

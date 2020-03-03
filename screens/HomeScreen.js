@@ -28,7 +28,7 @@ export default class HomeScreen extends Component {
     const scrollEnabled = this.state.screenHeight > (height - 60);
     console.log(this.state.token)
     return (
-      <View style={{ flex: 1, justifyContent: 'flex-start', marginHorizontal: 5 }}>
+      <View style={{ flex: 1, justifyContent: 'flex-start'}}>
         <ScrollView
           style={{ flex: 1 }}
           scrollEnabled={scrollEnabled}
@@ -58,7 +58,7 @@ export default class HomeScreen extends Component {
 const styles = StyleSheet.create({
   duty: {
     flex: 1,
-  },  
+  },
   vacationList: {
     flex: 1,
   },

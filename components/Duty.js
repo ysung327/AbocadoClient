@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native"
 import { Card, Button } from 'react-native-elements'
 import { Actions } from 'react-native-router-flux';
+import Colors from '../constants/Colors'
 
 class Duty extends Component {
   constructor(props) {
@@ -53,7 +54,7 @@ class Duty extends Component {
     
   render() {
     return (
-      <Card containerStyle={styles.container}>
+      <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>전역</Text>
           <Text style={styles.end_date}>{this.state.end_date}</Text>
@@ -62,7 +63,7 @@ class Duty extends Component {
           <Text style={styles.dday}>D-{this.state.lefted}</Text>
           <Text style={styles.time}>{this.state.hour}시간 {this.state.minute}분 {this.state.second}초 전</Text>
         </View>
-      </Card>
+      </View>
     )
   }
 } 
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     borderWidth: 0,
-    borderColor: 'white',
+    backgroundColor: Colors.primaryColor,
     flexDirection: 'column',
     alignItems: 'center',
   },
