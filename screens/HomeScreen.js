@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+  import React, { Component } from 'react';
 import { StyleSheet, View, ScrollView, Dimensions } from 'react-native';
 import VacationList from '../components/VacationList';
 import VacationInfo from '../components/VacationInfo';

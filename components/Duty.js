@@ -54,16 +54,18 @@ class Duty extends Component {
     
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>전역</Text>
-          <Text style={styles.end_date}>{this.state.end_date}</Text>
-        </View>
-        <View style={styles.header}>
-          <Text style={styles.dday}>D-{this.state.lefted}</Text>
-          <Text style={styles.time}>{this.state.hour}시간 {this.state.minute}분 {this.state.second}초 전</Text>
-        </View>
+      <LinearGradient colors={[Colors.secondaryColor, Colors.primaryColor]}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.title}>전역</Text>
+            <Text style={styles.end_date}>{this.state.end_date}</Text>
+          </View>
+          <View style={styles.header}>
+            <Text style={styles.dday}>D-{this.state.lefted}</Text>
+            <Text style={styles.time}>{this.state.hour}시간 {this.state.minute}분 {this.state.second}초 전</Text>
+          </View>
       </View>
+    </LinearGradient>
     )
   }
 } 
@@ -71,7 +73,9 @@ class Duty extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    borderWidth: 0,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    paddingBottom: 30,
     backgroundColor: Colors.primaryColor,
     flexDirection: 'column',
     alignItems: 'center',
