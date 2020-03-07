@@ -6,7 +6,6 @@ class Header extends Component {
   render() {
       return (
         <View style={styles.header}>
-          <Text style={styles.title}>header</Text>
         </View>
       )
   }
@@ -14,7 +13,7 @@ class Header extends Component {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: Colors.secondaryColor,
     height: 70,
     alignItems: 'center',
     justifyContent: 'center',

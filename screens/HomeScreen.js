@@ -1,4 +1,4 @@
-  import React, { Component } from 'react';
+import React, { Component } from 'react';
 import { StyleSheet, View, ScrollView, Dimensions } from 'react-native';
 import VacationList from '../components/VacationList';
 import VacationInfo from '../components/VacationInfo';
@@ -34,7 +34,8 @@ export default class HomeScreen extends Component {
           scrollEnabled={scrollEnabled}
           onContentSizeChange={this.onContentSizeChange}
           contentContainerStyle={{ flexGrow: 1}}
-          showsVerticalScrollIndicator={false}>
+          showsVerticalScrollIndicator={false}
+          bounces={false}>
           <View style={styles.duty}>
             <Duty token={this.state.token} user={this.state.user}/>
           </View>
