@@ -6,6 +6,8 @@ import VacationType from '../components/VacationType';
 import Duty from '../components/Duty';
 
 const { height } = Dimensions.get('window');
+const HEADER_MAX_HEIGHT = 200
+const HEADER_MIN_HEIGHT = 75
 const token = "e36ea705904910cd1a9bbc76f1d62b0de16bbfdc"
 const user = "ysung327"
 export default class HomeScreen extends Component {
@@ -29,6 +31,9 @@ export default class HomeScreen extends Component {
     console.log(this.state.token)
     return (
       <View style={{ flex: 1, justifyContent: 'flex-start'}}>
+        <View style={styles.duty}>
+          <Duty token={this.state.token} user={this.state.user}/>
+        </View>
         <ScrollView
           style={{ flex: 1 }}
           scrollEnabled={scrollEnabled}
@@ -36,9 +41,6 @@ export default class HomeScreen extends Component {
           contentContainerStyle={{ flexGrow: 1}}
           showsVerticalScrollIndicator={false}
           bounces={false}>
-          <View style={styles.duty}>
-            <Duty token={this.state.token} user={this.state.user}/>
-          </View>
           <View style={styles.vacationInfo}>
             <VacationInfo token={this.state.token} user={this.state.user}/>
           </View>
@@ -58,13 +60,18 @@ export default class HomeScreen extends Component {
 
 const styles = StyleSheet.create({
   duty: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: HEADER_MAX_HEIGHT,
   },
   vacationList: {
     flex: 1,
   },
 
   vacationInfo: {
+    marginTop: HEADER_MAX_HEIGHT,
     height: 180,
     marginBottom: 20,
     marginRight: 25,

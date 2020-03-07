@@ -87,6 +87,7 @@ class Duty extends Component {
 
 const styles = StyleSheet.create({
   gradient: {
+    flex: 1,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
   },
