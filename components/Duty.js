@@ -64,23 +64,24 @@ class Duty extends Component {
     const percent = Number.parseFloat(this.state.percent*100).toFixed(2)
     
     return (
-      <LinearGradient colors={[Colors.secondaryColor, Colors.primaryColor]} style={styles.gradient}>
-        <View style={styles.container}>
-            <View style={styles.header}>
-              <Text style={styles.title}>전역</Text>
-              <Text style={styles.end_date}>{this.state.end_date}</Text>
-            </View>
-            <View style={styles.progress}>
-              <Text style={{position:'absolute', left: percentLeft}}>{percent}%</Text>
-              <ProgressBar unfilledColor={Colors.accentColor2} color={Colors.accentColor1} borderWidth={0} width={300} height={6} progress={this.state.percent} borderRadius={10}/>
-            </View>
-            
-            <View style={styles.footer}>
-              <Text style={styles.dday}>D-{this.state.lefted}</Text>
-              <Text style={styles.time}>{this.state.hour}시간 {this.state.minute}분 {this.state.second}초 전</Text>
-            </View>
-        </View>
-      </LinearGradient>
+      <View style={styles.container}>
+        <LinearGradient colors={[Colors.secondaryColor, Colors.primaryColor]} style={styles.gradient}>
+          <View style={styles.header}>
+            <Text style={styles.title}>전역</Text>
+            <Text style={styles.end_date}>{this.state.end_date}</Text>
+          </View>
+          <View style={styles.progress}>
+            <Text style={{position:'absolute', left: percentLeft, color: Colors.accentColor1, fontWeight: 'bold' }}>{percent}%</Text>
+            <ProgressBar unfilledColor={Colors.accentColor2} color={Colors.accentColor1} borderWidth={0} width={300} height={6} progress={this.state.percent} borderRadius={10}/>
+          </View>
+          
+          <View style={styles.footer}>
+            <Text style={styles.dday}>D-{this.state.lefted}</Text>
+            <Text style={styles.time}>{this.state.hour}시간 {this.state.minute}분 {this.state.second}초 전</Text>
+          </View>
+        </LinearGradient>
+      </View>
+
     )
   }
 } 
@@ -90,23 +91,32 @@ const styles = StyleSheet.create({
     flex: 1,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-  },
-  container: {
-    flex: 1,
-    paddingBottom: 20,
     flexDirection: 'column',
+    justifyContent: 'flex-start',
+    elevation: 8,
+  },
+  container:{
+    flex: 1,
+    shadowColor: "#000000",
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    shadowOffset: {
+      height: 6,
+    },
   },
   header:{
     alignItems: 'center',
+    marginTop: 10,
   },
   progress:{
     flex: 1,
     paddingTop: 20,
     alignItems: 'center',
-    marginVertical: 10,
+    marginTop: 15,
   },
   footer:{
     alignItems: 'center',
+    marginBottom: 20,
   },
   title:{
     fontSize: 28,

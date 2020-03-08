@@ -17,6 +17,13 @@ const styles = StyleSheet.create({
     height: 70,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: "#000000",
+    shadowOpacity: 0.4,
+    shadowRadius: 4.65,
+    shadowOffset: {
+      height: 0,
+    },
+    elevation: 4,
   },
   title: {
     fontSize: 24,
