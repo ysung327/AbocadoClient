@@ -10,6 +10,8 @@ import { Dimensions } from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
 const barPadding = (screenWidth - 300) / 2
+const DUTY_MAX_HEIGHT = 200
+const DUTY_MIN_HEIGHT = 75
 
 class Duty extends Component {
   constructor(props) {
@@ -60,25 +62,43 @@ class Duty extends Component {
   }
     
   render() {
+
     const percentLeft = barPadding + 300*this.state.percent - 20
     const percent = Number.parseFloat(this.state.percent*100).toFixed(2)
-    
+    let duty = null;
+
+    if(this.props.dutyHeight>(DUTY_MAX_HEIGHT-DUTY_MIN_HEIGHT)/2) {
+      duty =
+        <View style={styles.sContainer}>
+          <View style={styles.sHeader}>
+            <Text style={styles.sText}>전역</Text>
+            <Text style={styles.sDetail}>{this.state.end_date}</Text>
+          </View>
+          <View style={styles.sFooter}>
+            <Text style={styles.sText}>D-{this.state.lefted}</Text>
+            <Text style={styles.sDetail}>{this.state.hour}시간 {this.state.minute}분 {this.state.second}초 전</Text>
+          </View>
+        </View>
+    } else {
+      duty =
+        <View style={styles.header}>
+          <Text style={styles.title}>전역</Text>
+          <Text style={styles.end_date}>{this.state.end_date}</Text>
+        </View>
+        <View style={styles.progress}>
+          <Text style={{position:'absolute', left: percentLeft, color: Colors.accentColor1, fontWeight: 'bold' }}>{percent}%</Text>
+          <ProgressBar unfilledColor={Colors.accentColor2} color={Colors.accentColor1} borderWidth={0} width={300} height={6} progress={this.state.percent} borderRadius={10}/>
+        </View>
+        <View style={styles.footer}>
+          <Text style={styles.dday}>D-{this.state.lefted}</Text>
+          <Text style={styles.time}>{this.state.hour}시간 {this.state.minute}분 {this.state.second}초 전</Text>
+        </View>
+    }
+
     return (
       <View style={styles.container}>
         <LinearGradient colors={[Colors.secondaryColor, Colors.primaryColor]} style={styles.gradient}>
-          <View style={styles.header}>
-            <Text style={styles.title}>전역</Text>
-            <Text style={styles.end_date}>{this.state.end_date}</Text>
-          </View>
-          <View style={styles.progress}>
-            <Text style={{position:'absolute', left: percentLeft, color: Colors.accentColor1, fontWeight: 'bold' }}>{percent}%</Text>
-            <ProgressBar unfilledColor={Colors.accentColor2} color={Colors.accentColor1} borderWidth={0} width={300} height={6} progress={this.state.percent} borderRadius={10}/>
-          </View>
-          
-          <View style={styles.footer}>
-            <Text style={styles.dday}>D-{this.state.lefted}</Text>
-            <Text style={styles.time}>{this.state.hour}시간 {this.state.minute}분 {this.state.second}초 전</Text>
-          </View>
+          {duty}
         </LinearGradient>
       </View>
 
@@ -133,6 +153,30 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'white'
   },
+
+  sContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  sHeader: {
+    flex: 1,
+    marginLeft: 20,
+  },
+  sFooter: {
+    flex: 1,
+    marginRight: 20,
+  },
+  sText: {
+    color: 'white',
+    fontSize: 15,
+    fontWeight: 'bold'
+  },
+  sDetail: {
+    color: 'white',
+    fontSize: 10,
+  }
+
 })
 
 export default Duty
