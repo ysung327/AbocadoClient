@@ -67,7 +67,7 @@ class Duty extends Component {
     const percent = Number.parseFloat(this.state.percent*100).toFixed(2)
     let duty = null;
 
-    if(this.props.dutyHeight>(DUTY_MAX_HEIGHT-DUTY_MIN_HEIGHT)/2) {
+    if(this.props.height>(DUTY_MAX_HEIGHT-DUTY_MIN_HEIGHT)/2) {
       duty =
         <View style={styles.sContainer}>
           <View style={styles.sHeader}>
@@ -81,17 +81,19 @@ class Duty extends Component {
         </View>
     } else {
       duty =
-        <View style={styles.header}>
-          <Text style={styles.title}>전역</Text>
-          <Text style={styles.end_date}>{this.state.end_date}</Text>
-        </View>
-        <View style={styles.progress}>
-          <Text style={{position:'absolute', left: percentLeft, color: Colors.accentColor1, fontWeight: 'bold' }}>{percent}%</Text>
-          <ProgressBar unfilledColor={Colors.accentColor2} color={Colors.accentColor1} borderWidth={0} width={300} height={6} progress={this.state.percent} borderRadius={10}/>
-        </View>
-        <View style={styles.footer}>
-          <Text style={styles.dday}>D-{this.state.lefted}</Text>
-          <Text style={styles.time}>{this.state.hour}시간 {this.state.minute}분 {this.state.second}초 전</Text>
+        <View>
+          <View style={styles.header}>
+            <Text style={styles.title}>전역</Text>
+            <Text style={styles.end_date}>{this.state.end_date}</Text>
+          </View>
+          <View style={styles.progress}>
+            <Text style={{position:'absolute', left: percentLeft, color: Colors.accentColor1, fontWeight: 'bold' }}>{percent}%</Text>
+            <ProgressBar unfilledColor={Colors.accentColor2} color={Colors.accentColor1} borderWidth={0} width={300} height={6} progress={this.state.percent} borderRadius={10}/>
+          </View>
+          <View style={styles.footer}>
+            <Text style={styles.dday}>D-{this.state.lefted}</Text>
+            <Text style={styles.time}>{this.state.hour}시간 {this.state.minute}분 {this.state.second}초 전</Text>
+          </View>
         </View>
     }
 
