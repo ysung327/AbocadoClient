@@ -22,6 +22,7 @@ const screenWidth = Dimensions.get('window').width;
 const HEADER_MAX_HEIGHT = 70
 const DUTY_MAX_HEIGHT = 200
 const DUTY_MIN_HEIGHT = 75
+const SCROLL_THERSHOLD = (DUTY_MAX_HEIGHT - HEADER_MAX_HEIGHT) / 10
 const barPadding = (screenWidth - 300) / 2
 const token = "e36ea705904910cd1a9bbc76f1d62b0de16bbfdc"
 const user = "ysung327"
@@ -84,52 +85,63 @@ export default class HomeScreen extends Component {
 
 
   render() {
-
     const dutyHeight = this.state.scrollY.interpolate({
-      inputRange: [0, DUTY_MAX_HEIGHT-DUTY_MIN_HEIGHT],
+      inputRange: [0, SCROLL_THERSHOLD],
       outputRange: [DUTY_MAX_HEIGHT, DUTY_MIN_HEIGHT],
       extrapolate: 'clamp',
       easing: Easing.ease,
     })
     const dutyOpacity = this.state.scrollY.interpolate({
-      inputRange: [30, 100],
+      inputRange: [0, SCROLL_THERSHOLD],
       outputRange: [1, 0],
       extrapolate: 'clamp',
-      easing: Easing.step0,
+      easing: Easing.ease,
     })
     const titleLeft = this.state.scrollY.interpolate({
-      inputRange: [70, DUTY_MAX_HEIGHT-DUTY_MIN_HEIGHT],
+      inputRange: [0, SCROLL_THERSHOLD],
       outputRange: [screenWidth/2 - 50, 10],
       extrapolate: 'clamp',
       easing: Easing.ease,
     })
     const footerRight = this.state.scrollY.interpolate({
-      inputRange: [80, DUTY_MAX_HEIGHT-DUTY_MIN_HEIGHT],
-      outputRange: [screenWidth/2 -75, 10],
+      inputRange: [0, SCROLL_THERSHOLD],
+      outputRange: [screenWidth/2 - 75, 10],
       extrapolate: 'clamp',
       easing: Easing.ease,
     })
     const textColor = this.state.scrollY.interpolate({
-      inputRange: [120, DUTY_MAX_HEIGHT-DUTY_MIN_HEIGHT],
+      inputRange: [0, SCROLL_THERSHOLD],
       outputRange: ['black', 'white'],
       extrapolate: 'clamp',
       easing: Easing.step0,
     })
     const footerFontSize = this.state.scrollY.interpolate({
-      inputRange: [70, DUTY_MAX_HEIGHT-DUTY_MIN_HEIGHT],
+      inputRange: [0, SCROLL_THERSHOLD],
       outputRange: [36, 28],
       extrapolate: 'clamp',
       easing: Easing.ease,
     })
     const headerPadding = this.state.scrollY.interpolate({
-      inputRange: [70, DUTY_MAX_HEIGHT-DUTY_MIN_HEIGHT],
+      inputRange: [0, SCROLL_THERSHOLD],
       outputRange: [23, 10],
       extrapolate: 'clamp',
       easing: Easing.ease,
     })
     const footerPadding = this.state.scrollY.interpolate({
-      inputRange: [80, DUTY_MAX_HEIGHT-DUTY_MIN_HEIGHT],
-      outputRange: [25, 65],
+      inputRange: [0, SCROLL_THERSHOLD],
+      outputRange: [26, 60],
+      extrapolate: 'clamp',
+      easing: Easing.ease,
+    })
+    const scrollMarginTop = this.state.scrollY.interpolate({
+      inputRange: [0, SCROLL_THERSHOLD],
+      outputRange: [DUTY_MAX_HEIGHT + HEADER_MAX_HEIGHT + 40, DUTY_MIN_HEIGHT + HEADER_MAX_HEIGHT + 50],
+      extrapolate: 'clamp',
+      easing: Easing.ease,
+    })
+    const scrollMarginBottom = this.state.scrollY.interpolate({
+      inputRange: [0, SCROLL_THERSHOLD],
+      outputRange: [100, DUTY_MAX_HEIGHT + HEADER_MAX_HEIGHT + 20],
       extrapolate: 'clamp',
       easing: Easing.ease,
     })
@@ -151,15 +163,17 @@ export default class HomeScreen extends Component {
           zIndex: 1000,
         }}>
           <View style={styles.container}>
-            <LinearGradient colors={[Colors.secondaryColor, Colors.primaryColor]} style={styles.gradient} start={[0, 0.4]}>
+            <LinearGradient colors={[Colors.secondaryColor, Colors.primaryColor]} style={styles.gradient}>
               <Animated.View style={{
+                top: 0,
                 marginTop: 10,
+                marginBottom: 10,
                 width: 100,
                 position: 'absolute',
                 left: titleLeft,
               }}>
-                <Animated.Text style={{ color: textColor, paddingLeft: headerPadding, fontSize: 28, fontWeight: 'bold' }}>전역</Animated.Text>
-                <Animated.Text style={{ color: textColor, textAlign: 'center', fontSize: 14,}}>{this.state.end_date}</Animated.Text>
+                <Animated.Text style={{ color: 'white', paddingLeft: headerPadding, fontSize: 28, fontWeight: 'bold' }}>전역</Animated.Text>
+                <Animated.Text style={{ color: 'white', textAlign: 'center', fontSize: 14,}}>{this.state.end_date}</Animated.Text>
               </Animated.View>
               <Animated.View style={{
                 flex: 1,
@@ -176,6 +190,7 @@ export default class HomeScreen extends Component {
                 width: 150,
                 position: 'absolute',
                 right: footerRight,
+                marginTop: 10,
                 marginBottom: 10,
               }}>
                 <Animated.Text style={{ fontSize: footerFontSize, paddingLeft: footerPadding, fontWeight: 'bold', color: 'white' }}>D-{this.state.lefted}</Animated.Text>
@@ -190,19 +205,23 @@ export default class HomeScreen extends Component {
             [{nativeEvent: {contentOffset: {y: this.state.scrollY} } }]
           )}
           scrollEventThrottle={16}
-          onContentSizeChange={this.onContentSizeChange}
           contentContainerStyle={{ flexGrow: 1}}
           showsVerticalScrollIndicator={false}
           bounces={false}>
-          <View style={styles.vacationInfo}>
+          <Animated.View style={{
+            marginTop: scrollMarginTop,
+            height: 120,
+            marginBottom: 20,
+          }}>
             <VacationInfo token={this.state.token} user={this.state.user}/>
-          </View>
+          </Animated.View>
           <View style={styles.vacationList}>
             <VacationList token={this.state.token} user={this.state.user}/>
           </View>
           <View style={styles.vacationType}>
             <VacationType token={this.state.token} user={this.state.user}/>
           </View>
+          <Animated.View style={{ height: 200 }}></Animated.View>
         </ScrollView>
       </View>
     )
@@ -218,18 +237,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: HEADER_MAX_HEIGHT,
+    zIndex: 1000,
   },
 
   vacationList: {
     flex: 1,
-  },
-
-  vacationInfo: {
-    marginTop: DUTY_MAX_HEIGHT + HEADER_MAX_HEIGHT,
-    height: 180,
-    marginBottom: 20,
-    marginRight: 25,
-    marginLeft: 15,
   },
 
   vacationType: {

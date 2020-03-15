@@ -1,7 +1,7 @@
-const primaryColor = 'rgba(125, 162, 170, 1)';
-const secondaryColor = 'rgba(147, 188, 152, 1)';
+const primaryColor = 'rgba(132, 175, 178, 1)';
+const secondaryColor = 'rgba(159, 196, 183, 1)';
 const accentColor1 = '#BA9175';
-const accentColor2= '#e5e5e5';
+const accentColor2= '#7f7f7f';
 
 export default {
     primaryColor,

@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native"
 import { Card, Button } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
+import Colors from '../constants/Colors'
 
 class VacationItem extends Component {
   constructor(props) {
@@ -15,58 +16,74 @@ class VacationItem extends Component {
   }
 
   render() {
+    let start_date = this.props.item.start_date.split('-', 3)
+    let end_date = this.props.item.end_date.split('-', 3)
+    console.log(start_date)
     let dday = []
     if(this.props.item.dDay<0) {
       let dDay = this.props.item.dDay * -1
-      dday.push(<Text style={styles.content}>휴가까지 {dDay}일 남았습니다.</Text>)
+      dday.push(
+        <Text>
+          <Text style={styles.content}>D-</Text>
+          <Text style={styles.content}>{this.props.item.dDay}</Text>
+        </Text>
+        )
     }
-    else dday.push(<Text style={styles.content}>휴가가 {this.props.item.dDay}일 지났습니다.</Text>)
+    else dday.push(
+      <View style={styles.dday}>
+        <Text style={{ position: 'absolute', top: 3, left: 65, fontSize: 16 }}>D+</Text>
+        <Text style={{ fontSize: 32 }}>{this.props.item.dDay}</Text>
+      </View>
+    )
 
     return (
+      <Card containerStyle={styles.container} wrapperStyle={{}}>
         <TouchableOpacity onPress={this.onPress}>
-          <Card containerStyle={styles.container} wrapperStyle={{padding:0}}>
-            <View style={styles.day}>
-              <Text style={styles.content}>{this.props.item.day} 일</Text>
+          <View>
+            <Text style={{ position:'absolute', top: 10, fontSize: 24 , color: Colors.accentColor2}}>{this.props.item.day}</Text>
+            <Text style={{ position:'absolute', top: 17, left: 20, fontSize: 16, color: Colors.accentColor2 }}>Days</Text>
+          </View>
+          {dday}
+          <View style={styles.info}>
+            <View style={styles.date}>
+              <Text style={[styles.year, {color: Colors.secondaryColor}]}>{start_date[0]}</Text>
+              <Text style={[styles.text, {color: Colors.secondaryColor}]}>{start_date[1]}.{start_date[2]}</Text>
             </View>
-            <View style={styles.dday}>
-              {dday}
+            <Card containerStyle={{ borderWidth: 1, borderColor: Colors.accentColor1, height: 0 }}></Card>
+            <View style={styles.date}>
+              <Text style={[styles.year, {color: Colors.primaryColor}]}>{end_date[0]}</Text>
+              <Text style={[styles.text, {color: Colors.primaryColor}]}>{end_date[1]}.{end_date[2]}</Text>
             </View>
-            <View style={styles.info}>
-              <View style={styles.date}>
-                <Text style={styles.text}>출발</Text>
-                <Text style={styles.text}>{this.props.item.start_date}</Text>
-              </View>
-              <View style={styles.date}>
-                <Text style={styles.text}>복귀</Text>
-                <Text style={styles.text}>{this.props.item.end_date}</Text>
-              </View>
-            </View>
-          </Card>
+          </View>
         </TouchableOpacity>
+
+      </Card>
     )
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 0,
-    width: 310,
+    height: 130, 
+    borderRadius: 10,
+    elevation: 10,
+    shadowColor: "#000000",
+    shadowOffset: {
+        width: 0,
+        height: 4,
+      },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
+    width: 275,
     flexDirection: 'column',
     justifyContent: 'space-around',
-    backgroundColor: 'white',
-    borderWidth: 0.3,
-    borderColor: 'gray',
     marginRight: 3,
-  },
-
-  day:{
-    alignItems: 'center',
-    paddingBottom: 10,
+    marginBottom: 20,
   },
 
   dday:{
     alignItems: 'center',
-    paddingBottom: 10,
+    marginTop: 40,
   },
 
   content: {
@@ -87,6 +104,12 @@ const styles = StyleSheet.create({
 
   text: {
     fontSize: 17,
+    fontWeight: 'bold',
+  },
+
+  year: {
+    fontSize: 13,
+    fontWeight: 'bold',
   },
 })
 

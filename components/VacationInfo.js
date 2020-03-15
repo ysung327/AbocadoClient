@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text} from 'react-native';
 import { Card, Button } from 'react-native-elements'
+import Colors from '../constants/Colors'
 
 class VacationInfo extends Component {
   constructor(props) {
@@ -45,32 +46,37 @@ class VacationInfo extends Component {
   
   render() {
     return (
-      <View style={styles.container}>
-        <Card containerStyle={styles.column1}>
-            <Text style={[styles.title, styles.text]}>총 휴가</Text>
-            <Text style={[styles.content, styles.text]}>{this.state.data.total} 일</Text>
-        </Card>
-        <View style={styles.column2}>
-          <View style={styles.row1}>
-            <Card containerStyle={styles.card1}>
+      <View style={{ flex:1 }}>
+        <View style={{ alignItems: 'center' }}>
+          <Text style={{ fontSize: 20, }}>나의 휴가</Text>
+        </View>
+        <View style={styles.container}>
+          <View style={styles.column1}>
+            <Card containerStyle={styles.card1} wrapperStyle={{ flex:1, justifyContent: 'center', }}>
+              <Text style={{ top: 0, position: 'absolute', fontSize: 12, color: Colors.accentColor2, }}>총 휴가</Text>
+              <View style={{ alignItems: 'center', }}>
+                <Text style={{ fontSize: 32, }}>{this.state.data.total}</Text>
+              </View>          
+            </Card>
+          </View>
+          <View style={styles.column2}>
+            <Card containerStyle={styles.card2}>
               <View>
-                <Text style={[styles.title, styles.text]}>나간 휴가</Text>
-                <Text style={[styles.detail, styles.text]}>{this.state.data.gone} 일</Text>
+                <Text style={{ position: 'absolute', fontSize: 12, color: Colors.accentColor2, }}>나간 휴가</Text>
+              </View>
+              <View style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, }}>{this.state.data.gone}</Text>
               </View>
             </Card>
-            <Card containerStyle={styles.card1}>
+            <Card containerStyle={styles.card2}>
               <View>
-                <Text style={[styles.title, styles.text]}>남은 휴가</Text>
-                <Text style={[styles.detail, styles.text]}>{this.state.data.left} 일</Text>
+                <Text style={{ position: 'absolute', fontSize: 12, color: Colors.accentColor2, }}>남은 휴가</Text>
+              </View>
+              <View style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, }}>{this.state.data.left}</Text>
               </View>
             </Card>
           </View>
-          <Card containerStyle={[styles.card2, styles.row2]}>
-              <View>
-                <Text style={[styles.title, styles.text]}>나간 휴가</Text>
-                <Text style={[styles.detail, styles.text]}>{this.state.data.gone} 일</Text>
-              </View>
-          </Card>
         </View>
       </View>
     )
@@ -83,41 +89,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   card1: {
-    marginHorizontal: 0,
+    borderWidth: 1,
+    flex: 1,
+    borderRadius: 10,
+    paddingVertical: 3,
+    elevation: 8,
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
   },
   card2: {
-    marginHorizontal: 0,
-    marginVertical: 7,
+    flex: 1,
+    marginLeft: 0,
+    paddingVertical: 3,
+    borderRadius: 10,
+    elevation: 8,
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
   },
   column1: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'center',
-    marginLeft: 0,
+    paddingTop: 0,
   },
   column2: {
-    flex: 3,
+    flex: 2,
     flexDirection: 'column',
-  },
-  row1: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  row2: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  text: {
-    textAlign: 'center',
-  },
-  title: {
-    fontSize: 15,
-  },
-  content: {
-    fontSize: 27,
-  },
-  detail: {
-    fontSize: 20,
   },
 
 })
