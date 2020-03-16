@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Card, Button } from 'react-native-elements'
 import { Actions } from 'react-native-router-flux';
+import Colors from '../constants/Colors'
 
 class VacationType extends Component {
   constructor(props) {
@@ -28,28 +29,28 @@ class VacationType extends Component {
             <View style={styles.column2}>
               <View style={styles.row}>
                 <Card containerStyle={styles.card}>
-                <TouchableOpacity 
-                  onPress={()=>this._onPress('CON')}>
+                  <TouchableOpacity 
+                    onPress={()=>this._onPress('CON')}>
                     <Text style={styles.text}>위로</Text>
                   </TouchableOpacity>
                 </Card>
                 <Card containerStyle={styles.card}>
-                <TouchableOpacity 
-                  onPress={()=>this._onPress('PR')}>
+                  <TouchableOpacity 
+                    onPress={()=>this._onPress('PR')}>
                     <Text style={styles.text}>포상</Text>
                   </TouchableOpacity>
                 </Card>             
               </View>
               <View style={styles.row}>
                 <Card containerStyle={styles.card}>
-                <TouchableOpacity 
-                  onPress={()=>this._onPress('RE')}>
+                  <TouchableOpacity 
+                    onPress={()=>this._onPress('RE')}>
                     <Text style={styles.text}>보상</Text>
                   </TouchableOpacity>
                 </Card>
                 <Card containerStyle={styles.card}>
-                <TouchableOpacity 
-                  onPress={()=>this._onPress('PE')}>
+                  <TouchableOpacity 
+                    onPress={()=>this._onPress('PE')}>
                     <Text style={styles.text}>청원</Text>
                   </TouchableOpacity>
                 </Card>             
@@ -80,12 +81,22 @@ const styles = StyleSheet.create({
   },
   card: {
     flex: 1,
-    justifyContent: 'center',
-    margin: 0,
+    borderRadius: 10,
+    paddingTop: 5,
+    margin: 5,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
   },
-  text: {
-    fontSize: 25,
-    textAlign: 'center',
+  text: {    
+    position: 'absolute',
+    fontSize: 12, 
+    color: Colors.accentColor2,
   }
 })
 

@@ -60,12 +60,12 @@ class VacationInfo extends Component {
             </Card>
           </View>
           <View style={styles.column2}>
-            <Card containerStyle={styles.card2}>
+            <Card containerStyle={[styles.card2, { marginBottom: 0 }]}>
               <View>
-                <Text style={{ position: 'absolute', fontSize: 12, color: Colors.accentColor2, }}>나간 휴가</Text>
+                <Text style={{ position: 'absolute', fontSize: 12, color: Colors.accentColor2 }}>나간 휴가</Text>
               </View>
               <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 20, }}>{this.state.data.gone}</Text>
+                <Text style={{ fontSize: 20, marginBottom: 5 }}>{this.state.data.gone}</Text>
               </View>
             </Card>
             <Card containerStyle={styles.card2}>
@@ -73,7 +73,7 @@ class VacationInfo extends Component {
                 <Text style={{ position: 'absolute', fontSize: 12, color: Colors.accentColor2, }}>남은 휴가</Text>
               </View>
               <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 20, }}>{this.state.data.left}</Text>
+                <Text style={{ fontSize: 20, marginBottom: 5 }}>{this.state.data.left}</Text>
               </View>
             </Card>
           </View>
@@ -89,32 +89,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   card1: {
-    borderWidth: 1,
     flex: 1,
+    marginRight: 5,
     borderRadius: 10,
-    paddingVertical: 3,
-    elevation: 8,
-    shadowColor: "#000000",
+    paddingVertical: 5,
+    elevation: 3,
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: 1,
     },
-    shadowOpacity: 0.30,
-    shadowRadius: 4.65,
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
   },
   card2: {
     flex: 1,
     marginLeft: 0,
     paddingVertical: 3,
     borderRadius: 10,
-    elevation: 8,
-    shadowColor: "#000000",
+    elevation: 3,
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: 1,
     },
-    shadowOpacity: 0.30,
-    shadowRadius: 4.65,
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
   },
   column1: {
     flex: 1,

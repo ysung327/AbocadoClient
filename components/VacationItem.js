@@ -49,7 +49,9 @@ class VacationItem extends Component {
               <Text style={[styles.year, {color: Colors.secondaryColor}]}>{start_date[0]}</Text>
               <Text style={[styles.text, {color: Colors.secondaryColor}]}>{start_date[1]}.{start_date[2]}</Text>
             </View>
-            <Card containerStyle={{ borderWidth: 1, borderColor: Colors.accentColor1, height: 0 }}></Card>
+            <View>
+              <Text style={{ marginTop: 10, color: Colors.accentColor1, fontWeight: 'bold' }}>______________</Text>
+            </View>
             <View style={styles.date}>
               <Text style={[styles.year, {color: Colors.primaryColor}]}>{end_date[0]}</Text>
               <Text style={[styles.text, {color: Colors.primaryColor}]}>{end_date[1]}.{end_date[2]}</Text>
@@ -66,14 +68,14 @@ const styles = StyleSheet.create({
   container: {
     height: 130, 
     borderRadius: 10,
-    elevation: 10,
-    shadowColor: "#000000",
+    elevation: 3,
+    shadowColor: "#000",
     shadowOffset: {
-        width: 0,
-        height: 4,
-      },
-    shadowOpacity: 0.30,
-    shadowRadius: 4.65,
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
     width: 275,
     flexDirection: 'column',
     justifyContent: 'space-around',

@@ -139,12 +139,6 @@ export default class HomeScreen extends Component {
       extrapolate: 'clamp',
       easing: Easing.ease,
     })
-    const scrollMarginBottom = this.state.scrollY.interpolate({
-      inputRange: [0, SCROLL_THERSHOLD],
-      outputRange: [100, DUTY_MAX_HEIGHT + HEADER_MAX_HEIGHT + 20],
-      extrapolate: 'clamp',
-      easing: Easing.ease,
-    })
     const percentLeft = barPadding + 300*this.state.percent - 20
     const percent = Number.parseFloat(this.state.percent*100).toFixed(2)
 
@@ -237,7 +231,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: HEADER_MAX_HEIGHT,
-    zIndex: 1000,
+    zIndex: 1200,
   },
 
   vacationList: {
@@ -246,6 +240,7 @@ const styles = StyleSheet.create({
 
   vacationType: {
     flex: 1,
+    height: 150,
     marginTop: 20,
     marginRight: 25,
     marginLeft: 15,
