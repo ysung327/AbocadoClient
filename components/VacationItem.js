@@ -37,7 +37,7 @@ class VacationItem extends Component {
     )
 
     return (
-      <Card containerStyle={styles.container} wrapperStyle={{}}>
+      <Card containerStyle={styles.container}>
         <TouchableOpacity onPress={this.onPress}>
           <View>
             <Text style={{ position:'absolute', top: 10, fontSize: 24 , color: Colors.accentColor2}}>{this.props.item.day}</Text>

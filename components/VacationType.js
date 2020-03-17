@@ -7,6 +7,67 @@ import Colors from '../constants/Colors'
 class VacationType extends Component {
   constructor(props) {
     super(props);
+    this.state  = {
+      loading: false,
+      ann: [],
+      con: [],
+      re: [],
+      pe: [],
+      pr: [],
+    }
+  }
+  
+  componentDidMount() {
+    let arr = ["ANN", "CON", "RE", "PE", "PR"]
+    for (i of arr) {
+      this.getTypeInfo(arr)
+  }
+
+  getTypeInfo = (_type)  => {
+    const url = "http://ysung327.pythonanywhere.com/vacations/type/info/";
+
+    this.setState({ loading: true });
+
+    fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Token ' + this.props.token,
+      },
+      body: JSON.stringify({
+        user: this.props.user,
+        type_of_detail: _type
+      })
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (_type === "ANN") {
+          this.setState({
+            ann: res,
+          })
+          console.log(this.state.ann)
+        } else if (_type === "CON") {
+          this.setState({
+            con: res,
+          })
+        } else if (_type === "PR") {
+          this.setState({
+            pr: res,
+          })
+        } else if (_type === "RE") {
+          this.setState({
+            re: res,
+          })
+        } else if (_type === "PE") {
+          this.setState({
+            pe: res,
+          })
+        }
+    })
+    .catch((error) => {
+          console.log(error);
+    })
   }
 
   _onPress = (type) => {
@@ -22,7 +83,10 @@ class VacationType extends Component {
               <Card containerStyle={styles.card}>
                 <TouchableOpacity 
                     onPress={()=>this._onPress('ANN')}>
-                  <Text style={styles.text}>연가</Text>
+                  <View>
+                    <Text style={styles.text}>연가</Text>
+                    <Text style={{ fontSize: 32, top: 45, left: 15 }}>26</Text>                  
+                  </View>
                 </TouchableOpacity>
               </Card>
             </View>
@@ -32,12 +96,14 @@ class VacationType extends Component {
                   <TouchableOpacity 
                     onPress={()=>this._onPress('CON')}>
                     <Text style={styles.text}>위로</Text>
+                    <Text style={{ fontSize: 32, top: 13, left: 15 }}>20</Text>
                   </TouchableOpacity>
                 </Card>
                 <Card containerStyle={styles.card}>
                   <TouchableOpacity 
                     onPress={()=>this._onPress('PR')}>
                     <Text style={styles.text}>포상</Text>
+                    <Text style={{ fontSize: 32, top: 13, left: 15 }}>20</Text>
                   </TouchableOpacity>
                 </Card>             
               </View>
@@ -46,12 +112,14 @@ class VacationType extends Component {
                   <TouchableOpacity 
                     onPress={()=>this._onPress('RE')}>
                     <Text style={styles.text}>보상</Text>
+                    <Text style={{ fontSize: 32, top: 13, left: 15 }}>20</Text>
                   </TouchableOpacity>
                 </Card>
                 <Card containerStyle={styles.card}>
                   <TouchableOpacity 
                     onPress={()=>this._onPress('PE')}>
                     <Text style={styles.text}>청원</Text>
+                    <Text style={{ fontSize: 32, top: 13, left: 15 }}>20</Text>
                   </TouchableOpacity>
                 </Card>             
               </View>
@@ -60,6 +128,7 @@ class VacationType extends Component {
       )
     }
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -95,6 +164,7 @@ const styles = StyleSheet.create({
   },
   text: {    
     position: 'absolute',
+    top: 0,
     fontSize: 12, 
     color: Colors.accentColor2,
   }

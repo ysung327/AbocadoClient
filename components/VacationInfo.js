@@ -60,20 +60,20 @@ class VacationInfo extends Component {
             </Card>
           </View>
           <View style={styles.column2}>
-            <Card containerStyle={[styles.card2, { marginBottom: 0 }]}>
+            <Card containerStyle={[styles.card2, { marginBottom: 3 }]}>
               <View>
                 <Text style={{ position: 'absolute', fontSize: 12, color: Colors.accentColor2 }}>나간 휴가</Text>
               </View>
-              <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 20, marginBottom: 5 }}>{this.state.data.gone}</Text>
+              <View style={{ alignItems: 'center', paddingBottom: 5 }}>
+                <Text style={{ fontSize: 20 }}>{this.state.data.gone}</Text>
               </View>
             </Card>
-            <Card containerStyle={styles.card2}>
+            <Card containerStyle={[styles.card2, { marginTop: 3 }]}>
               <View>
                 <Text style={{ position: 'absolute', fontSize: 12, color: Colors.accentColor2, }}>남은 휴가</Text>
               </View>
               <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 20, marginBottom: 5 }}>{this.state.data.left}</Text>
+                <Text style={{ fontSize: 20 }}>{this.state.data.left}</Text>
               </View>
             </Card>
           </View>
