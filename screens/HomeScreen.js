@@ -109,12 +109,6 @@ export default class HomeScreen extends Component {
       extrapolate: 'clamp',
       easing: Easing.ease,
     })
-    const textColor = this.state.scrollY.interpolate({
-      inputRange: [0, SCROLL_THERSHOLD],
-      outputRange: ['black', 'white'],
-      extrapolate: 'clamp',
-      easing: Easing.step0,
-    })
     const footerFontSize = this.state.scrollY.interpolate({
       inputRange: [0, SCROLL_THERSHOLD],
       outputRange: [36, 28],
@@ -167,7 +161,7 @@ export default class HomeScreen extends Component {
                 left: titleLeft,
               }}>
                 <Animated.Text style={{ color: 'white', paddingLeft: headerPadding, fontSize: 28, fontWeight: 'bold' }}>전역</Animated.Text>
-                <Animated.Text style={{ color: 'white', textAlign: 'center', fontSize: 14,}}>{this.state.end_date}</Animated.Text>
+                <Text style={{ color: 'white', textAlign: 'center', fontSize: 14,}}>{this.state.end_date}</Text>
               </Animated.View>
               <Animated.View style={{
                 flex: 1,
@@ -188,11 +182,12 @@ export default class HomeScreen extends Component {
                 marginBottom: 10,
               }}>
                 <Animated.Text style={{ fontSize: footerFontSize, paddingLeft: footerPadding, fontWeight: 'bold', color: 'white' }}>D-{this.state.lefted}</Animated.Text>
-                <Animated.Text style={{ fontSize: 14, textAlign: 'center', color: 'white' }}>{this.state.hour}시간 {this.state.minute}분 {this.state.second}초 전</Animated.Text>
+                <Text style={{ fontSize: 14, textAlign: 'center', color: 'white' }}>{this.state.hour}시간 {this.state.minute}분 {this.state.second}초 전</Text>
               </Animated.View>
             </LinearGradient>
           </View>
         </Animated.View>
+        
         <ScrollView
           style={{ flex: 1 }}
           onScroll={Animated.event(
@@ -207,12 +202,21 @@ export default class HomeScreen extends Component {
             height: 120,
             marginBottom: 20,
           }}>
+            <View style={{ alignItems: 'center', marginBottom: 5 }}>
+              <Text style={{ fontSize: 20, }}>나의 휴가</Text>
+            </View>
             <VacationInfo token={this.state.token} user={this.state.user}/>
           </Animated.View>
           <View style={styles.vacationList}>
+            <View style={{ alignItems: 'center', marginBottom: 5 }}>
+              <Text style={{ fontSize: 20, }}>등록한 휴가</Text>
+            </View>
             <VacationList token={this.state.token} user={this.state.user}/>
           </View>
           <View style={styles.vacationType}>
+            <View style={{ alignItems: 'center', marginBottom: 10 }}>
+              <Text style={{ fontSize: 20, }}>보유한 휴가</Text>
+            </View>
             <VacationType token={this.state.token} user={this.state.user}/>
           </View>
           <Animated.View style={{ height: 200 }}></Animated.View>
@@ -231,19 +235,19 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: HEADER_MAX_HEIGHT,
-    zIndex: 1200,
+    zIndex: 1000,
   },
 
   vacationList: {
     flex: 1,
+    marginTop: 20,
   },
 
   vacationType: {
     flex: 1,
-    height: 150,
+    marginHorizontal: 10,
+    height: 185,
     marginTop: 20,
-    marginRight: 25,
-    marginLeft: 15,
   },
 
   gradient: {

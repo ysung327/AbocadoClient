@@ -18,9 +18,10 @@ class VacationType extends Component {
   }
   
   componentDidMount() {
-    let arr = ["ANN", "CON", "RE", "PE", "PR"]
-    for (i of arr) {
-      this.getTypeInfo(arr)
+    let arr = ["CON", "RE", "PE", "PR"]
+    for (let i of arr) {
+      this.getTypeInfo(i)
+    }
   }
 
   getTypeInfo = (_type)  => {
@@ -42,26 +43,22 @@ class VacationType extends Component {
     })
     .then(res => res.json())
     .then(res => {
-        if (_type === "ANN") {
+        if (_type === "CON") {
           this.setState({
-            ann: res,
+            con: res.total,
           })
-          console.log(this.state.ann)
-        } else if (_type === "CON") {
-          this.setState({
-            con: res,
-          })
+          console.log(this.state.con)
         } else if (_type === "PR") {
           this.setState({
-            pr: res,
+            pr: res.total,
           })
         } else if (_type === "RE") {
           this.setState({
-            re: res,
+            re: res.total,
           })
         } else if (_type === "PE") {
           this.setState({
-            pe: res,
+            pe: res.total,
           })
         }
     })
@@ -81,12 +78,12 @@ class VacationType extends Component {
         <View style={styles.container}> 
             <View style={styles.column1}>
               <Card containerStyle={styles.card}>
-                <TouchableOpacity 
-                    onPress={()=>this._onPress('ANN')}>
-                  <View>
+                <TouchableOpacity
+                    onPress={()=>this._onPress('ANN')}>                  
                     <Text style={styles.text}>연가</Text>
-                    <Text style={{ fontSize: 32, top: 45, left: 15 }}>26</Text>                  
-                  </View>
+                    <View style={{ height: 130, alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ fontSize: 32 }}>6</Text>
+                    </View>
                 </TouchableOpacity>
               </Card>
             </View>
@@ -96,14 +93,18 @@ class VacationType extends Component {
                   <TouchableOpacity 
                     onPress={()=>this._onPress('CON')}>
                     <Text style={styles.text}>위로</Text>
-                    <Text style={{ fontSize: 32, top: 13, left: 15 }}>20</Text>
+                    <View style={{ height: 70, alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ fontSize: 32 }}>{this.state.con}</Text>
+                    </View>
                   </TouchableOpacity>
                 </Card>
                 <Card containerStyle={styles.card}>
                   <TouchableOpacity 
                     onPress={()=>this._onPress('PR')}>
                     <Text style={styles.text}>포상</Text>
-                    <Text style={{ fontSize: 32, top: 13, left: 15 }}>20</Text>
+                    <View style={{ height: 70, alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ fontSize: 32 }}>{this.state.pr}</Text>
+                    </View>
                   </TouchableOpacity>
                 </Card>             
               </View>
@@ -112,23 +113,26 @@ class VacationType extends Component {
                   <TouchableOpacity 
                     onPress={()=>this._onPress('RE')}>
                     <Text style={styles.text}>보상</Text>
-                    <Text style={{ fontSize: 32, top: 13, left: 15 }}>20</Text>
+                    <View style={{ height: 70, alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ fontSize: 32 }}>{this.state.re}</Text>
+                    </View>
                   </TouchableOpacity>
                 </Card>
                 <Card containerStyle={styles.card}>
                   <TouchableOpacity 
                     onPress={()=>this._onPress('PE')}>
                     <Text style={styles.text}>청원</Text>
-                    <Text style={{ fontSize: 32, top: 13, left: 15 }}>20</Text>
+                    <View style={{ height: 70, alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ fontSize: 32 }}>{this.state.pe}</Text>
+                    </View>
                   </TouchableOpacity>
-                </Card>             
+                </Card>
               </View>
             </View>
         </View>
       )
     }
 }
-
 
 const styles = StyleSheet.create({
   container: {

@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, FlatList, Modal, Dimensions, ScrollView} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList, Modal, Dimensions, ScrollView } from 'react-native';
 import { Card, Button, Icon } from 'react-native-elements'
 import CalendarPicker from 'react-native-calendar-picker'
 import NumericInput from 'react-native-numeric-input'
 import moment from 'moment'
+import Colors from '../constants/Colors'
+import { LinearGradient } from 'expo-linear-gradient';
+import Header from '../components/Header'
+
+
 
 const { height } = Dimensions.get('window')
+const HEADER_MAX_HEIGHT = 70
 
 export default class DetailScreen extends Component {
   constructor(props) {
@@ -31,6 +37,7 @@ export default class DetailScreen extends Component {
       start_date: null,
       end_date: null,
       day: null,
+      title: null,
     }
   }
 
@@ -74,6 +81,7 @@ export default class DetailScreen extends Component {
       start_date: responseJson.start_date,
       end_date: responseJson.end_date,
       day: responseJson.day,
+      title: responseJson.title,
       loading: false
     })
   }
@@ -257,30 +265,30 @@ export default class DetailScreen extends Component {
     if(this.state.data.start_date!=null) {
       if(this.state.data.dDay<0) {
         let dDay = this.state.data.dDay * -1
-        dday.push(<Text style={styles.content}>휴가까지 {dDay}일 남았습니다.</Text>)
+        dday.push(<Text style={{ fontSize: 24, color: 'white' }}>D-{dDay}</Text>)
       }
-      else dday.push(<Text style={styles.content}>휴가가 {this.state.data.dDay}일 지났습니다.</Text>)
+      else dday.push(<Text style={{ fontSize: 24, color: 'white' }}>D+{this.state.data.dDay}</Text>)
     }
-    else dday.push(<Text style={styles.content}>휴가날짜를 정해주세요!</Text>)
+    else dday.push(<Text style={{ fontSize: 24, color: 'white' }}>휴가날짜를 정해주세요!</Text>)
     return dday
   }
 
   _renderDetail = ({item}) => {
     return (
-      <Card wrapperStyle={styles.detailCard}>
-          <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 20 }}>{item.day}</Text>
-          </View>
-          <View style={{ flex: 3 }}>
-              <Text style={{ fontSize: 17 }}>{item.title}</Text>
-          </View>
-          <View style={{ flex: 1 }}>
-            <Icon
-              name='delete'
-              onPress={() => this.deleteDetail(item.id)}
-            />
-          </View>
-      </Card>
+      <View style={{ borderWidth: 1 }}>
+        <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 20 }}>{item.day}</Text>
+        </View>
+        <View style={{ flex: 3 }}>
+            <Text style={{ fontSize: 17 }}>{item.title}</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Icon
+            name='md-delete'
+            onPress={() => this.deleteDetail(item.id)}
+          />
+        </View>
+      </View>
     )
   }
 
@@ -413,14 +421,14 @@ export default class DetailScreen extends Component {
   getListHeader = () => {
     if (this.state.annual != null) {
       return (
-        <Card wrapperStyle={styles.detailCard}>
-          <View style={{ flex: 1 }}>
+        <View style={{ borderWidth: 1, flexDirection: 'row' }}>
+          <View style={{ borderWidth: 1, justifyContent: 'center' }}>
+              <Text style={{ fontSize: 17 }}>{this.state.annual}</Text>
+          </View>      
+          <View style={{ borderWidth: 1 }}>
               <Text style={{ fontSize: 20 }}>연가</Text>
           </View>
-          <View style={{ flex: 3 }}>
-              <Text style={{ fontSize: 17 }}>{this.state.annual}</Text>
-          </View>
-        </Card>
+        </View>
       )
     }
     return null
@@ -429,6 +437,48 @@ export default class DetailScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.header}>
+          <Header/>
+        </View>
+        <View style={{
+          position: 'absolute',
+          top: 70,
+          left: 0,
+          right: 0,
+          height: 80,
+          zIndex: 1000,
+        }}>
+          <View style={{  
+            flex: 1,
+            flexDirection: "row",
+            shadowColor: "#000000",
+            shadowOpacity: 0.4,
+            shadowRadius: 3,
+            shadowOffset: {
+              height: 6,
+            }
+          }}>
+            <LinearGradient colors={[Colors.secondaryColor, Colors.primaryColor]} style={styles.gradient}>
+              <View style={{
+                flex: 1,
+                alignItems: 'flex-start',
+                paddingLeft: 20,
+              }}>
+                {<Text style={{ fontSize: 24, color: 'white' }}>{ this.state.title }</Text>}
+                <Text style={{ fontSize: 12, color: 'white' }}>{this.state.start_date} - {this.state.end_date}</Text>
+              </View>
+              <View style={{
+                flex: 1,
+                alignItems: 'flex-end',
+                paddingRight: 20,
+              }}>
+                { this.getdDay() }
+                <Text style={{ fontSize: 12, color: 'white' }}>{this.state.hour}시간 {this.state.minute}분 {this.state.second}초 전</Text>
+              </View>
+            </LinearGradient>
+          </View>
+        </View>
+
         <Modal
           animationType="slide"
           transparent={true}
@@ -564,49 +614,91 @@ export default class DetailScreen extends Component {
           </View>
         </Modal>
 
-
-        <Card containerStyle={styles.card}>
-          <View style={styles.deleteIcon}>
-            <Icon
-              name='delete'
-              onPress={this.deleteVacation}
-            />
-          </View>
-          <TouchableOpacity style={styles.day} onPress={this.showDayPicker}>
-            <Text style={styles.text}>{(this.state.data.day!=null) ? this.state.data.day + '일' : '이번엔 몇 나갈까?'}</Text>
+        <View style={{ marginTop: 110, flexDirection: 'row', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={this.showDayPicker}>
+            <Text style={{ fontSize: 32, textAlign: 'center' }}>{(this.state.data.day!=null) ? this.state.data.day + ' Days' : '이번엔 몇 나갈까?'}</Text>
           </TouchableOpacity>
-          <View style={styles.dday}>
-            { this.getdDay() }
-          </View>
-          <TouchableOpacity style={styles.info} onPress={()=>this.showDatePicker()}>
-            <View style={styles.date}>
-              <Text style={styles.text}>출발</Text>
-              <Text style={styles.text}>{(this.state.data.start_date!=null) ? this.state.data.start_date : '-'}</Text>
-            </View>
-            <View style={styles.date}>
-              <Text style={styles.text}>복귀</Text>
-              <Text style={styles.text}>{(this.state.data.end_date!=null) ? this.state.data.end_date : '-'}</Text>
+          <View style={{ position: 'absolute', right:30, top: 10 }}>
+            <Icon name="md-trash" type='ionicon' size={30} color={Colors.primaryColor} onPress={this.deleteVacation}/>
+          </View> 
+        </View>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10, marginBottom: 10 }}>
+          <TouchableOpacity onPress={()=>this.showDatePicker()}>
+            <View style={{ flexDirection: 'column', alignItems: 'center'}}>
+              <Icon name="ios-calendar" type="ionicon" size={20} color={Colors.primaryColor}/>
+              <Card containerStyle={{ borderRadius: 10, height: 40, justifyContent: 'center', marginHorizontal: 5, paddingHorizontal: 20, marginTop: 5,
+                elevation: 3,
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 1,
+                },
+                shadowOpacity: 0.22,
+                shadowRadius: 2.22
+              }}>
+                  <Text style={{ fontSize: 18 }}>{this.state.start_date}</Text>
+              </Card>
             </View>
           </TouchableOpacity>
+          <View style={{ flexDirection: 'column', justifyContent: 'center' }}><Text>_______</Text></View>
+          <TouchableOpacity onPress={()=>this.showDatePicker()}>
+            <View style={{ flexDirection: 'column', alignItems: 'center'}}>
+              <Icon name="ios-calendar" type="ionicon" size={20} color={Colors.primaryColor}/>
+              <Card containerStyle={{ borderRadius: 10, height: 40, justifyContent: 'center', marginHorizontal: 5, paddingHorizontal: 20, marginTop: 5,
+                elevation: 3,
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 1,
+                },
+                shadowOpacity: 0.22,
+                shadowRadius: 2.22
+              }}>
+                  <Text style={{ fontSize: 18 }}>{this.state.end_date}</Text>
+              </Card>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <Card containerStyle={{ 
+          height: 250,
+          borderRadius: 10,
+          elevation: 3,
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 1,
+          },
+          shadowOpacity: 0.22,
+          shadowRadius: 2.22
+        }}>
+          <FlatList
+            data={this.state.detail}
+            renderItem={this._renderDetail}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={this.getListHeader}
+            ListEmptyComponent={this.getEmptyList}
+          />
         </Card>
-        <FlatList
-          data={this.state.detail}
-          renderItem={this._renderDetail}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-          ListHeaderComponent={this.getListHeader}
-          ListEmptyComponent={this.getEmptyList}
-          ListFooterComponent={this.getListFooter}
-        />
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: HEADER_MAX_HEIGHT,
+    zIndex: 1200,
+  },
+
   container:{
     flex: 1,
     justifyContent: 'center',
+    backgroundColor: Colors.backgroundColor
   },
 
   contentContainer: {
@@ -649,17 +741,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
 
-  card: {
-    justifyContent: 'space-around',
-    backgroundColor: 'white',
-    borderWidth: 0.3,
-    borderColor: 'gray',
-  },
-
-  deleteIcon: {
-    alignItems: 'flex-end'
-  },
-
   detailCard: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -668,27 +749,6 @@ const styles = StyleSheet.create({
   day:{
     alignItems: 'center',
     paddingBottom: 10,
-  },
-
-  dday:{
-    alignItems: 'center',
-    paddingBottom: 10,
-  },
-
-  content: {
-    fontSize: 25,
-  },
-
-  info: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-    
-  date: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingBottom: 15,
   },
 
   text: {
@@ -703,5 +763,14 @@ const styles = StyleSheet.create({
 
   selectedRangeStyle: {
     backgroundColor: 'gray'
-  }
+  },
+
+  gradient: {
+    flex: 1,
+    paddingTop: 10,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    flexDirection: 'row',
+    elevation: 8,
+  },
 })

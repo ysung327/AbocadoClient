@@ -46,37 +46,32 @@ class VacationInfo extends Component {
   
   render() {
     return (
-      <View style={{ flex:1 }}>
-        <View style={{ alignItems: 'center' }}>
-          <Text style={{ fontSize: 20, }}>나의 휴가</Text>
+      <View style={styles.container}>
+        <View style={styles.column1}>
+          <Card containerStyle={styles.card1} wrapperStyle={{ flex:1, justifyContent: 'center', }}>
+            <Text style={{ top: 0, position: 'absolute', fontSize: 12, color: Colors.accentColor2, }}>총 휴가</Text>
+            <View style={{ alignItems: 'center', }}>
+              <Text style={{ fontSize: 32, }}>{this.state.data.total}</Text>
+            </View>
+          </Card>
         </View>
-        <View style={styles.container}>
-          <View style={styles.column1}>
-            <Card containerStyle={styles.card1} wrapperStyle={{ flex:1, justifyContent: 'center', }}>
-              <Text style={{ top: 0, position: 'absolute', fontSize: 12, color: Colors.accentColor2, }}>총 휴가</Text>
-              <View style={{ alignItems: 'center', }}>
-                <Text style={{ fontSize: 32, }}>{this.state.data.total}</Text>
-              </View>          
-            </Card>
-          </View>
-          <View style={styles.column2}>
-            <Card containerStyle={[styles.card2, { marginBottom: 3 }]}>
-              <View>
-                <Text style={{ position: 'absolute', fontSize: 12, color: Colors.accentColor2 }}>나간 휴가</Text>
-              </View>
-              <View style={{ alignItems: 'center', paddingBottom: 5 }}>
-                <Text style={{ fontSize: 20 }}>{this.state.data.gone}</Text>
-              </View>
-            </Card>
-            <Card containerStyle={[styles.card2, { marginTop: 3 }]}>
-              <View>
-                <Text style={{ position: 'absolute', fontSize: 12, color: Colors.accentColor2, }}>남은 휴가</Text>
-              </View>
-              <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 20 }}>{this.state.data.left}</Text>
-              </View>
-            </Card>
-          </View>
+        <View style={styles.column2}>
+          <Card containerStyle={[styles.card2, { marginBottom: 3 }]}>
+            <View>
+              <Text style={{ position: 'absolute', fontSize: 12, color: Colors.accentColor2 }}>나간 휴가</Text>
+            </View>
+            <View style={{ alignItems: 'center', paddingBottom: 5 }}>
+              <Text style={{ fontSize: 20 }}>{this.state.data.gone}</Text>
+            </View>
+          </Card>
+          <Card containerStyle={[styles.card2, { marginTop: 3 }]}>
+            <View>
+              <Text style={{ position: 'absolute', fontSize: 12, color: Colors.accentColor2, }}>남은 휴가</Text>
+            </View>
+            <View style={{ alignItems: 'center' }}>
+              <Text style={{ fontSize: 20 }}>{this.state.data.left}</Text>
+            </View>
+          </Card>
         </View>
       </View>
     )
