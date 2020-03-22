@@ -138,7 +138,7 @@ export default class HomeScreen extends Component {
 
 
     return (
-      <View style={{ flex: 1, justifyContent: 'flex-start'}}>
+      <View style={{ flex: 1, justifyContent: 'flex-start', backgroundColor: Colors.backgroundColor }}>
         <View style={styles.header}>
           <Header/>
         </View>

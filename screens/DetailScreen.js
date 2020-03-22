@@ -12,6 +12,8 @@ import Header from '../components/Header'
 
 const { height } = Dimensions.get('window')
 const HEADER_MAX_HEIGHT = 70
+const CALENDAR_WEEK_DAYS = [ '일', '월', '화', '수', '목', '금', '토' ]
+const CALENDAR_MONTHS = [ '1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월' ]
 
 export default class DetailScreen extends Component {
   constructor(props) {
@@ -177,6 +179,34 @@ export default class DetailScreen extends Component {
     this.setDatePickerVisible(true)
   }
 
+  showCalendar = () => {
+    if(this.state.isDatePickerVisible == true) {
+      return(
+        <Card containerStyle={[{ height: 400, borderRadius: 10, paddingTop: 0 }, styles.elevation ]}>
+          <CalendarPicker
+            scaleFactor={410}
+            allowRangeSelection={true}
+            selectedStartDate={this.state.start_date}
+            selectedEndDate={this.state.end_date}
+            initialDate={(this.state.start_date!=null) ? this.state.start_date : moment().format()}
+            onDateChange={this.onDateChange}
+            weekdays={CALENDAR_WEEK_DAYS}
+            months={CALENDAR_MONTHS}
+            textStyle={{ fontSize: 20 }}
+            previousTitleStyle={{ fontSize: 20, textAlign: 'right', color: Colors.primaryColor }}
+            nextTitleStyle={{ fontSize: 20, textAlign: 'left', color: Colors.primaryColor }}
+            previousTitle="<"
+            nextTitle=">"
+            selectedDayColor={Colors.accentColor2}
+            selectedRangeStyle={{ backgroundColor: "#e5e5e5"}}
+            dayLabelsWrapper={{ marginLeft: 15, borderBottomWidth: 0, borderTopWidth: 0 }}
+          />
+        </Card>
+      )
+    } return null
+
+  }
+
   hideDatePicker = () => {
     this.setDatePickerVisible(false)
   }
@@ -253,9 +283,9 @@ export default class DetailScreen extends Component {
       })
       //console.log(this.state.itemChecked)
     } else {
-      this.setState({
-        itemChecked: [...itemChecked.slice(0, i), ...itemChecked.slice(i + 1)]
-      })
+        this.setState({
+          itemChecked: [...itemChecked.slice(0, i), ...itemChecked.slice(i + 1)]
+        })
       //console.log(this.state.itemChecked)
     }
   }
@@ -314,70 +344,41 @@ export default class DetailScreen extends Component {
   }
 
   sendDate = () => {
-    if(typeof this.state.start_date != 'string' && this.state.start_date != null) {
-      var obj1 = this.state.start_date.toObject()
-      var obj2 = this.state.end_date.toObject()
-      var start_date = null
-      var end_date = null
-      //console.log(obj1, obj2)
-
-      start_date = obj1.years + '-' + (obj1.months+1) + '-' + obj1.date
-      end_date = obj2.years + '-' + (obj2.months+1) + '-' + obj2.date
-      //console.log(start_date, end_date)
-
-      const url = "http://ysung327.pythonanywhere.com/vacations/" + this.state.pk + '/'
-      fetch(url, {
-        method: 'PUT',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'Token ' + this.state.token,
-        },
-        body: JSON.stringify({
-            start_date : start_date,
-            end_date: end_date,
-            user: this.state.user,
-        })
-      })
-    }
-    this.hideDatePicker()
-    setTimeout(() => {
-      this.fetchDataFromApi(this.state.pk)
-    }, 300)
-  }
-
-  onDateChange = (date, type) => {
-    if (type === 'END_DATE') {
-      this.setState({
-        end_date: date,
-      })
-    } else {
-      this.setState({
-        start_date: date,
-        end_date: null
-      })
-    }
-    //console.log(this.state.start_date, this.state.end_date)
-  }
-
-  sendDay = (value) => {
     const url = "http://ysung327.pythonanywhere.com/vacations/" + this.state.pk + '/'
-    this.setState({
-      day: value
-    })
-    console.log(this.state.day)
     fetch(url, {
       method: 'PUT',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Token ' + this.state.token,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Token ' + this.state.token,
       },
       body: JSON.stringify({
-        day : this.state.day,
-        user : this.state.user,
+          start_date : this.props.start_date,
+          end_date: this.props.end_date,
+          user: this.state.user,
       })
     })
+    this.fetchDataFromApi(this.state.pk)
+  }
+
+  onDateChange = (date, type) => {
+    var temp = date.toObject()
+    var end = null
+    var start = null
+    if (type === 'END_DATE') {
+      end = temp.years + '-' + (temp.months+1) + '-' + temp.date
+      this.props.end_date = end
+      this.sendDate()
+      setTimeout(() => {
+        this.setDatePickerVisible(false)
+      }, 500)
+      
+    } else {
+      start = temp.years + '-' + (temp.months+1) + '-' + temp.date
+      this.props.start_date = start
+      this.props.end_date = null
+      this.sendDate()
+    }
   }
 
   sendAnnual = (value) => {
@@ -400,12 +401,15 @@ export default class DetailScreen extends Component {
     })
   }
 
-  getEmptyList = () => {
-    return (
-      <View>
-        <Text>상세내용을 저장해보세요!</Text>
-      </View>
-    )
+  renderEmptyList = () => {
+    if( this.state.annual == 0 && this.state.detail == null) {
+      return (
+        <View>
+          <Text>상세내용을 저장해보세요!</Text>
+        </View>
+      )
+    }
+    return null
   }
   
   getListFooter = () => {
@@ -418,14 +422,14 @@ export default class DetailScreen extends Component {
     )
   }
 
-  getListHeader = () => {
+  renderAnn = () => {
     if (this.state.annual != null) {
       return (
-        <View style={{ borderWidth: 1, flexDirection: 'row' }}>
-          <View style={{ borderWidth: 1, justifyContent: 'center' }}>
-              <Text style={{ fontSize: 17 }}>{this.state.annual}</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ width: 50  }}>
+              <Text style={{ fontSize: 18, textAlign: 'center' }}>{this.state.annual}</Text>
           </View>      
-          <View style={{ borderWidth: 1 }}>
+          <View style={{ marginLeft: 30 }}>
               <Text style={{ fontSize: 20 }}>연가</Text>
           </View>
         </View>
@@ -552,134 +556,48 @@ export default class DetailScreen extends Component {
           </View>
         </Modal>
 
-
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={this.state.isDatePickerVisible}
-          onRequestClose={() => this.hideDatePicker()}
-        >              
-          <View style={styles.modal}>
-            <View style={[styles.modalInside, {height: this.state.screenHeight*0.7}]}>
-              <CalendarPicker
-                allowRangeSelection={true}
-                startFromMonday={true}
-                selectedStartDate={this.state.start_date}
-                selectedEndDate={this.state.end_date}
-                initialDate={(this.state.start_date!=null) ? this.state.start_date : moment().format()}
-                selectedRangeStyle={styles.selectedRangeStyle}
-                onDateChange={this.onDateChange}
-              />
-              <Button 
-                title={'완료'}
-                onPress={() => this.sendDate()}
-              />
-            </View>
+        <View style={{ marginTop: 160, flexDirection: 'row', justifyContent: 'center' }}>
+          <View>
+            <Text style={{ fontSize: 32, textAlign: 'center' }}>{(this.state.data.day!=null) ? this.state.data.day + ' Days' : '휴가를 정해보세요!'}</Text>
           </View>
-        </Modal>
 
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={this.state.isDayPickerVisible}
-          onRequestClose={() => this.hideDayPicker()}
-        >              
-          <View style={styles.dayPicker}>
-            <View style={[styles.dayPickerInside, {height: this.state.screenHeight*0.7}]}>
-              <Text style={styles.text}>
-                이번휴가는 얼마나 나가는지 정해보세요!
-              </Text>
-              <View style={{ alignContent: 'center' }}>
-                <NumericInput 
-                  value={this.state.day}
-                  initValue={this.state.day}
-                  onChange={value => this.sendDay(value)}
-                  step={1}
-                  minValue={0}
-                  valueType='integer'
-                  rounded
-                  type='up-down'
-                  textColor='#B0228C' 
-                  iconStyle={{ color: 'white' }}
-                  upDownButtonsBackgroundColor='#E56B70'/>
-              </View>
-              <Button 
-                title={'완료'}
-                onPress={() => {
-                  this.hideDayPicker()
-                  this.fetchDataFromApi(this.state.pk)
-                }}
-              />
-            </View>
-          </View>
-        </Modal>
-
-        <View style={{ marginTop: 110, flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={this.showDayPicker}>
-            <Text style={{ fontSize: 32, textAlign: 'center' }}>{(this.state.data.day!=null) ? this.state.data.day + ' Days' : '이번엔 몇 나갈까?'}</Text>
-          </TouchableOpacity>
           <View style={{ position: 'absolute', right:30, top: 10 }}>
             <Icon name="md-trash" type='ionicon' size={30} color={Colors.primaryColor} onPress={this.deleteVacation}/>
           </View> 
+
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10, marginBottom: 10 }}>
           <TouchableOpacity onPress={()=>this.showDatePicker()}>
             <View style={{ flexDirection: 'column', alignItems: 'center'}}>
               <Icon name="ios-calendar" type="ionicon" size={20} color={Colors.primaryColor}/>
-              <Card containerStyle={{ borderRadius: 10, height: 40, justifyContent: 'center', marginHorizontal: 5, paddingHorizontal: 20, marginTop: 5,
-                elevation: 3,
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 1,
-                },
-                shadowOpacity: 0.22,
-                shadowRadius: 2.22
-              }}>
-                  <Text style={{ fontSize: 18 }}>{this.state.start_date}</Text>
+              <Card containerStyle={[{ borderRadius: 10, height: 40, justifyContent: 'center', marginHorizontal: 5, paddingHorizontal: 20, marginTop: 5 }, styles.elevation ]}>
+                  <Text style={{ fontSize: 18 }}>{(this.state.start_date!=null) ? this.state.start_date : '휴가출발일'}</Text>
               </Card>
             </View>
           </TouchableOpacity>
-          <View style={{ flexDirection: 'column', justifyContent: 'center' }}><Text>_______</Text></View>
+          <View style={{ flexDirection: 'column', justifyContent: 'center', paddingTop: 13 }}><Text>_______</Text></View>
           <TouchableOpacity onPress={()=>this.showDatePicker()}>
             <View style={{ flexDirection: 'column', alignItems: 'center'}}>
               <Icon name="ios-calendar" type="ionicon" size={20} color={Colors.primaryColor}/>
-              <Card containerStyle={{ borderRadius: 10, height: 40, justifyContent: 'center', marginHorizontal: 5, paddingHorizontal: 20, marginTop: 5,
-                elevation: 3,
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 1,
-                },
-                shadowOpacity: 0.22,
-                shadowRadius: 2.22
-              }}>
-                  <Text style={{ fontSize: 18 }}>{this.state.end_date}</Text>
+              <Card containerStyle={[{ borderRadius: 10, height: 40, justifyContent: 'center', marginHorizontal: 5, paddingHorizontal: 20, marginTop: 5 }, styles.elevation ]}>
+                  <Text style={{ fontSize: 18 }}>{(this.state.end_date!=null) ? this.state.end_date : '휴가복귀일'}</Text>
               </Card>
             </View>
           </TouchableOpacity>
         </View>
-        <Card containerStyle={{ 
-          height: 250,
-          borderRadius: 10,
-          elevation: 3,
-          shadowColor: "#000",
-          shadowOffset: {
-            width: 0,
-            height: 1,
-          },
-          shadowOpacity: 0.22,
-          shadowRadius: 2.22
-        }}>
-          <FlatList
-            data={this.state.detail}
-            renderItem={this._renderDetail}
-            keyExtractor={(item) => item.id}
-            showsVerticalScrollIndicator={false}
-            ListHeaderComponent={this.getListHeader}
-            ListEmptyComponent={this.getEmptyList}
-          />
-        </Card>
+        { this.showCalendar() }
+        { this.state.isDatePickerVisible == false &&
+          <Card containerStyle={[{ height: 400, borderRadius: 10 }, styles.elevation ]}>
+            { this.renderAnn() }
+            <FlatList
+              data={this.state.detail}
+              renderItem={this._renderDetail}
+              keyExtractor={(item) => item.id}
+              showsVerticalScrollIndicator={false}
+            />
+            { this.renderEmptyList() }
+          </Card>
+        }
       </View>
     )
   }
@@ -697,8 +615,7 @@ const styles = StyleSheet.create({
 
   container:{
     flex: 1,
-    justifyContent: 'center',
-    backgroundColor: Colors.backgroundColor
+    backgroundColor: Colors.backgroundColor,
   },
 
   contentContainer: {
@@ -727,20 +644,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
 
-  dayPicker: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor : 'rgba(0,0,0,0.2)',
-  },
-
-  dayPickerInside: {
-    borderRadius: 10,
-    borderWidth: 0.3,
-    width: '80%',
-    backgroundColor: 'white',
-  },
-
   detailCard: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -751,18 +654,10 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
 
-  text: {
-    fontSize: 17,
-  },
-
   typeTitle: {
     fontSize: 15, 
     fontWeight: 'bold',
     textAlign: 'center'
-  },
-
-  selectedRangeStyle: {
-    backgroundColor: 'gray'
   },
 
   gradient: {
@@ -773,4 +668,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     elevation: 8,
   },
+
+  elevation: {
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22
+  }
 })
