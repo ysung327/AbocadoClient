@@ -41,7 +41,7 @@ class VacationItem extends Component {
         <TouchableOpacity onPress={this.onPress}>
           <View>
             <Text style={{ position:'absolute', top: 10, fontSize: 24 , color: Colors.accentColor2}}>{this.props.item.day}</Text>
-            <Text style={{ position:'absolute', top: 17, left: 20, fontSize: 16, color: Colors.accentColor2 }}>Days</Text>
+            <Text style={[{ position:'absolute', top: 17, fontSize: 16, color: Colors.accentColor2 }, (this.props.item.day > 9) ? {left: 30} : {left: 20}]}>Days</Text>
           </View>
           {dday}
           <View style={styles.info}>
