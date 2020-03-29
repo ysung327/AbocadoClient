@@ -1,13 +1,6 @@
 import React, { Component } from 'react';
-import { 
-  StyleSheet, 
-  View, 
-  ScrollView, 
-  Dimensions,
-  Animated,
-  Text,
-  Easing,
-} from 'react-native';
+import { StyleSheet,  View, ScrollView, Dimensions, Animated, Text, Easing } from 'react-native';
+import { Card, Button, Icon } from 'react-native-elements'
 import { LinearGradient } from 'expo-linear-gradient';
 import ProgressBar from 'react-native-progress/Bar';
 import Colors from '../constants/Colors'
@@ -15,6 +8,7 @@ import VacationList from '../components/VacationList';
 import VacationInfo from '../components/VacationInfo';
 import VacationType from '../components/VacationType';
 import Header from '../components/Header'
+import { Actions } from 'react-native-router-flux';
 
 
 const { height } = Dimensions.get('window');
@@ -41,6 +35,7 @@ export default class HomeScreen extends Component {
         hour : 5448,
         minute : 31,
         second : 39,
+        newVacationId: null
     }
   }
   
@@ -83,6 +78,32 @@ export default class HomeScreen extends Component {
     })
   }
 
+  _createVacation = () => {
+    const url = "http://ysung327.pythonanywhere.com/vacations/create/"
+    fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Token ' + this.state.token,
+      },        
+      body: JSON.stringify({
+        user: this.state.user
+      })
+    })
+    .then(res => res.json())
+    .then(res => {
+      this.setState({
+        newVacationId: res.id
+      })
+      console.log(this.state.newVacationId)
+    })
+    setTimeout(()=>{
+      Actions.detail({onUpload: this.props.onUpload,
+        id : this.state.newVacationId, token : this.state.token, user : this.state.user})
+    }, 500)
+
+  }
 
   render() {
     const dutyHeight = this.state.scrollY.interpolate({
@@ -138,7 +159,7 @@ export default class HomeScreen extends Component {
 
 
     return (
-      <View style={{ flex: 1, justifyContent: 'flex-start', backgroundColor: Colors.backgroundColor }}>
+      <View style={{ flex: 1, justifyContent: 'flex-start'}}>
         <View style={styles.header}>
           <Header/>
         </View>
@@ -209,7 +230,10 @@ export default class HomeScreen extends Component {
           </Animated.View>
           <View style={styles.vacationList}>
             <View style={{ alignItems: 'center', marginBottom: 5 }}>
-              <Text style={{ fontSize: 20, }}>등록한 휴가</Text>
+              <Text style={{ fontSize: 20 }}>등록한 휴가</Text>
+              <View style={{ position: 'absolute', right:25 }}>
+                <Icon name="md-add-circle" type='ionicon' size={30} color={Colors.primaryColor} onPress={this._createVacation}/>
+              </View> 
             </View>
             <VacationList token={this.state.token} user={this.state.user}/>
           </View>
@@ -217,7 +241,7 @@ export default class HomeScreen extends Component {
             <View style={{ alignItems: 'center', marginBottom: 10 }}>
               <Text style={{ fontSize: 20, }}>보유한 휴가</Text>
             </View>
-            <VacationType token={this.state.token} user={this.state.user}/>
+            <VacationType token={this.state.token} user={this.state.user} lefted={this.state.lefted}/>
           </View>
           <Animated.View style={{ height: 200 }}></Animated.View>
         </ScrollView>

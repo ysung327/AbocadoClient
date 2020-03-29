@@ -67,10 +67,15 @@ class VacationType extends Component {
     })
   }
 
-  _onPress = (type) => {
-    console.log(type)
-    Actions.type_detail({type_of_detail: type,
-      token : this.props.token, user : this.props.user})
+  _onPress = (type_of_detail) => {
+    if(type_of_detail !== 'ANN') {
+      Actions.type_detail({
+        type_of_detail: type_of_detail,
+        lefted: this.props.lefted,
+        token : this.props.token,
+        user : this.props.user
+      })
+    }
   }
 
   render() {
@@ -82,7 +87,7 @@ class VacationType extends Component {
                     onPress={()=>this._onPress('ANN')}>                  
                     <Text style={styles.text}>연가</Text>
                     <View style={{ height: 130, alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ fontSize: 32 }}>6</Text>
+                      <Text style={{ fontSize: 32 }}>26</Text>
                     </View>
                 </TouchableOpacity>
               </Card>

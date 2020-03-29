@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, FlatList, Modal, Dimensions, ScrollView } from 'react-native';
 import { Card, Button, Icon } from 'react-native-elements'
 import CalendarPicker from 'react-native-calendar-picker'
-import NumericInput from 'react-native-numeric-input'
+import { TextInput } from 'react-native-paper';
+import { TextField, FilledTextField, OutlinedTextField } from 'react-native-material-textfield';
 import moment from 'moment'
 import Colors from '../constants/Colors'
 import { LinearGradient } from 'expo-linear-gradient';
@@ -25,6 +26,7 @@ export default class DetailScreen extends Component {
       loading: false,
       data: [],
       detail: [],
+      detailSum: 0,
       modalData: [],
       conData: [],
       prData: [],
@@ -51,7 +53,6 @@ export default class DetailScreen extends Component {
   componentDidMount() {
     this.fetchDataFromApi(this.state.pk)
     this.fetchModalFromApi()
-    console.log(this.state.user)
   }
 
   async fetchDataFromApi(pk) {
@@ -72,12 +73,18 @@ export default class DetailScreen extends Component {
         user: this.state.user
       })
     })
+    
     const responseJson = await response.json()
     const _detail = responseJson.detail
+    let _detailSum = responseJson.annual
+    for (let i of _detail) {
+      _detailSum += i.day
+    }
 
     this.setState({
       data: responseJson,
       detail: _detail,
+      detailSum: _detailSum,
       annual: responseJson.annual,
       start_date: responseJson.start_date,
       end_date: responseJson.end_date,
@@ -124,11 +131,79 @@ export default class DetailScreen extends Component {
         reData: _reData,
         prData: _prData,
         peData: _peData,
+        created: false
       })
     })
     .catch((error) => {
       console.log(error);
     })
+  }
+
+  sendDate = () => {
+    console.log('test   ' + this.state.pk)
+    const url = "http://ysung327.pythonanywhere.com/vacations/" + this.state.pk + '/'
+    fetch(url, {
+      method: 'PUT',
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Token ' + this.state.token,
+      },
+      body: JSON.stringify({
+          start_date : this.props.start_date,
+          end_date: this.props.end_date,
+          user: this.state.user,
+      })
+    })
+    setTimeout(()=> {
+      this.fetchDataFromApi(this.state.pk)
+    }, 50)
+    
+  }
+
+  sendDetail = () => {
+    const newDetail = this.state.itemChecked
+    this.setState({
+      itemChecked: []
+    })
+    for (let i of newDetail) {
+      //console.log(i)
+      let url = "http://ysung327.pythonanywhere.com/vacations/detail/" + i + '/';
+      fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Token ' + this.state.token,
+        },
+        body: JSON.stringify({
+          vacation: this.state.pk,
+          is_used: true,
+        })
+      })
+    }
+    setTimeout(() => {
+      this.fetchDataFromApi(this.state.pk)
+      this.fetchModalFromApi()
+    }, 300)
+  }
+  
+  sendAnnual = () => {
+    const url = "http://ysung327.pythonanywhere.com/vacations/" + this.state.pk + '/'
+
+    fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Token ' + this.state.token,
+      },
+      body: JSON.stringify({
+        annual : this.state.annual,
+        user : this.state.user,
+      })
+    })
+    this.fetchDataFromApi(this.state.pk)
   }
 
   deleteVacation = () => {
@@ -166,27 +241,56 @@ export default class DetailScreen extends Component {
     }, 300)
   }
 
+  showDetail = () => {
+    if(this.state.isDatePickerVisible == false && this.state.isDetailAddVisible == false) {
+      return(
+        <Card containerStyle={[{ height: 600, borderRadius: 10, zIndex: 1 }, styles.elevation ]}>
+          { this.renderAnn() }
+          <FlatList
+            data={this.state.detail}
+            renderItem={this._renderDetail}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+          />
+          { this.renderEmptyList() }
+        </Card>
+      )
+    }
+    return null
+  }
+
+  showDetialSum = () => {
+    if(this.state.detailSum != null) {
+      return(
+        <View style={{ justifyContent: 'center', marginVertical: 10, paddingBottom: 5, borderBottomWidth: 2, borderBottomColor: Colors.lineColor }}>
+          <Text style={{ fontSize: 24, textAlign: 'center' }}>{ this.state.detailSum }</Text>
+        </View>
+      )
+    } else {
+        return(
+          <View style={{ justifyContent: 'center', marginVertical: 10, paddingBottom: 5, borderBottomWidth: 2, borderBottomColor: Colors.lineColor }}>
+            <Text style={{ fontSize: 24, textAlign: 'center' }}>0</Text>
+          </View>
+      )
+    }
+  }
+
   showDetailAdd = () => {
     if(this.state.isDetailAddVisible == true) {
       return(
-        <Card containerStyle={[{ height: 400, borderRadius: 10, paddingTop: 0 }, styles.elevation ]}>
-          <ScrollView>
-            <View style={styles.day}>
-              <NumericInput 
-                value={this.state.annual}
-                initValue={this.state.annual}
-                onChange={value => this.sendAnnual(value)}
-                step={1}
-                minValue={0}
-                valueType='integer'
-                rounded
-                type='up-down'
-                textColor='#B0228C' 
-                iconStyle={{ color: 'white' }}
-                upDownButtonsBackgroundColor='#E56B70'/>
+        <Card containerStyle={[{ height: 600, borderRadius: 10, paddingTop: 0 }, styles.elevation ]}>
+          { this.showDetialSum() }
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={{ justifyContent: 'center' }}>
+              <Card containerStyle={{ justifyContent: 'center', backgroundColor: Colors.lineColor, borderRadius: 10, paddingVertical: 5, marginHorizontal: 0, marginBottom: 10 }}>
+                <Text style={styles.typeTitle}>연가</Text>
+              </Card>
+              { this._renderTextInput() }
             </View>
-            <View style={{ flexDirection: 'row', borderTopWidth: 1, borderColor: Colors.lineColor, alignItems: 'center' }}>
-              <View style={{ justifyContent: 'center', width: 75, borderRightWidth: 1, borderColor: Colors.lineColor }}><Text style={styles.typeTitle}>위로</Text></View>
+            <View style={{ justifyContent: 'center' }}>
+              <Card containerStyle={{ justifyContent: 'center', backgroundColor: Colors.lineColor, borderRadius: 10, paddingVertical: 5, marginHorizontal: 0, marginBottom: 10 }}>
+                <Text style={styles.typeTitle}>위로</Text>
+              </Card>
               <FlatList
                 data={this.state.conData}
                 renderItem={this._renderUnusedDetail}
@@ -194,8 +298,10 @@ export default class DetailScreen extends Component {
                 showsVerticalScrollIndicator={false}
               />
             </View>
-            <View style={{ flexDirection: 'row', borderTopWidth: 1, borderColor: Colors.lineColor, alignItems: 'center' }}>
-              <View style={{ justifyContent: 'center', width: 75, borderRightWidth: 1, borderColor: Colors.lineColor }}><Text style={styles.typeTitle}>포상</Text></View>
+            <View style={{ justifyContent: 'center' }}>
+              <Card containerStyle={{ justifyContent: 'center', backgroundColor: Colors.lineColor, borderRadius: 10, paddingVertical: 5, marginHorizontal: 0, marginBottom: 10 }}>
+                <Text style={styles.typeTitle}>포상</Text>
+              </Card>
               <FlatList
                 data={this.state.prData}
                 renderItem={this._renderUnusedDetail}
@@ -203,8 +309,10 @@ export default class DetailScreen extends Component {
                 showsVerticalScrollIndicator={false}
               />
             </View>
-            <View style={{ flexDirection: 'row', borderTopWidth: 1, borderColor: Colors.lineColor, alignItems: 'center' }}>
-              <View style={{ justifyContent: 'center', width: 75, borderRightWidth: 1, borderColor: Colors.lineColor }}><Text style={styles.typeTitle}>보상</Text></View>
+            <View style={{ justifyContent: 'center' }}>
+              <Card containerStyle={{ justifyContent: 'center', backgroundColor: Colors.lineColor, borderRadius: 10, paddingVertical: 5, marginHorizontal: 0, marginBottom: 10 }}>
+                <Text style={styles.typeTitle}>보상</Text>
+              </Card>
               <FlatList
                 data={this.state.reData}
                 renderItem={this._renderUnusedDetail}
@@ -212,8 +320,10 @@ export default class DetailScreen extends Component {
                 showsVerticalScrollIndicator={false}
               />
             </View>
-            <View style={{ flexDirection: 'row', borderTopWidth: 1, borderColor: Colors.lineColor, alignItems: 'center' }}>
-              <View style={{ justifyContent: 'center', width: 75, borderRightWidth: 1, borderColor: Colors.lineColor }}><Text style={styles.typeTitle}>청원</Text></View>
+            <View style={{ justifyContent: 'center' }}>
+              <Card containerStyle={{ justifyContent: 'center', backgroundColor: Colors.lineColor, borderRadius: 10, paddingVertical: 5, marginHorizontal: 0, marginBottom: 10 }}>
+                <Text style={styles.typeTitle}>청원</Text>
+              </Card>
               <FlatList
                 data={this.state.peData}
                 renderItem={this._renderUnusedDetail}
@@ -221,6 +331,7 @@ export default class DetailScreen extends Component {
                 showsVerticalScrollIndicator={false}
               />
             </View>
+            <View style={{ height: 300 }}></View>
           </ScrollView>
         </Card>
       )
@@ -255,25 +366,7 @@ export default class DetailScreen extends Component {
     } return null
   }
 
-  showDetail = () => {
-    if(this.state.isDatePickerVisible == false && this.state.isDetailAddVisible == false) {
-      return(
-        <Card containerStyle={[{ height: 400, borderRadius: 10, zIndex: 1 }, styles.elevation ]}>
-          { this.renderAnn() }
-          <FlatList
-            data={this.state.detail}
-            renderItem={this._renderDetail}
-            keyExtractor={(item) => item.id}
-            showsVerticalScrollIndicator={false}
-          />
-          { this.renderEmptyList() }
-        </Card>
-      )
-    }
-    return null
-  }
-
-  setDetailAddVisible = (visible) => {
+  setDetailAddVisible = () => {
     if(this.state.isDetailAddVisible == false) {
       this.setState({
         isDetailAddVisible: true
@@ -300,126 +393,7 @@ export default class DetailScreen extends Component {
 
   goBack = () => {
     this.props.navigation.goBack()
-    this.props.navigation.state.params.onUpload()
-  }
-
-  sendDetail = () => {
-    const newDetail = this.state.itemChecked
-    this.setState({
-      itemChecked: []
-    })
-    for (let i of newDetail) {
-      //console.log(i)
-      let url = "http://ysung327.pythonanywhere.com/vacations/detail/" + i + '/';
-      fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': 'Token ' + this.state.token,
-        },
-        body: JSON.stringify({
-          vacation: this.state.pk,
-          is_used: true,
-        })
-      })
-    }
-    this.hideDetailAdd()
-    setTimeout(() => {
-      this.fetchDataFromApi(this.state.pk)
-      this.fetchModalFromApi()
-    }, 300)
-  }
-
-  selectItem = (index) => {
-    const itemChecked = this.state.itemChecked
-    let i = itemChecked.indexOf(index)
-    let temp = []
-    //console.log("id: " + index)
-    //console.log("i: " + i)
-    if (i == -1) {
-      temp = itemChecked.concat(index)
-      this.setState({
-        itemChecked: temp
-      })
-      //console.log(this.state.itemChecked)
-    } else {
-        this.setState({
-          itemChecked: [...itemChecked.slice(0, i), ...itemChecked.slice(i + 1)]
-        })
-      //console.log(this.state.itemChecked)
-    }
-  }
-
-  getdDay = () => {
-    let dday = []
-    if(this.state.data.start_date!=null) {
-      if(this.state.data.dDay<0) {
-        let dDay = this.state.data.dDay * -1
-        dday.push(<Text style={{ fontSize: 24, color: 'white' }}>D-{dDay}</Text>)
-      }
-      else dday.push(<Text style={{ fontSize: 24, color: 'white' }}>D+{this.state.data.dDay}</Text>)
-    }
-    else dday.push(<Text style={{ fontSize: 24, color: 'white' }}>휴가날짜를 정해주세요!</Text>)
-    return dday
-  }
-
-  _renderDetail = ({item}) => {
-    return (
-      <View style={{ borderWidth: 1 }}>
-        <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 20 }}>{item.day}</Text>
-        </View>
-        <View style={{ flex: 3 }}>
-            <Text style={{ fontSize: 17 }}>{item.title}</Text>
-        </View>
-        <View style={{ flex: 1 }}>
-          <Icon
-            name='md-delete'
-            onPress={() => this.deleteDetail(item.id)}
-          />
-        </View>
-      </View>
-    )
-  }
-
-  changeBackground = (id) => {
-    if (this.state.itemChecked.indexOf(id) != -1) {
-      return true
-    } else false
-  }
-
-  _renderUnusedDetail = ({item}) => {
-    return (
-      <TouchableOpacity onPress={()=>this.selectItem(item.id)}>
-        <View style={[{ flexDirection: 'row', alignItems: 'center' }, this.changeBackground(item.id) ? {backgroundColor: 'gray'} : null]}>
-          <View style={{ width: 50  }}>
-              <Text style={{ fontSize: 18, textAlign: 'center' }}>{item.day}</Text>
-          </View>      
-          <View style={{ marginLeft: 30 }}>
-              <Text style={{ fontSize: 20 }}>{item.title}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    )
-  }
-
-  sendDate = () => {
-    const url = "http://ysung327.pythonanywhere.com/vacations/" + this.state.pk + '/'
-    fetch(url, {
-      method: 'PUT',
-      headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': 'Token ' + this.state.token,
-      },
-      body: JSON.stringify({
-          start_date : this.props.start_date,
-          end_date: this.props.end_date,
-          user: this.state.user,
-      })
-    })
-    this.fetchDataFromApi(this.state.pk)
+    //this.props.navigation.state.params.onUpload()
   }
 
   onDateChange = (date, type) => {
@@ -431,7 +405,7 @@ export default class DetailScreen extends Component {
       this.props.end_date = end
       this.sendDate()
       setTimeout(() => {
-        this.setDatePickerVisible(false)
+        this.setDatePickerVisible()
       }, 500)
       
     } else {
@@ -439,54 +413,123 @@ export default class DetailScreen extends Component {
       this.props.start_date = start
       this.props.end_date = null
       this.sendDate()
+      setTimeout(()=>{
+        this.setDatePickerVisible()
+        setTimeout(()=>{
+          this.setDatePickerVisible()
+        }, 200)
+      }, 100)
+
     }
   }
 
-  sendAnnual = (value) => {
-    const url = "http://ysung327.pythonanywhere.com/vacations/" + this.state.pk + '/'
-    this.setState({
-      annual: value
-    })
-    //console.log(this.state.annual)
-    fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Token ' + this.state.token,
-      },
-      body: JSON.stringify({
-        annual : this.state.annual,
-        user : this.state.user,
+  selectItem = (index, day) => {
+    const itemChecked = this.state.itemChecked
+    let i = itemChecked.indexOf(index)
+    let temp = []
+    if (i == -1) {
+      temp = itemChecked.concat(index)
+      let _detailSum = this.state.detailSum + day
+      this.setState({
+        itemChecked: temp,
+        detailSum: _detailSum
       })
-    })
+      //console.log(this.state.itemChecked)
+    } 
+    else {
+      let _detailSum = this.state.detailSum - day
+      this.setState({
+        itemChecked: [...itemChecked.slice(0, i), ...itemChecked.slice(i + 1)],
+        detailSum: _detailSum
+      })
+      //console.log(this.state.itemChecked)
+    }
+    this.setDetailAddVisible()
+    setTimeout(()=>{
+      this.setDetailAddVisible()
+    }, 1)
+  }
+
+  changeBackground = (id) => {
+    if (this.state.itemChecked.indexOf(id) != -1) {
+      console.log('도ㅔㅅㅇㅇ')
+      return (
+        <View style={{ borderWidth: 1, borderRadius: 100, width: 20, height: 20, backgroundColor: 'green' }}></View>
+      )
+    } else null
+  }
+
+  _renderDday = () => {
+    let dday = []
+    if(this.state.data.start_date!=null) {
+      if(this.state.data.dDay<0) {
+        let dDay = this.state.data.dDay * -1
+        dday.push(<Text style={{ fontSize: 24, color: 'white' }}>D-{dDay}</Text>)
+      }
+      else dday.push(<Text style={{ fontSize: 24, color: 'white' }}>D+{this.state.data.dDay}</Text>)
+      return dday
+    } 
+    else return null
+  }
+
+  _renderDetail = ({item}) => {
+    return (
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+        <View style={{ width: 50 }}>
+            <Text style={{ fontSize: 18, textAlign: 'center' }}>{item.day}</Text>
+        </View>
+        <View style={{ flex: 3 }}>
+            <Text style={{ marginLeft: 30, fontSize: 20 }}>{item.title}</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Icon name='md-trash' type='ionicon' size={20} onPress={() => this.deleteDetail(item.id)}/>
+        </View>
+      </View>
+    )
+  }
+
+  _renderUnusedDetail = ({item}) => {
+    let due_date = null
+    if(item.due_date != null) {
+      due_date = item.due_date.split('-', 3)
+    }
+    return (
+      <TouchableOpacity style={{ width: '100%' }} onPress={()=>this.selectItem(item.id , item.day)}>
+        <View style={{ flexDirection: 'row', alignContent: 'flex-start', alignItems: 'center' }}>
+          <View style={{ paddingLeft: '5%', paddingRight: '7%' }}>
+              <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{item.day}</Text>
+          </View>
+          <View style={{ flexDirection: 'row', width: '15%', alignItems: 'center' }}>
+            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{ due_date == null ? null : '~' }</Text>
+            <View style={{ marginLeft: 5, flexDirection: 'column', justifyContent: 'center' }}>
+              <Text style={{ fontSize: 12 }}>{ due_date == null ? null : due_date[0] }</Text>
+              <Text style={{ fontSize: 14}}>{ due_date == null ? null : due_date[1] + '.' + due_date[2] }</Text>
+            </View>
+          </View>      
+          <View style={{ justifyContent: 'center' }}>
+              <Text style={{ marginLeft: '10%', fontSize: 16, marginRight: '8%' }}>{item.title}</Text>
+          </View>
+          {this.changeBackground(item.id)}
+        </View>
+      </TouchableOpacity>
+    )
   }
 
   renderEmptyList = () => {
-    if( this.state.annual == 0 && this.state.detail == null) {
+    if( this.state.annual == null && this.state.detail.length == 0) {
       return (
-        <View>
-          <Text>상세내용을 저장해보세요!</Text>
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 24, textAlign: 'center' }}>휴가 세부항목을 정해보세요.</Text>
         </View>
       )
     }
     return null
   }
-  
-  getListFooter = () => {
-    return (
-      <View>
-        <Button
-          title='추가'
-          onPress={this.showDetailAdd}/>
-      </View>
-    )
-  }
 
   renderAnn = () => {
     if (this.state.annual != null) {
       return (
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{ flexDirection: 'row', marginBottom: 10 }}>
           <View style={{ width: 50  }}>
               <Text style={{ fontSize: 18, textAlign: 'center' }}>{this.state.annual}</Text>
           </View>      
@@ -499,20 +542,78 @@ export default class DetailScreen extends Component {
     return null
   }
 
+  _renderDay = () => {
+    if (this.state.day != null) {
+      return (
+          <View>
+            <Text style={{ fontSize: 32, textAlign: 'center' }}>{ this.state.data.day } Days</Text>
+          </View>
+      )
+    }
+    else return(
+      <View>
+        <Text style={{ fontSize: 20, textAlign: 'center', marginTop: 10 }}>휴가계획을 세워보세요.</Text>
+      </View>
+    )
+  }
+
+  _renderDate = () => {
+    if(this.state.start_date == null) {
+      return null
+    }
+    else if(this.state.start_date != null && this.state.end_date == null) {
+      return(
+        <Text style={{ fontSize: 12, color: 'white' }}>{this.state.start_date}</Text>
+      )
+    }
+    else if(this.state.start_date != null && this.state.end_date != null) {
+      return(
+        <Text style={{ fontSize: 12, color: 'white' }}>{this.state.start_date} - {this.state.end_date}</Text>
+      )
+    }
+  }
+
+  _renderTextInput = () => {
+    if(this.state.annual != null) {
+      let annual = this.state.annual.toString()
+      return (
+        <OutlinedTextField
+          label={'연가'}
+          placeholder={'연가'}
+          containerStyle={{ paddingVertical: 0 }}
+          inputContainerStyle={{ height: 50, width: '50%', paddingBottom: 2 }}
+          fontSize={24}
+          tintColor={Colors.primaryColor}
+          keyboardType={'phone-pad'}
+          onChangeText={annual => this.setState({ annual })}
+          onBlur={()=>this.sendAnnual()}
+        />
+      )
+    }
+    else return (
+      <TextInput
+        placeholder='연가를 입력하세요'
+        style={{ height: 50, fontSize: 24, fontWeight: 'bold', backgroundColor: null }}
+        underlineColor={Colors.primaryColor}
+        value={this.state.annual}
+        onChangeText={annual => this.setState({ annual })}
+        onBlur={()=>this.sendAnnual()}
+      />
+    )
+  }
+
+  _onPress = () => {
+    this.sendDetail()
+    this.setDetailAddVisible()
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
           <Header/>
         </View>
-        <View style={{
-          position: 'absolute',
-          top: 70,
-          left: 0,
-          right: 0,
-          height: 80,
-          zIndex: 1000,
-        }}>
+        <View style={{ position: 'absolute', top: 70, left: 0, right: 0, height: 80, zIndex: 1000 }}>
           <View style={{  
             flex: 1,
             flexDirection: "row",
@@ -524,35 +625,22 @@ export default class DetailScreen extends Component {
             }
           }}>
             <LinearGradient colors={[Colors.secondaryColor, Colors.primaryColor]} style={styles.gradient}>
-              <View style={{
-                flex: 1,
-                alignItems: 'flex-start',
-                paddingLeft: 20,
-              }}>
-                {<Text style={{ fontSize: 24, color: 'white' }}>{ this.state.title }</Text>}
-                <Text style={{ fontSize: 12, color: 'white' }}>{this.state.start_date} - {this.state.end_date}</Text>
+              <View style={{ flex: 1, alignItems: 'flex-start', paddingLeft: 20 }}>
+                <Text style={{ fontSize: 24, color: 'white' }}>{ this.state.title != null ? this.state.title : null }</Text>
+                { this._renderDate() }
               </View>
-              <View style={{
-                flex: 1,
-                alignItems: 'flex-end',
-                paddingRight: 20,
-              }}>
-                { this.getdDay() }
-                <Text style={{ fontSize: 12, color: 'white' }}>{this.state.hour}시간 {this.state.minute}분 {this.state.second}초 전</Text>
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-end', paddingRight: 20 }}>
+                { this._renderDday() }
               </View>
             </LinearGradient>
           </View>
         </View>
 
         <View style={{ marginTop: 160, flexDirection: 'row', justifyContent: 'center' }}>
-          <View>
-            <Text style={{ fontSize: 32, textAlign: 'center' }}>{(this.state.data.day!=null) ? this.state.data.day + ' Days' : '휴가를 정해보세요!'}</Text>
-          </View>
-
+          { this._renderDay() }
           <View style={{ position: 'absolute', right:30, top: 10 }}>
             <Icon name="md-trash" type='ionicon' size={30} color={Colors.primaryColor} onPress={this.deleteVacation}/>
           </View> 
-
         </View>
         <TouchableOpacity onPress={() => this.setDatePickerVisible()}>
           <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10, marginBottom: 10 }}>
@@ -575,11 +663,9 @@ export default class DetailScreen extends Component {
         { this.showCalendar() }
         { this.showDetail() }
         { this.showDetailAdd() }
-        { this.state.isDatePickerVisible == false &&
-          <View style={[{ position: 'absolute', bottom: 0, left: '42%', zIndex: 2 }, styles.elevation]}>
-            <Icon name="md-add-circle" type="ionicon" size={75} color={Colors.primaryColor} onPress={()=>this.setDetailAddVisible()}/>
-          </View>
-        }
+        <View style={[{ position: 'absolute', bottom: 0, left: '42%', zIndex: 2 }, styles.elevation]}>
+          <Icon name="md-add-circle" type="ionicon" size={75} color={Colors.primaryColor} onPress={()=>this._onPress()}/>
+        </View>
       </View>
     )
   }
@@ -597,17 +683,12 @@ const styles = StyleSheet.create({
 
   container:{
     flex: 1,
-    zIndex: 0,
+    zIndex: 3,
     backgroundColor: Colors.backgroundColor,
   },
 
-  day:{
-    alignItems: 'center',
-    paddingBottom: 10,
-  },
-
   typeTitle: {
-    fontSize: 24,
+    fontSize: 16,
     textAlign: 'center',
   },
 
