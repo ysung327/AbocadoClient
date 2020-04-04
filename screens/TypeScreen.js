@@ -24,6 +24,8 @@ export default class TypeScreen extends Component {
       day: null,
       title: null,
       uploaded: false,
+      isInfoVisible: true,
+      isDetailVisible: true,
       isDetailEditVisible: false,
       isDetailAddVisible: false,
     }
@@ -118,10 +120,12 @@ export default class TypeScreen extends Component {
   setDetailAddVisible = () => {
     if(this.state.isDetailAddVisible == false) {
       this.setState({
+        isDetailVisible: false,
         isDetailAddVisible: true
       })
     } else {
       this.setState({
+        isDetailVisible: true,
         isDetailAddVisible: false,
       })
     }
@@ -130,10 +134,12 @@ export default class TypeScreen extends Component {
   setDetailEditVisible = () => {
     if(this.state.isDetailEditVisible == false) {
       this.setState({
+        isDetailVisible: false,
         isDetailEditVisible: true
       })
     } else {
       this.setState({
+        isDetailVisible: true,
         isDetailEditVisible: false,
       })
     }
@@ -141,6 +147,8 @@ export default class TypeScreen extends Component {
 
   editDetail = (id) => {
     const url = "http://ysung327.pythonanywhere.com/vacations/detail/" + id + "/";
+    console.log(this.state.id)
+    console.log(this.state.title, this.state.day)
 
     fetch(url, {
       method: 'PUT',
@@ -163,6 +171,10 @@ export default class TypeScreen extends Component {
       })
       console.log(res)
     })
+    setTimeout(() => {
+      this.fetchDataFromApi(this.state.type_of_detail)
+      this.fetchInfoFromApi(this.state.type_of_detail)
+    }, 300)
   }
 
   addDetail = ()  => {
@@ -182,10 +194,10 @@ export default class TypeScreen extends Component {
     })
     .then(res => res.json())
     .then(res => {
-      console.log(res.id)
       this.setState({
         id: res.id,
       })
+      console.log(res.id, this.state.id)
     })
   }
 
@@ -194,8 +206,14 @@ export default class TypeScreen extends Component {
     fetch( url, { 
       method: 'DELETE',
       headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
         'Authorization': 'Token ' + this.state.token,
       },
+      body: JSON.stringify({
+        type_of_detail: this.state.type_of_detail,
+        user: this.state.user
+      })
     })
     setTimeout(() => {
       this.fetchDataFromApi(this.state.type_of_detail)
@@ -204,55 +222,42 @@ export default class TypeScreen extends Component {
   }
   
   _onPress = () => {
-    if(this.state.isDetailAddVisible == false && this.state.isDetailEditVisible == false) {
+    if(this.state.isDetailVisible) {
       this.setDetailAddVisible()
     }
     else if(this.state.isDetailAddVisible) {
-      if(this.state.title != null) {
+      if(this.state.title != null && this.state.day != null) {
         this.addDetail()
         setTimeout(()=>{
-          setTimeout(()=>{
-            this.editDetail(this.state.id)
-          }, 300)
+          console.log(this.state.id)
+          this.editDetail(this.state.id)
+        }, 1000)
+        setTimeout(()=>{
           this.fetchDataFromApi(this.state.type_of_detail)
           this.fetchInfoFromApi(this.state.type_of_detail)
-        }, 300)
+        }, 1200)
         this.setDetailAddVisible()
-      } else this.setDetailAddVisible()
+      } 
+      else this.setDetailAddVisible()
     }
-    else if(this.state.isDetailAddVisible != true && this.state.isDetailEditVisible == true) {
-      if(this.state.title != null) {
+    else if(this.state.isDetailEditVisible == true) {
+      if(this.state.title != null && this.state.day != null) {
         this.editDetail(this.state.id)
         setTimeout(() => {
           this.fetchDataFromApi(this.state.type_of_detail)
           this.fetchInfoFromApi(this.state.type_of_detail)
         }, 300)
         this.setDetailEditVisible()
-      } else this.setDetailEditVisible()
+      } 
+      else this.setDetailEditVisible()
     }
   }
 
   showDetail = () => {
-    if(this.state.isDetailEditVisible == false && this.state.isDetailAddVisible == false) {
+    if(this.state.isDetailVisible) {
       return(
-        <Card containerStyle={[{ height: 600, borderRadius: 10, zIndex: 1 }, styles.elevation ]}>
-          <View style={{ 
-            justifyContent: 'space-between',
-            flexDirection: 'row', 
-            marginBottom: 20,
-            paddingBottom: 10,
-            borderBottomWidth: 2,
-            borderBottomColor: Colors.lineColor
-          }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: 17, textAlign: 'center', paddingHorizontal: 5 }}>총 {this.state.type}</Text>
-              <Text style={{ fontSize: 24, textAlign: 'center', paddingHorizontal: 5 }}>{ this.state.total }</Text>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: 17, textAlign: 'center', paddingHorizontal: 5 }}>사용 가능</Text>
-              <Text style={{ fontSize: 24, textAlign: 'center', paddingHorizontal: 5 }}>{ this.state.left }</Text>
-            </View>
-          </View>
+        <Card containerStyle={[{ height: '70%', borderRadius: 10, zIndex: 1 }, styles.elevation ]}>
+          { this._renderInfo() }
           <FlatList
             data={this.state.data}
             renderItem={this._renderDetail}
@@ -279,8 +284,10 @@ export default class TypeScreen extends Component {
               containerStyle={{ paddingVertical: 0, marginTop: 10 }}
               inputContainerStyle={{ height: 50, width: '50%', paddingBottom: 3 }}
               tintColor={Colors.primaryColor}
-              onChangeText={title => this.setState({ title })}
-              onBlur={()=>console.log(this.state.title)}
+              onChangeText={title => {
+                this.setState({ title })
+                console.log(this.state.title)  
+              }}
             />
           </View>
           <View style={{ alignItems: 'center' }}>
@@ -301,7 +308,9 @@ export default class TypeScreen extends Component {
     } else return null
   }
 
-  showDetailEdit = (title, day) => {
+  showDetailEdit = () => {
+    var title = this.state.title
+    var day = this.state.day
     if(this.state.isDetailEditVisible) {
       return (
         <Card containerStyle={[{ height: 600, borderRadius: 10, zIndex: 1 }, styles.elevation ]}>
@@ -322,7 +331,7 @@ export default class TypeScreen extends Component {
           <View style={{ alignItems: 'center' }}>
             <Text style={{ fontSize: 18, marginTop: 10 }}>휴가 일수</Text>
             <OutlinedTextField
-              value={day}
+              label={day}
               labelFontSize={10}
               containerStyle={{ paddingVertical: 0, marginTop: 10 }}
               inputContainerStyle={{ height: 50, width: '50%', paddingBottom: 3 }}
@@ -338,10 +347,12 @@ export default class TypeScreen extends Component {
 
   detailPressd = (id, title, day) => {
     this.setState({
-      id: id
+      id: id,
+      title: title,
+      day: day 
     })
     this.setDetailEditVisible()
-    this.showDetailEdit(title, day)
+    this.showDetailEdit()
   }
 
   _renderDetail = ({item}) => {
@@ -373,10 +384,36 @@ export default class TypeScreen extends Component {
     )
   }
 
-  _renderDday = () => {
-    let dday = []
-    dday.push(<Text style={{ fontSize: 24, color: 'white', fontWeight: 'bold' }}>D+{this.state.lefted}</Text>)
-    return dday
+  _renderTotal = () => {
+    if(this.state.isInfoVisible) {
+      let dday = []
+      dday.push(<Text style={{ fontSize: 17, color: 'white' }}>{ this.state.total }</Text>)
+      return dday
+    }
+  }
+
+  _renderInfo = () => {
+    if(this.state.isInfoVisible) {
+      return(
+        <View style={{ 
+          justifyContent: 'space-between',
+          flexDirection: 'row', 
+          marginBottom: 20,
+          paddingBottom: 10,
+          borderBottomWidth: 2,
+          borderBottomColor: Colors.lineColor
+        }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ fontSize: 17, textAlign: 'center', paddingHorizontal: 5 }}>총 {this.state.type}</Text>
+            <Text style={{ fontSize: 24, textAlign: 'center', paddingHorizontal: 5 }}>{ this.state.total }</Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ fontSize: 17, textAlign: 'center', paddingHorizontal: 5 }}>사용 가능</Text>
+            <Text style={{ fontSize: 24, textAlign: 'center', paddingHorizontal: 5 }}>{ this.state.left }</Text>
+          </View>
+        </View>
+      )
+    }
   }
 
   render() {
@@ -399,10 +436,10 @@ export default class TypeScreen extends Component {
             <LinearGradient colors={[Colors.secondaryColor, Colors.primaryColor]} style={styles.gradient}>
               <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-start', paddingLeft: 20 }}>
                 <Text style={{ fontSize: 24, color: 'white', fontWeight: 'bold'}}>{ this.state.type }</Text>
-                <Text style={{ fontSize: 17, color: 'white' }}>{ this.state.total }</Text>
+                { this._renderTotal() }
               </View>
               <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-end', paddingRight: 20 }}>
-                { this._renderDday() }
+                <Text style={{ fontSize: 24, color: 'white', fontWeight: 'bold' }}>D+{this.state.lefted}</Text>
               </View>
             </LinearGradient>
           </View>
@@ -415,8 +452,8 @@ export default class TypeScreen extends Component {
         { this.showDetail() }
         { this.showDetailAdd() }
         { this.showDetailEdit() }
-        <View style={[{ position: 'absolute', bottom: 0, left: '42%', zIndex: 2 }, styles.elevation]}>
-          <Icon name="md-add-circle" type="ionicon" size={75} color={Colors.primaryColor} onPress={()=>this._onPress()}/>
+        <View style={[{ position: 'absolute', bottom: 0, left: '45%', zIndex: 2 }, styles.elevation]}>
+          <Icon name="md-add-circle" type="ionicon" size={50} color={Colors.primaryColor} onPress={()=>this._onPress()}/>
         </View>
       </View>
     )
@@ -434,6 +471,7 @@ const styles = StyleSheet.create({
   },
 
   container:{
+    fontFamily: 'NanumSquare',
     flex: 1,
     zIndex: 0,
     backgroundColor: Colors.backgroundColor,

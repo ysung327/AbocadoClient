@@ -158,7 +158,6 @@ export default class DetailScreen extends Component {
     setTimeout(()=> {
       this.fetchDataFromApi(this.state.pk)
     }, 50)
-    
   }
 
   sendDetail = () => {
@@ -203,7 +202,10 @@ export default class DetailScreen extends Component {
         user : this.state.user,
       })
     })
-    this.fetchDataFromApi(this.state.pk)
+    setTimeout(() => {
+      this.fetchDataFromApi(this.state.pk)
+      this.fetchModalFromApi()
+    }, 300)
   }
 
   deleteVacation = () => {
@@ -244,7 +246,7 @@ export default class DetailScreen extends Component {
   showDetail = () => {
     if(this.state.isDatePickerVisible == false && this.state.isDetailAddVisible == false) {
       return(
-        <Card containerStyle={[{ height: 600, borderRadius: 10, zIndex: 1 }, styles.elevation ]}>
+        <Card containerStyle={[{ height: '50%', borderRadius: 10, zIndex: 1 }, styles.elevation ]}>
           { this.renderAnn() }
           <FlatList
             data={this.state.detail}
@@ -278,7 +280,7 @@ export default class DetailScreen extends Component {
   showDetailAdd = () => {
     if(this.state.isDetailAddVisible == true) {
       return(
-        <Card containerStyle={[{ height: 600, borderRadius: 10, paddingTop: 0 }, styles.elevation ]}>
+        <Card containerStyle={[{ height: '62%', borderRadius: 10, paddingTop: 0 }, styles.elevation ]}>
           { this.showDetialSum() }
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={{ justifyContent: 'center' }}>
@@ -415,9 +417,6 @@ export default class DetailScreen extends Component {
       this.sendDate()
       setTimeout(()=>{
         this.setDatePickerVisible()
-        setTimeout(()=>{
-          this.setDatePickerVisible()
-        }, 200)
       }, 100)
 
     }
@@ -452,9 +451,8 @@ export default class DetailScreen extends Component {
 
   changeBackground = (id) => {
     if (this.state.itemChecked.indexOf(id) != -1) {
-      console.log('도ㅔㅅㅇㅇ')
       return (
-        <View style={{ borderWidth: 1, borderRadius: 100, width: 20, height: 20, backgroundColor: 'green' }}></View>
+        <View style={{ borderRadius: 100, width: 20, height: 20, backgroundColor: Colors.secondaryColor }}></View>
       )
     } else null
   }
@@ -494,22 +492,24 @@ export default class DetailScreen extends Component {
       due_date = item.due_date.split('-', 3)
     }
     return (
-      <TouchableOpacity style={{ width: '100%' }} onPress={()=>this.selectItem(item.id , item.day)}>
+      <TouchableOpacity style={{ width: '100%', marginBottom: 7 }} onPress={()=>this.selectItem(item.id , item.day)}>
         <View style={{ flexDirection: 'row', alignContent: 'flex-start', alignItems: 'center' }}>
-          <View style={{ paddingLeft: '5%', paddingRight: '7%' }}>
+          <View style={{ width: '17%', alignItems: 'center' }}>
               <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{item.day}</Text>
           </View>
-          <View style={{ flexDirection: 'row', width: '15%', alignItems: 'center' }}>
+          <View style={{ width: '17%', flexDirection: 'row', alignItems: 'center' }}>
             <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{ due_date == null ? null : '~' }</Text>
-            <View style={{ marginLeft: 5, flexDirection: 'column', justifyContent: 'center' }}>
+            <View style={{ flexDirection: 'column', justifyContent: 'center', paddingLeft: 2 }}>
               <Text style={{ fontSize: 12 }}>{ due_date == null ? null : due_date[0] }</Text>
               <Text style={{ fontSize: 14}}>{ due_date == null ? null : due_date[1] + '.' + due_date[2] }</Text>
             </View>
           </View>      
-          <View style={{ justifyContent: 'center' }}>
-              <Text style={{ marginLeft: '10%', fontSize: 16, marginRight: '8%' }}>{item.title}</Text>
+          <View style={{ width: '45%', paddingLeft: '5%' }}>
+              <Text style={{ fontSize: 16 }}>{item.title}</Text>
           </View>
-          {this.changeBackground(item.id)}
+          <View style={{ width: '15%', alignItems: 'center' }}>
+            {this.changeBackground(item.id)}
+          </View>
         </View>
       </TouchableOpacity>
     )
@@ -527,7 +527,7 @@ export default class DetailScreen extends Component {
   }
 
   renderAnn = () => {
-    if (this.state.annual != null) {
+    if (this.state.annual != null && this.state.annual != 0) {
       return (
         <View style={{ flexDirection: 'row', marginBottom: 10 }}>
           <View style={{ width: 50  }}>
@@ -574,28 +574,13 @@ export default class DetailScreen extends Component {
   }
 
   _renderTextInput = () => {
-    if(this.state.annual != null) {
-      let annual = this.state.annual.toString()
-      return (
-        <OutlinedTextField
-          label={'연가'}
-          placeholder={'연가'}
-          containerStyle={{ paddingVertical: 0 }}
-          inputContainerStyle={{ height: 50, width: '50%', paddingBottom: 2 }}
-          fontSize={24}
-          tintColor={Colors.primaryColor}
-          keyboardType={'phone-pad'}
-          onChangeText={annual => this.setState({ annual })}
-          onBlur={()=>this.sendAnnual()}
-        />
-      )
-    }
-    else return (
-      <TextInput
-        placeholder='연가를 입력하세요'
-        style={{ height: 50, fontSize: 24, fontWeight: 'bold', backgroundColor: null }}
-        underlineColor={Colors.primaryColor}
-        value={this.state.annual}
+    return (
+      <OutlinedTextField
+        containerStyle={{ alignItems: 'center' }}
+        inputContainerStyle={{ height: 50, width: '50%' }}
+        fontSize={18}
+        tintColor={Colors.primaryColor}
+        keyboardType={'phone-pad'}
         onChangeText={annual => this.setState({ annual })}
         onBlur={()=>this.sendAnnual()}
       />
@@ -610,13 +595,9 @@ export default class DetailScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Header/>
-        </View>
-        <View style={{ position: 'absolute', top: 70, left: 0, right: 0, height: 80, zIndex: 1000 }}>
+        <View style={{ height: 150 }}>
           <View style={{  
             flex: 1,
-            flexDirection: "row",
             shadowColor: "#000000",
             shadowOpacity: 0.4,
             shadowRadius: 3,
@@ -625,18 +606,23 @@ export default class DetailScreen extends Component {
             }
           }}>
             <LinearGradient colors={[Colors.secondaryColor, Colors.primaryColor]} style={styles.gradient}>
-              <View style={{ flex: 1, alignItems: 'flex-start', paddingLeft: 20 }}>
-                <Text style={{ fontSize: 24, color: 'white' }}>{ this.state.title != null ? this.state.title : null }</Text>
-                { this._renderDate() }
+              <View style={styles.header}>
+                <Header/>
               </View>
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-end', paddingRight: 20 }}>
-                { this._renderDday() }
+              <View style={{ flexDirection: 'row', }}>
+                <View style={{ flex: 1, alignItems: 'flex-start', paddingLeft: 20, marginTop: 10 }}>
+                  <Text style={{ fontSize: 24, color: 'white' }}>{ this.state.title != null ? this.state.title : null }</Text>
+                  { this._renderDate() }
+                </View>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-end', paddingRight: 20, marginTop: 15 }}>
+                  { this._renderDday() }
+                </View>
               </View>
             </LinearGradient>
           </View>
         </View>
 
-        <View style={{ marginTop: 160, flexDirection: 'row', justifyContent: 'center' }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 15 }}>
           { this._renderDay() }
           <View style={{ position: 'absolute', right:30, top: 10 }}>
             <Icon name="md-trash" type='ionicon' size={30} color={Colors.primaryColor} onPress={this.deleteVacation}/>
@@ -663,8 +649,8 @@ export default class DetailScreen extends Component {
         { this.showCalendar() }
         { this.showDetail() }
         { this.showDetailAdd() }
-        <View style={[{ position: 'absolute', bottom: 0, left: '42%', zIndex: 2 }, styles.elevation]}>
-          <Icon name="md-add-circle" type="ionicon" size={75} color={Colors.primaryColor} onPress={()=>this._onPress()}/>
+        <View style={[{ position: 'absolute', bottom: 10, left: '45%', zIndex: 2 }, styles.elevation]}>
+          <Icon name="md-add-circle" type="ionicon" size={50} color={Colors.primaryColor} onPress={()=>this._onPress()}/>
         </View>
       </View>
     )
@@ -673,12 +659,8 @@ export default class DetailScreen extends Component {
 
 const styles = StyleSheet.create({
   header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
     height: HEADER_MAX_HEIGHT,
-    zIndex: 1200,
+    borderWidth: 1,
   },
 
   container:{
@@ -694,10 +676,8 @@ const styles = StyleSheet.create({
 
   gradient: {
     flex: 1,
-    paddingTop: 10,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    flexDirection: 'row',
     elevation: 8,
   },
 

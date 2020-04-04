@@ -14,9 +14,9 @@ import { Actions } from 'react-native-router-flux';
 const { height } = Dimensions.get('window');
 const screenWidth = Dimensions.get('window').width;
 const HEADER_MAX_HEIGHT = 70
-const DUTY_MAX_HEIGHT = 200
-const DUTY_MIN_HEIGHT = 75
-const SCROLL_THERSHOLD = (DUTY_MAX_HEIGHT - HEADER_MAX_HEIGHT) / 10
+const DUTY_MAX_HEIGHT = 270
+const DUTY_MIN_HEIGHT = 145
+const SCROLL_THERSHOLD = 13
 const barPadding = (screenWidth - 300) / 2
 const token = "e36ea705904910cd1a9bbc76f1d62b0de16bbfdc"
 const user = "ysung327"
@@ -150,7 +150,7 @@ export default class HomeScreen extends Component {
     })
     const scrollMarginTop = this.state.scrollY.interpolate({
       inputRange: [0, SCROLL_THERSHOLD],
-      outputRange: [DUTY_MAX_HEIGHT + HEADER_MAX_HEIGHT + 40, DUTY_MIN_HEIGHT + HEADER_MAX_HEIGHT + 50],
+      outputRange: [DUTY_MAX_HEIGHT + 40, DUTY_MIN_HEIGHT + 50],
       extrapolate: 'clamp',
       easing: Easing.ease,
     })
@@ -159,26 +159,24 @@ export default class HomeScreen extends Component {
 
 
     return (
-      <View style={{ flex: 1, justifyContent: 'flex-start'}}>
-        <View style={styles.header}>
-          <Header/>
-        </View>
+      <View style={{ flex: 1, justifyContent: 'flex-start' }}>
         <Animated.View style={{
           position: 'absolute',
-          top: 70,
+          top: 0,
           left: 0,
           right: 0,
+          zIndex: 100,
           height: dutyHeight,
-          zIndex: 1000,
         }}>
           <View style={styles.container}>
             <LinearGradient colors={[Colors.secondaryColor, Colors.primaryColor]} style={styles.gradient}>
+              <View style={styles.header}>
+                <Header/>
+              </View>
               <Animated.View style={{
-                top: 0,
                 marginTop: 10,
                 marginBottom: 10,
                 width: 100,
-                position: 'absolute',
                 left: titleLeft,
               }}>
                 <Animated.Text style={{ color: 'white', paddingLeft: headerPadding, fontSize: 28, fontWeight: 'bold' }}>전역</Animated.Text>
@@ -188,7 +186,6 @@ export default class HomeScreen extends Component {
                 flex: 1,
                 paddingTop: 20,
                 alignItems: 'center',
-                marginTop: 80,
                 opacity: dutyOpacity,
               }}>
                 <Text style={{ position:'absolute', left: percentLeft, color: Colors.accentColor1, fontWeight: 'bold' }}>{percent}%</Text>
@@ -210,7 +207,7 @@ export default class HomeScreen extends Component {
         </Animated.View>
         
         <ScrollView
-          style={{ flex: 1 }}
+          style={{ flex: 1, zIndex: 0 }}
           onScroll={Animated.event(
             [{nativeEvent: {contentOffset: {y: this.state.scrollY} } }]
           )}
@@ -254,12 +251,8 @@ export default class HomeScreen extends Component {
 
 const styles = StyleSheet.create({
   header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
+    borderWidth: 1,
     height: HEADER_MAX_HEIGHT,
-    zIndex: 1000,
   },
 
   vacationList: {
@@ -284,6 +277,7 @@ const styles = StyleSheet.create({
   },
 
   container:{
+    fontFamily: 'NanumSquare',
     flex: 1,
     shadowColor: "#000000",
     shadowOpacity: 0.4,

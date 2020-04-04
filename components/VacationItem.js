@@ -11,52 +11,88 @@ class VacationItem extends Component {
   }
 
   onPress = () => {
-    Actions.detail({onUpload: this.props.onUpload, 
+    Actions.detail({onUpload: this.props.onUpload,
       id : this.props.item.id, token : this.props.token, user : this.props.user})
   }
 
-  render() {
-    let start_date = this.props.item.start_date.split('-', 3)
-    let end_date = this.props.item.end_date.split('-', 3)
-    console.log(start_date)
+  _renderInfo = () => {
+    if(this.props.item.start_date != null && this.props.item.end_date != null) {
+      let start_date = this.props.item.start_date.split('-', 3)
+      let end_date = this.props.item.end_date.split('-', 3)
+      return(
+        <View style={styles.info}>
+          <View style={styles.date}>
+            <Text style={[styles.year, {color: Colors.secondaryColor}]}>{start_date[0]}</Text>
+            <Text style={[styles.text, {color: Colors.secondaryColor}]}>{start_date[1]}.{start_date[2]}</Text>
+          </View>
+          <View>
+            <Text style={{ marginTop: 10, color: Colors.accentColor1, fontWeight: 'bold' }}>______________</Text>
+          </View>
+          <View style={styles.date}>
+            <Text style={[styles.year, {color: Colors.primaryColor}]}>{end_date[0]}</Text>
+            <Text style={[styles.text, {color: Colors.primaryColor}]}>{end_date[1]}.{end_date[2]}</Text>
+          </View>
+        </View>
+      )
+    } 
+    else return(
+      <View style={styles.info}>
+        <View style={styles.date}>
+          <Text style={{ fontSize: 20, textAlign: 'center'}}>휴가계획을 마저 세워주세요.</Text>
+        </View>
+      </View>
+    )
+  }
+
+  _renderDay = () => {
+    if(this.props.item.day != null) {
+      if(this.props.item.day > 9) {
+        return(
+          <View>
+            <Text style={{ position:'absolute', top: 10, fontSize: 24 , color: Colors.accentColor2}}>{this.props.item.day}</Text>
+            <Text style={{ position:'absolute', top: 17, left: 30, fontSize: 16, color: Colors.accentColor2 }}>Days</Text>
+          </View>
+        )
+      }
+      else {
+        return(
+          <View>
+            <Text style={{ position:'absolute', top: 10, fontSize: 24 , color: Colors.accentColor2}}>{this.props.item.day}</Text>
+            <Text style={{ position:'absolute', top: 17, left: 20, fontSize: 16, color: Colors.accentColor2 }}>Days</Text>
+          </View>
+        )
+      }
+    } else return null
+  }
+
+  _renderDday = () => {
     let dday = []
     if(this.props.item.dDay<0) {
       let dDay = this.props.item.dDay * -1
-      dday.push(
+      return(
         <Text>
           <Text style={styles.content}>D-</Text>
           <Text style={styles.content}>{this.props.item.dDay}</Text>
         </Text>
-        )
+      )
     }
-    else dday.push(
-      <View style={styles.dday}>
-        <Text style={{ position: 'absolute', top: 3, left: 65, fontSize: 16 }}>D+</Text>
-        <Text style={{ fontSize: 32 }}>{this.props.item.dDay}</Text>
-      </View>
-    )
-
+    else if(this.props.item.dDay>0) {
+      return(
+        <View style={styles.dday}>
+          <Text style={{ position: 'absolute', top: 3, left: 65, fontSize: 16 }}>D+</Text>
+          <Text style={{ fontSize: 32 }}>{this.props.item.dDay}</Text>
+        </View>
+      )
+    } else return null
+  }
+  
+  render() {
     return (
       <Card containerStyle={styles.container}>
         <TouchableOpacity onPress={this.onPress}>
-          <View>
-            <Text style={{ position:'absolute', top: 10, fontSize: 24 , color: Colors.accentColor2}}>{this.props.item.day}</Text>
-            <Text style={[{ position:'absolute', top: 17, fontSize: 16, color: Colors.accentColor2 }, (this.props.item.day > 9) ? {left: 30} : {left: 20}]}>Days</Text>
-          </View>
-          {dday}
-          <View style={styles.info}>
-            <View style={styles.date}>
-              <Text style={[styles.year, {color: Colors.secondaryColor}]}>{start_date[0]}</Text>
-              <Text style={[styles.text, {color: Colors.secondaryColor}]}>{start_date[1]}.{start_date[2]}</Text>
-            </View>
-            <View>
-              <Text style={{ marginTop: 10, color: Colors.accentColor1, fontWeight: 'bold' }}>______________</Text>
-            </View>
-            <View style={styles.date}>
-              <Text style={[styles.year, {color: Colors.primaryColor}]}>{end_date[0]}</Text>
-              <Text style={[styles.text, {color: Colors.primaryColor}]}>{end_date[1]}.{end_date[2]}</Text>
-            </View>
-          </View>
+          { this._renderDay() }
+          { this._renderDday() }
+          { this._renderInfo() }
         </TouchableOpacity>
 
       </Card>
