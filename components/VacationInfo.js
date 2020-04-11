@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text} from 'react-native';
 import { Card, Button } from 'react-native-elements'
 import Colors from '../constants/Colors'
+import store from "../app/store";
 
 class VacationInfo extends Component {
   constructor(props) {
@@ -11,8 +12,14 @@ class VacationInfo extends Component {
         data: [],
       }
     }
+    
+  update = () => {
+    console.log('vacationInfo!')
+    this.getVacationInfo()
+  }
 
   componentDidMount() {
+    store.subscribe(this.update)
     this.getVacationInfo();
   }
 
@@ -122,6 +129,5 @@ const styles = StyleSheet.create({
   },
 
 })
-
 
 export default VacationInfo

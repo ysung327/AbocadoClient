@@ -3,21 +3,31 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Card, Button } from 'react-native-elements'
 import { Actions } from 'react-native-router-flux';
 import Colors from '../constants/Colors'
+import store from "../app/store";
 
 class VacationType extends Component {
   constructor(props) {
     super(props);
     this.state  = {
       loading: false,
-      ann: [],
-      con: [],
-      re: [],
-      pe: [],
-      pr: [],
+      ann: null,
+      con: null,
+      re: null,
+      pe: null,
+      pr: null,
     }
   }
-  
+
+  update = () => {
+    console.log('vacationType!')
+    let arr = ["CON", "RE", "PE", "PR"]
+    for (let i of arr) {
+      this.getTypeInfo(i)
+    }
+  }
+
   componentDidMount() {
+    store.subscribe(this.update)
     let arr = ["CON", "RE", "PE", "PR"]
     for (let i of arr) {
       this.getTypeInfo(i)
@@ -47,7 +57,6 @@ class VacationType extends Component {
           this.setState({
             con: res.total,
           })
-          console.log(this.state.con)
         } else if (_type === "PR") {
           this.setState({
             pr: res.total,
@@ -76,67 +85,74 @@ class VacationType extends Component {
         user : this.props.user
       })
     }
+    else {
+      Actions.type_ann({
+        lefted: this.props.lefted,
+        token: this.props.token,
+        user: this.props.user
+      })
+    }
   }
 
   render() {
-      return (
-        <View style={styles.container}> 
-            <View style={styles.column1}>
+    return (
+      <View style={styles.container}> 
+          <View style={styles.column1}>
+            <Card containerStyle={styles.card}>
+              <TouchableOpacity
+                  onPress={()=>this._onPress('ANN')}>                  
+                  <Text style={styles.text}>연가</Text>
+                  <View style={{ height: 130, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 32 }}>26</Text>
+                  </View>
+              </TouchableOpacity>
+            </Card>
+          </View>
+          <View style={styles.column2}>
+            <View style={styles.row}>
               <Card containerStyle={styles.card}>
-                <TouchableOpacity
-                    onPress={()=>this._onPress('ANN')}>                  
-                    <Text style={styles.text}>연가</Text>
-                    <View style={{ height: 130, alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ fontSize: 32 }}>26</Text>
-                    </View>
+                <TouchableOpacity 
+                  onPress={()=>this._onPress('CON')}>
+                  <Text style={styles.text}>위로</Text>
+                  <View style={{ height: 70, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 32 }}>{this.state.con}</Text>
+                  </View>
+                </TouchableOpacity>
+              </Card>
+              <Card containerStyle={styles.card}>
+                <TouchableOpacity 
+                  onPress={()=>this._onPress('PR')}>
+                  <Text style={styles.text}>포상</Text>
+                  <View style={{ height: 70, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 32 }}>{this.state.pr}</Text>
+                  </View>
+                </TouchableOpacity>
+              </Card>             
+            </View>
+            <View style={styles.row}>
+              <Card containerStyle={styles.card}>
+                <TouchableOpacity 
+                  onPress={()=>this._onPress('RE')}>
+                  <Text style={styles.text}>보상</Text>
+                  <View style={{ height: 70, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 32 }}>{this.state.re}</Text>
+                  </View>
+                </TouchableOpacity>
+              </Card>
+              <Card containerStyle={styles.card}>
+                <TouchableOpacity 
+                  onPress={()=>this._onPress('PE')}>
+                  <Text style={styles.text}>청원</Text>
+                  <View style={{ height: 70, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 32 }}>{this.state.pe}</Text>
+                  </View>
                 </TouchableOpacity>
               </Card>
             </View>
-            <View style={styles.column2}>
-              <View style={styles.row}>
-                <Card containerStyle={styles.card}>
-                  <TouchableOpacity 
-                    onPress={()=>this._onPress('CON')}>
-                    <Text style={styles.text}>위로</Text>
-                    <View style={{ height: 70, alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ fontSize: 32 }}>{this.state.con}</Text>
-                    </View>
-                  </TouchableOpacity>
-                </Card>
-                <Card containerStyle={styles.card}>
-                  <TouchableOpacity 
-                    onPress={()=>this._onPress('PR')}>
-                    <Text style={styles.text}>포상</Text>
-                    <View style={{ height: 70, alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ fontSize: 32 }}>{this.state.pr}</Text>
-                    </View>
-                  </TouchableOpacity>
-                </Card>             
-              </View>
-              <View style={styles.row}>
-                <Card containerStyle={styles.card}>
-                  <TouchableOpacity 
-                    onPress={()=>this._onPress('RE')}>
-                    <Text style={styles.text}>보상</Text>
-                    <View style={{ height: 70, alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ fontSize: 32 }}>{this.state.re}</Text>
-                    </View>
-                  </TouchableOpacity>
-                </Card>
-                <Card containerStyle={styles.card}>
-                  <TouchableOpacity 
-                    onPress={()=>this._onPress('PE')}>
-                    <Text style={styles.text}>청원</Text>
-                    <View style={{ height: 70, alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ fontSize: 32 }}>{this.state.pe}</Text>
-                    </View>
-                  </TouchableOpacity>
-                </Card>
-              </View>
-            </View>
-        </View>
-      )
-    }
+          </View>
+      </View>
+    )
+  }
 }
 
 const styles = StyleSheet.create({

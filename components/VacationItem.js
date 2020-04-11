@@ -11,8 +11,9 @@ class VacationItem extends Component {
   }
 
   onPress = () => {
-    Actions.detail({onUpload: this.props.onUpload,
-      id : this.props.item.id, token : this.props.token, user : this.props.user})
+    Actions.detail({
+      id : this.props.item.id, token : this.props.token, user : this.props.user
+    })
   }
 
   _renderInfo = () => {
@@ -70,16 +71,16 @@ class VacationItem extends Component {
     if(this.props.item.dDay<0) {
       let dDay = this.props.item.dDay * -1
       return(
-        <Text>
-          <Text style={styles.content}>D-</Text>
-          <Text style={styles.content}>{this.props.item.dDay}</Text>
-        </Text>
+        <View style={styles.dday}>
+          <Text style={{ position: 'absolute', top: 3, left: 65, fontSize: 18 }}>D -</Text>
+          <Text style={{ fontSize: 32 }}>{dDay}</Text>
+        </View>
       )
     }
     else if(this.props.item.dDay>0) {
       return(
         <View style={styles.dday}>
-          <Text style={{ position: 'absolute', top: 3, left: 65, fontSize: 16 }}>D+</Text>
+          <Text style={{ position: 'absolute', top: 3, left: 65, fontSize: 18 }}>D + </Text>
           <Text style={{ fontSize: 32 }}>{this.props.item.dDay}</Text>
         </View>
       )
@@ -122,10 +123,6 @@ const styles = StyleSheet.create({
   dday:{
     alignItems: 'center',
     marginTop: 40,
-  },
-
-  content: {
-    fontSize: 25,
   },
 
   info: {

@@ -1,14 +1,24 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, FlatList, Modal, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList, BackHandler } from 'react-native';
 import { Card, Button, Icon, Input } from 'react-native-elements'
 import Colors from '../constants/Colors'
 import { OutlinedTextField } from 'react-native-material-textfield';
 import { LinearGradient } from 'expo-linear-gradient';
 import Header from '../components/Header'
+import { CommonActions } from '@react-navigation/native';
+import { connect } from "react-redux";
+import { update } from '../app/reducer'
+import store from "../app/store";
 
 const HEADER_MAX_HEIGHT = 70
 
-export default class TypeScreen extends Component {
+function mapDispatchToProps(dispatch) {
+  return {
+    update: shouldUpdate => dispatch(update(shouldUpdate))
+  };
+}
+
+class ConnectedTypeScreen extends Component {
   constructor(props) {
     super(props);
     this.state  = {
@@ -35,10 +45,34 @@ export default class TypeScreen extends Component {
     this.fetchDataFromApi(this.state.type_of_detail)
     this.fetchInfoFromApi(this.state.type_of_detail)
     this.initialize()
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton)
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton)
+  }
+
+  handleBackButton = () => {
+    if(this.state.isDetailEditVisible) {
+      this.setState({
+        isDetailEditVisible: false,
+        isDetailVisible: true
+      })
+      return true
+    } 
+    else if(this.state.isDetailAddVisible) {
+      this.setState({
+        isDetailAddVisible: false,
+        isDetailVisible: true
+      })
+      return true
+    }
+    this.props.navigation.dispatch(CommonActions.goBack());
+    this.props.update(true)
   }
 
   fetchDataFromApi = (type_of_detail)  => {
-    const url = "http://ysung327.pythonanywhere.com/vacations/type/";
+    const url = "http://ysung327.pythonanywhere.com/vacations/type/"
     fetch(url, {
       method: 'PUT',
       headers: {
@@ -361,26 +395,29 @@ export default class TypeScreen extends Component {
       due_date = item.due_date.split('-', 3)
     }
     return (
-      <TouchableOpacity style={{ width: '100%', marginBottom: 10 }} onPress={() => this.detailPressd(item.id, item.title, item.day)}>
-        <View style={{ flexDirection: 'row', alignContent: 'flex-start', alignItems: 'center' }}>
-          <View style={{ paddingLeft: '5%', paddingRight: '7%' }}>
-              <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{item.day}</Text>
-          </View>
-          <View style={{ flexDirection: 'row', width: '15%', alignItems: 'center' }}>
-            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{ due_date == null ? null : '~' }</Text>
-            <View style={{ marginLeft: 5, flexDirection: 'column', justifyContent: 'center' }}>
-              <Text style={{ fontSize: 12 }}>{ due_date == null ? null : due_date[0] }</Text>
-              <Text style={{ fontSize: 14}}>{ due_date == null ? null : due_date[1] + '.' + due_date[2] }</Text>
+      <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+        <TouchableOpacity style={{ width: '75%' }} onPress={() => this.detailPressd(item.id, item.title, item.day)}>
+          <View style={{ flexDirection: 'row', alignContent: 'flex-start', alignItems: 'center' }}>
+            <View style={{ paddingLeft: '5%', paddingRight: '7%' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{item.day}</Text>
             </View>
-          </View>      
-          <View style={{ width: '50%', marginLeft: '7%', marginRight: '5%', justifyContent: 'center' }}>
-              <Text style={{ fontSize: 16 }}>{item.title}</Text>
+            <View style={{ flexDirection: 'row', width: '15%', alignItems: 'center' }}>
+              <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{ due_date == null ? null : '~' }</Text>
+              <View style={{ marginLeft: 5, flexDirection: 'column', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 12 }}>{ due_date == null ? null : due_date[0] }</Text>
+                <Text style={{ fontSize: 14}}>{ due_date == null ? null : due_date[1] + '.' + due_date[2] }</Text>
+              </View>
+            </View>      
+            <View style={{ width: '45%', marginLeft: '7%', marginRight: '5%', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16 }}>{item.title}</Text>
+            </View>
           </View>
-          <View>
-            <Icon name='md-trash' type='ionicon' size={20} onPress={() => this.deleteDetail(item.id)}/>
-          </View>
+        </TouchableOpacity>
+        <View style={{ justifyContent: 'center', width: '25%' }}>
+          <Icon name='md-trash' type='ionicon' size={20} color={Colors.primaryColor} onPress={() => this.deleteDetail(item.id)}/>
         </View>
-      </TouchableOpacity>
+      </View>
+
     )
   }
 
@@ -419,13 +456,9 @@ export default class TypeScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Header/>
-        </View>
-        <View style={{ position: 'absolute', top: 70, left: 0, right: 0, height: 80, zIndex: 1000 }}>
+        <View style={{ height: 150 }}>
           <View style={{  
             flex: 1,
-            flexDirection: "row",
             shadowColor: "#000000",
             shadowOpacity: 0.4,
             shadowRadius: 3,
@@ -434,44 +467,50 @@ export default class TypeScreen extends Component {
             }
           }}>
             <LinearGradient colors={[Colors.secondaryColor, Colors.primaryColor]} style={styles.gradient}>
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-start', paddingLeft: 20 }}>
-                <Text style={{ fontSize: 24, color: 'white', fontWeight: 'bold'}}>{ this.state.type }</Text>
-                { this._renderTotal() }
+              <View style={styles.header}>
+                <Header/>
               </View>
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-end', paddingRight: 20 }}>
-                <Text style={{ fontSize: 24, color: 'white', fontWeight: 'bold' }}>D+{this.state.lefted}</Text>
+              <View style={{ flexDirection: 'row', marginTop: 10 }}>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-start', paddingLeft: 20 }}>
+                  <Text style={{ fontSize: 24, color: 'white', fontWeight: 'bold'}}>{ this.state.type }</Text>
+                  { this._renderTotal() }
+                </View>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-end', paddingRight: 20 }}>
+                  <Text style={{ fontSize: 24, color: 'white', fontWeight: 'bold' }}>D-{this.state.lefted}</Text>
+                </View>
               </View>
             </LinearGradient>
           </View>
         </View>
 
-        <View style={{ marginTop: 160, height: 70, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ fontSize: 32 }}
-          >{this.state.type}</Text>
+        <View style={{ marginTop: 20, height: 70, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 32 }}>{this.state.type}</Text>
         </View>
         { this.showDetail() }
         { this.showDetailAdd() }
         { this.showDetailEdit() }
         <View style={[{ position: 'absolute', bottom: 0, left: '45%', zIndex: 2 }, styles.elevation]}>
-          <Icon name="md-add-circle" type="ionicon" size={50} color={Colors.primaryColor} onPress={()=>this._onPress()}/>
+          <Icon name="md-add-circle" type="ionicon" size={50} color={Colors.secondaryColor} onPress={()=>this._onPress()}/>
         </View>
       </View>
     )
   }
 }
 
+const TypeScreen = connect(
+  null,
+  mapDispatchToProps
+)(ConnectedTypeScreen);
+
+export default TypeScreen;
+
+
 const styles = StyleSheet.create({
   header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
     height: HEADER_MAX_HEIGHT,
-    zIndex: 1200,
   },
 
   container:{
-    fontFamily: 'NanumSquare',
     flex: 1,
     zIndex: 0,
     backgroundColor: Colors.backgroundColor,
@@ -481,7 +520,6 @@ const styles = StyleSheet.create({
     flex: 1,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    flexDirection: 'row',
     elevation: 8,
   },
   

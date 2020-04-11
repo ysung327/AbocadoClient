@@ -1,22 +1,29 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, FlatList, Modal, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList, ScrollView, BackHandler } from 'react-native';
 import { Card, Button, Icon } from 'react-native-elements'
 import CalendarPicker from 'react-native-calendar-picker'
-import { TextInput } from 'react-native-paper';
-import { TextField, FilledTextField, OutlinedTextField } from 'react-native-material-textfield';
+import { OutlinedTextField } from 'react-native-material-textfield';
 import moment from 'moment'
 import Colors from '../constants/Colors'
 import { LinearGradient } from 'expo-linear-gradient';
 import Header from '../components/Header'
+import { CommonActions } from '@react-navigation/native';
+import { connect } from "react-redux";
+import { update } from '../app/reducer'
+import store from "../app/store";
 
-
-
-const { height } = Dimensions.get('window')
 const HEADER_MAX_HEIGHT = 70
 const CALENDAR_WEEK_DAYS = [ '일', '월', '화', '수', '목', '금', '토' ]
 const CALENDAR_MONTHS = [ '1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월' ]
 
-export default class DetailScreen extends Component {
+
+function mapDispatchToProps(dispatch) {
+  return {
+    update: shouldUpdate => dispatch(update(shouldUpdate))
+  };
+}
+
+class ConnectedDetailScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -34,7 +41,6 @@ export default class DetailScreen extends Component {
       reData: [],
       isDetailAddVisible: false,
       isDatePickerVisible: false,
-      screenHeight: height,
       itemChecked: [],
       annual: null,
       start_date: null,
@@ -44,15 +50,31 @@ export default class DetailScreen extends Component {
     }
   }
 
-  onContentSizeChange = (contentWidth, contentHeight) => {
-    this.setState({
-      screenHeight: contentHeight
-    });
-  }
-
   componentDidMount() {
     this.fetchDataFromApi(this.state.pk)
     this.fetchModalFromApi()
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  handleBackButton = () => {
+    if(this.state.isDetailAddVisible) {
+      this.setState({
+        isDetailAddVisible: false,
+      })
+      return true
+    } 
+    else if(this.state.isDatePickerVisible) {
+      this.setState({
+        isDatePickerVisible: false,
+      })
+      return true;
+    }
+    this.props.navigation.dispatch(CommonActions.goBack());
+    this.props.update(true)
   }
 
   async fetchDataFromApi(pk) {
@@ -433,7 +455,6 @@ export default class DetailScreen extends Component {
         itemChecked: temp,
         detailSum: _detailSum
       })
-      //console.log(this.state.itemChecked)
     } 
     else {
       let _detailSum = this.state.detailSum - day
@@ -441,7 +462,6 @@ export default class DetailScreen extends Component {
         itemChecked: [...itemChecked.slice(0, i), ...itemChecked.slice(i + 1)],
         detailSum: _detailSum
       })
-      //console.log(this.state.itemChecked)
     }
     this.setDetailAddVisible()
     setTimeout(()=>{
@@ -452,7 +472,7 @@ export default class DetailScreen extends Component {
   changeBackground = (id) => {
     if (this.state.itemChecked.indexOf(id) != -1) {
       return (
-        <View style={{ borderRadius: 100, width: 20, height: 20, backgroundColor: Colors.secondaryColor }}></View>
+        <View style={{ borderRadius: 100, width: 15, height: 15, backgroundColor: Colors.secondaryColor }}></View>
       )
     } else null
   }
@@ -480,7 +500,7 @@ export default class DetailScreen extends Component {
             <Text style={{ marginLeft: 30, fontSize: 20 }}>{item.title}</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Icon name='md-trash' type='ionicon' size={20} onPress={() => this.deleteDetail(item.id)}/>
+          <Icon name='md-trash' type='ionicon' size={20} color={Colors.primaryColor} onPress={() => this.deleteDetail(item.id)}/>
         </View>
       </View>
     )
@@ -650,17 +670,24 @@ export default class DetailScreen extends Component {
         { this.showDetail() }
         { this.showDetailAdd() }
         <View style={[{ position: 'absolute', bottom: 10, left: '45%', zIndex: 2 }, styles.elevation]}>
-          <Icon name="md-add-circle" type="ionicon" size={50} color={Colors.primaryColor} onPress={()=>this._onPress()}/>
+          <Icon name="md-add-circle" type="ionicon" size={50} color={Colors.secondaryColor} onPress={()=>this._onPress()}/>
         </View>
       </View>
     )
   }
 }
 
+const DetailScreen = connect(
+  null,
+  mapDispatchToProps
+)(ConnectedDetailScreen);
+
+export default DetailScreen;
+
+
 const styles = StyleSheet.create({
   header: {
     height: HEADER_MAX_HEIGHT,
-    borderWidth: 1,
   },
 
   container:{

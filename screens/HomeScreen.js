@@ -9,6 +9,9 @@ import VacationInfo from '../components/VacationInfo';
 import VacationType from '../components/VacationType';
 import Header from '../components/Header'
 import { Actions } from 'react-native-router-flux';
+import { connect } from 'react-redux';
+import store from "../app/store";
+import { update } from '../app/reducer'
 
 
 const { height } = Dimensions.get('window');
@@ -21,7 +24,12 @@ const barPadding = (screenWidth - 300) / 2
 const token = "e36ea705904910cd1a9bbc76f1d62b0de16bbfdc"
 const user = "ysung327"
 
-export default class HomeScreen extends Component {
+const mapStateToProps = (shouldUpdate) => ({
+  shouldUpdate,
+})
+
+
+class ConnectedHomeScreen extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -35,18 +43,24 @@ export default class HomeScreen extends Component {
         hour : 5448,
         minute : 31,
         second : 39,
-        newVacationId: null
+        newVacationId: null,
     }
   }
-  
+
+  update = () => {
+    console.log('vacationDuty!')
+    this.getDuty()
+  }
+
   componentDidMount() {
+    console.log(this.props.shouldUpdate)
+    store.subscribe(this.update)
     this.getDuty()
   }
 
   onContentSizeChange = (contentWidth, contentHeight) => {
     this.setState({ screenHeight: contentHeight });
   };
-
 
   getDuty = ()  => {
     const url = "http://ysung327.pythonanywhere.com/user/duty/";
@@ -66,12 +80,11 @@ export default class HomeScreen extends Component {
     })
     .then(res => res.json())
     .then(res => {
-          this.setState({
-            end_date: res.end_date,
-            lefted: res.lefted,
-            percent: res.percent,
-          })
-          console.log(this.state.end_date, this.state.percent)
+      this.setState({
+        end_date: res.end_date,
+        lefted: res.lefted,
+        percent: res.percent,
+      })
     })
     .catch((error) => {
           console.log(error);
@@ -106,6 +119,7 @@ export default class HomeScreen extends Component {
   }
 
   render() {
+
     const dutyHeight = this.state.scrollY.interpolate({
       inputRange: [0, SCROLL_THERSHOLD],
       outputRange: [DUTY_MAX_HEIGHT, DUTY_MIN_HEIGHT],
@@ -156,7 +170,6 @@ export default class HomeScreen extends Component {
     })
     const percentLeft = barPadding + 300*this.state.percent - 20
     const percent = Number.parseFloat(this.state.percent*100).toFixed(2)
-
 
     return (
       <View style={{ flex: 1, justifyContent: 'flex-start' }}>
@@ -229,7 +242,7 @@ export default class HomeScreen extends Component {
             <View style={{ alignItems: 'center', marginBottom: 5 }}>
               <Text style={{ fontSize: 20 }}>등록한 휴가</Text>
               <View style={{ position: 'absolute', right:25 }}>
-                <Icon name="md-add-circle" type='ionicon' size={30} color={Colors.primaryColor} onPress={this._createVacation}/>
+                <Icon name="md-add-circle" type='ionicon' size={30} color={Colors.secondaryColor} onPress={this._createVacation}/>
               </View> 
             </View>
             <VacationList token={this.state.token} user={this.state.user}/>
@@ -247,11 +260,12 @@ export default class HomeScreen extends Component {
   }
 }
 
+const HomeScreen = connect(mapStateToProps)(ConnectedHomeScreen);
+export default HomeScreen;
 
 
 const styles = StyleSheet.create({
   header: {
-    borderWidth: 1,
     height: HEADER_MAX_HEIGHT,
   },
 
