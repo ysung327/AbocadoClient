@@ -24,10 +24,10 @@ const barPadding = (screenWidth - 300) / 2
 const token = "e36ea705904910cd1a9bbc76f1d62b0de16bbfdc"
 const user = "ysung327"
 
-const mapStateToProps = (shouldUpdate) => ({
+const mapStateToProps = (shouldUpdate, prevShouldUpdate) => ({
   shouldUpdate,
+  prevShouldUpdate
 })
-
 
 class ConnectedHomeScreen extends Component {
   constructor(props) {
@@ -48,12 +48,11 @@ class ConnectedHomeScreen extends Component {
   }
 
   update = () => {
-    console.log('vacationDuty!')
+    console.log('!')
     this.getDuty()
   }
 
   componentDidMount() {
-    console.log(this.props.shouldUpdate)
     store.subscribe(this.update)
     this.getDuty()
   }

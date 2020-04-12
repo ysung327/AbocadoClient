@@ -4,8 +4,14 @@ import VacationItem from './VacationItem'
 import { Icon } from 'react-native-elements'
 import { Actions } from 'react-native-router-flux';
 import store from "../app/store";
+import { connect } from "react-redux";
 
-class VacationList extends Component {
+const mapStateToProps = (shouldUpdate, prevShouldUpdate) => ({
+  shouldUpdate,
+  prevShouldUpdate
+})
+
+class ConnectedVacationList extends Component {
   constructor(props) {
       super(props);
       this.state  = {
@@ -17,8 +23,10 @@ class VacationList extends Component {
     }
 
   update = () => {
-    console.log('vacationList!')
-    this.getVacationList()
+    if(this.props.shouldUpdate && this.props.shouldUpdate != this.props.prevShouldUpdate) {
+      console.log('vacationList!')
+      this.getVacationList()
+    }
   }
 
   componentDidMount() {
@@ -76,5 +84,7 @@ class VacationList extends Component {
     );
   }
 }
+
+const VacationList = connect(mapStateToProps)(ConnectedVacationList);
 
 export default VacationList
