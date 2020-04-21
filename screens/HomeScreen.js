@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet,  View, ScrollView, Dimensions, Animated, Text, Easing } from 'react-native';
 import { Card, Button, Icon } from 'react-native-elements'
 import { LinearGradient } from 'expo-linear-gradient';
-import ProgressBar from 'react-native-progress/Bar';
+import { Progress } from 'react-native-progress';
 import Colors from '../constants/Colors'
 import VacationList from '../components/VacationList';
 import VacationInfo from '../components/VacationInfo';
@@ -201,7 +201,7 @@ class ConnectedHomeScreen extends Component {
                 opacity: dutyOpacity,
               }}>
                 <Text style={{ position:'absolute', left: percentLeft, color: Colors.accentColor1, fontWeight: 'bold' }}>{percent}%</Text>
-                <ProgressBar unfilledColor={Colors.accentColor2} color={Colors.accentColor1} borderWidth={0} width={300} height={6} progress={this.state.percent} borderRadius={10}/>
+                <Progress.Bar unfilledColor={Colors.accentColor2} color={Colors.accentColor1} borderWidth={0} width={300} height={6} progress={this.state.percent} borderRadius={10}/>
               </Animated.View>
               <Animated.View style={{
                 bottom: 0,

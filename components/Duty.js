@@ -4,7 +4,7 @@ import { Card, Button } from 'react-native-elements'
 import { Actions } from 'react-native-router-flux';
 import Colors from '../constants/Colors'
 import { LinearGradient } from 'expo-linear-gradient';
-import ProgressBar from 'react-native-progress/Bar';
+import { Progress } from 'react-native-progress';
 import { Dimensions } from 'react-native';
 
 
@@ -87,7 +87,7 @@ class Duty extends Component {
         </View>
         <View style={styles.progress}>
           <Text style={{position:'absolute', left: percentLeft, color: Colors.accentColor1, fontWeight: 'bold' }}>{percent}%</Text>
-          <ProgressBar unfilledColor={Colors.accentColor2} color={Colors.accentColor1} borderWidth={0} width={300} height={6} progress={this.state.percent} borderRadius={10}/>
+          <Progress.Bar unfilledColor={Colors.accentColor2} color={Colors.accentColor1} borderWidth={0} width={300} height={6} progress={this.state.percent} borderRadius={10}/>
         </View>
         <View style={styles.footer}>
           <Text style={styles.dday}>D-{this.state.lefted}</Text>

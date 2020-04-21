@@ -16,7 +16,7 @@
     "react-native-screens": "2.0.0-alpha.12",
     "react-native-elements": "1.2.7",
     "react-native-router-flux": "4.2.0",
-    "react-native-progress/Bar": "latest",
+    "react-native-progress": "latest",
     "react-native-numeric-input": "1.8.3",
     "react-native-calendar-picker": "6.0.5",
     "react-native-vector-icons/FontAwesome": "6.6.0",
