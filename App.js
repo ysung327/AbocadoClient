@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import * as Font from 'expo-font'
 import { AppLoading } from 'expo';
 import Root from './navigation/AppNavigator'
-import { setCustomView, setCustomText } from 'react-native-global-props';
-
 const fetchFonts = () => {
   return Font.loadAsync({
     'NanumSquare': require('./fonts/NanumSquare_acB.ttf'),
