@@ -11,9 +11,9 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icons8-app-symbol-64",
+    "icon": "./assets/icons8-app-symbol-64.png",
     "splash": {
-      "image": "./assets/icons8-app-symbol-64",
+      "image": "./assets/icons8-app-symbol-64.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
