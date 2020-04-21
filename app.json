@@ -11,9 +11,9 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icons8-app-symbol-64",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/icons8-app-symbol-64",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -25,6 +25,10 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "android": {
+      "package": "com.Titanism.DreamVac",
+      "versionCode": 1
     }
   }
 }
