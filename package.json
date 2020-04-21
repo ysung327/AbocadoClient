@@ -19,7 +19,6 @@
     "react-native-progress": "latest",
     "react-native-numeric-input": "1.8.3",
     "react-native-calendar-picker": "6.0.5",
-    "react-native-vector-icons/FontAwesome": "6.6.0",
     "expo-linear-gradient": "latest",
     "react-navigation": "latest"
   },
