@@ -10,6 +10,7 @@
   "dependencies": {
     "react-native": "0.62",
     "react-redux": "7.2.0",
+    "react-native-material-textfield": "0.16.1",
     "expo": "^35.0.0",
     "react": "16.8.3",
     "axios": "0.19.2",
