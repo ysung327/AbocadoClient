@@ -4,9 +4,6 @@ import { AppLoading } from 'expo';
 import Root from './navigation/AppNavigator'
 const fetchFonts = () => {
   return Font.loadAsync({
-    'NanumSquare': require('./fonts/NanumSquare_acB.ttf'),
-    'MyriadPro': require('./fonts/Myriad-Pro_31655.ttf'),
-    'BlackHan': require('./fonts/BlackHanSans-Regular.ttf'),
   })
 }
 
