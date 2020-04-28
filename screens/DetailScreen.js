@@ -7,10 +7,9 @@ import moment from 'moment'
 import Colors from '../constants/Colors'
 import { LinearGradient } from 'expo-linear-gradient';
 import Header from '../components/Header'
-import { CommonActions } from '@react-navigation/native';
 import { connect } from "react-redux";
 import { update } from '../app/reducer'
-import store from "../app/store";
+import { Actions } from 'react-native-router-flux';
 
 const HEADER_MAX_HEIGHT = 70
 const CALENDAR_WEEK_DAYS = [ '일', '월', '화', '수', '목', '금', '토' ]
@@ -73,8 +72,7 @@ class ConnectedDetailScreen extends Component {
       })
       return true;
     }
-    this.props.navigation.dispatch(CommonActions.goBack());
-    this.props.update(true)
+    Actions.home()
   }
 
   async fetchDataFromApi(pk) {
@@ -440,7 +438,6 @@ class ConnectedDetailScreen extends Component {
       setTimeout(()=>{
         this.setDatePickerVisible()
       }, 100)
-
     }
   }
 

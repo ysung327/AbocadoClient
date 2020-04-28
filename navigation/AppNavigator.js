@@ -8,27 +8,30 @@ import {
 import HomeScreen from '../screens/HomeScreen';
 import TypeScreen from '../screens/TypeScreen';
 import DetailScreen from '../screens/DetailScreen';
+import AnnScreen from '../screens/AnnScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 
-const AppNavigator = () => (
+const Root = () => (
   <Router>
     <Overlay key="overlay">
       <Scene hideNavBar key="root">
         <Scene hideNavBar key="auth-loading" component={AuthLoadingScreen}></Scene>
-        <Stack hideNavBar key="vacation">
+        <Scene hideNavBar key="vacation">
           <Scene key="home" component={HomeScreen}/>
           <Scene key="detail" component={DetailScreen}/>
           <Scene key="type_detail" component={TypeScreen}/>
-        </Stack>
+          <Scene key="type_ann" component={AnnScreen}/>
+        </Scene>
         <Stack hideNavBar key="auth">
           <Scene key="login" component={LoginScreen}/>
           <Scene key="register" component={RegisterScreen}/>
         </Stack>
+        
       </Scene>
     </Overlay>
   </Router>
 )
 
-export default AppNavigator;
+export default Root;

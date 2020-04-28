@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, FlatList, Modal, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList, Modal, Dimensions, BackHandler } from 'react-native';
 import { Card, Button, Icon, Input } from 'react-native-elements'
 import Colors from '../constants/Colors'
-import { OutlinedTextField } from 'react-native-material-textfield';
 import { LinearGradient } from 'expo-linear-gradient';
 import Header from '../components/Header'
+import { Actions } from 'react-native-router-flux';
 
 const HEADER_MAX_HEIGHT = 70
 
-export default class TypeScreen extends Component {
+export default class AnnScreen extends Component {
   constructor(props) {
     super(props);
     this.state  = {
@@ -26,6 +26,15 @@ export default class TypeScreen extends Component {
   componentDidMount() {
     this.fetchDataFromApi()
     this.fetchInfoFromApi(this.state.type_of_detail)
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton)
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton)
+  }
+
+  handleBackButton = () => {
+    Actions.home()
   }
 
   fetchDataFromApi = ()  => {

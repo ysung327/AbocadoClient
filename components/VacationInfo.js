@@ -4,6 +4,7 @@ import { Card, Button } from 'react-native-elements'
 import Colors from '../constants/Colors'
 import store from "../app/store";
 
+
 class VacationInfo extends Component {
   constructor(props) {
       super(props);
@@ -12,14 +13,8 @@ class VacationInfo extends Component {
         data: [],
       }
     }
-    
-  update = () => {
-    console.log('vacationInfo!')
-    this.getVacationInfo()
-  }
 
   componentDidMount() {
-    store.subscribe(this.update)
     this.getVacationInfo();
   }
 

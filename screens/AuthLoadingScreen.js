@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { View, ActivityIndicator, StatusBar } from 'react-native';
-import { AsyncStorage } from 'react-native';
+import { View, ActivityIndicator, StatusBar, Alert, AsyncStorage } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { connect } from "react-redux";
 import { login } from '../app/reducer'
-import store from "../app/store";
 
 
 function mapDispatchToProps(dispatch) {
@@ -31,7 +29,7 @@ class ConnectedAuthLoadingScreen extends Component {
       if(token !== null) {
         this.props.login(userInfo)
         Actions.vacation()
-        console.log('토큰 있음')
+        console.log('토음 있음')
       }
       else { 
         Actions.auth()

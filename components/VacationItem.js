@@ -4,6 +4,7 @@ import { Card, Button } from 'react-native-elements'
 import { Actions } from 'react-native-router-flux';
 import Colors from '../constants/Colors'
 
+
 class VacationItem extends Component {
   constructor(props) {
     super(props);

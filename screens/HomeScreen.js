@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { StyleSheet,  View, ScrollView, Dimensions, Animated, Text, Easing } from 'react-native';
+import { StyleSheet,  View, ScrollView, Dimensions, Animated, Text, Easing, BackHandler } from 'react-native';
 import { Card, Button, Icon } from 'react-native-elements'
 import { LinearGradient } from 'expo-linear-gradient';
-import { Progress } from 'react-native-progress';
+import * as Progress from 'react-native-progress';
 import Colors from '../constants/Colors'
 import VacationList from '../components/VacationList';
 import VacationInfo from '../components/VacationInfo';
@@ -11,7 +11,6 @@ import Header from '../components/Header'
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import store from "../app/store";
-import { update } from '../app/reducer'
 
 
 const { height } = Dimensions.get('window');
@@ -21,20 +20,17 @@ const DUTY_MAX_HEIGHT = 270
 const DUTY_MIN_HEIGHT = 145
 const SCROLL_THERSHOLD = 13
 const barPadding = (screenWidth - 300) / 2
-const token = "e36ea705904910cd1a9bbc76f1d62b0de16bbfdc"
-const user = "ysung327"
 
-const mapStateToProps = (shouldUpdate, prevShouldUpdate) => ({
-  shouldUpdate,
-  prevShouldUpdate
-})
+const mapStateToProps = (state) => {
+  return {
+    userInfo : state.userInfo
+  }
+}
 
 class ConnectedHomeScreen extends Component {
   constructor(props) {
     super(props)
     this.state = {
-        token: token,
-        user: user,
         screenHeight: height,
         scrollY: new Animated.Value(0),
         end_date : "" ,
@@ -45,16 +41,25 @@ class ConnectedHomeScreen extends Component {
         second : 39,
         newVacationId: null,
     }
+    
   }
 
   update = () => {
-    console.log('!')
+    let currentState = store.getState()
     this.getDuty()
   }
 
   componentDidMount() {
-    store.subscribe(this.update)
     this.getDuty()
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+  
+  handleBackButton = () => {
+    return true
   }
 
   onContentSizeChange = (contentWidth, contentHeight) => {
@@ -71,10 +76,10 @@ class ConnectedHomeScreen extends Component {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'Token ' + this.state.token,
+        'Authorization': 'Token ' + this.props.userInfo.token,
       },
       body: JSON.stringify({
-        user: this.state.user,
+        user: this.props.userInfo.user,
       })
     })
     .then(res => res.json())
@@ -97,10 +102,10 @@ class ConnectedHomeScreen extends Component {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'Token ' + this.state.token,
+        'Authorization': 'Token ' + this.props.userInfo.token,
       },        
       body: JSON.stringify({
-        user: this.state.user
+        user: this.props.userInfo.user
       })
     })
     .then(res => res.json())
@@ -108,11 +113,10 @@ class ConnectedHomeScreen extends Component {
       this.setState({
         newVacationId: res.id
       })
-      console.log(this.state.newVacationId)
     })
     setTimeout(()=>{
       Actions.detail({onUpload: this.props.onUpload,
-        id : this.state.newVacationId, token : this.state.token, user : this.state.user})
+        id : this.state.newVacationId, token : this.props.userInfo.token, user : this.props.userInfo.user})
     }, 500)
 
   }
@@ -235,7 +239,7 @@ class ConnectedHomeScreen extends Component {
             <View style={{ alignItems: 'center', marginBottom: 5 }}>
               <Text style={{ fontSize: 20, }}>나의 휴가</Text>
             </View>
-            <VacationInfo token={this.state.token} user={this.state.user}/>
+            <VacationInfo token={this.props.userInfo.token} user={this.props.userInfo.user}/>
           </Animated.View>
           <View style={styles.vacationList}>
             <View style={{ alignItems: 'center', marginBottom: 5 }}>
@@ -244,13 +248,13 @@ class ConnectedHomeScreen extends Component {
                 <Icon name="md-add-circle" type='ionicon' size={30} color={Colors.secondaryColor} onPress={this._createVacation}/>
               </View> 
             </View>
-            <VacationList token={this.state.token} user={this.state.user}/>
+            <VacationList token={this.props.userInfo.token} user={this.props.userInfo.user}/>
           </View>
           <View style={styles.vacationType}>
             <View style={{ alignItems: 'center', marginBottom: 10 }}>
               <Text style={{ fontSize: 20, }}>보유한 휴가</Text>
             </View>
-            <VacationType token={this.state.token} user={this.state.user} lefted={this.state.lefted}/>
+            <VacationType token={this.props.userInfo.token} user={this.props.userInfo.user} lefted={this.state.lefted}/>
           </View>
           <Animated.View style={{ height: 200 }}></Animated.View>
         </ScrollView>

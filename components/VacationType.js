@@ -5,6 +5,7 @@ import { Actions } from 'react-native-router-flux';
 import Colors from '../constants/Colors'
 import store from "../app/store";
 
+
 class VacationType extends Component {
   constructor(props) {
     super(props);
@@ -18,16 +19,7 @@ class VacationType extends Component {
     }
   }
 
-  update = () => {
-    console.log('vacationType!')
-    let arr = ["CON", "RE", "PE", "PR"]
-    for (let i of arr) {
-      this.getTypeInfo(i)
-    }
-  }
-
   componentDidMount() {
-    store.subscribe(this.update)
     let arr = ["CON", "RE", "PE", "PR"]
     for (let i of arr) {
       this.getTypeInfo(i)

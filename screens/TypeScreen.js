@@ -5,10 +5,10 @@ import Colors from '../constants/Colors'
 import { OutlinedTextField } from 'react-native-material-textfield';
 import { LinearGradient } from 'expo-linear-gradient';
 import Header from '../components/Header'
-import { CommonActions } from '@react-navigation/native';
 import { connect } from "react-redux";
 import { update } from '../app/reducer'
-import store from "../app/store";
+import { Actions } from 'react-native-router-flux';
+
 
 const HEADER_MAX_HEIGHT = 70
 
@@ -67,8 +67,7 @@ class ConnectedTypeScreen extends Component {
       })
       return true
     }
-    this.props.navigation.dispatch(CommonActions.goBack());
-    this.props.update(true)
+    Actions.home()
   }
 
   fetchDataFromApi = (type_of_detail)  => {

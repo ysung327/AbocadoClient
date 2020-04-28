@@ -1,23 +1,14 @@
-import React, { useState } from 'react';
-import * as Font from 'expo-font'
-import { AppLoading } from 'expo';
+import React, { Component } from 'react';
 import Root from './navigation/AppNavigator'
-const fetchFonts = () => {
-  return Font.loadAsync({
-  })
-}
+import { Provider } from "react-redux";
+import store from "./app/store";
 
-export default function App() {
-  const [dataLoaded, setDataLoaded] = useState(false)
-  
-  if(dataLoaded) {
+export default class App extends Component {
+  render() {
     return(
-      <Root/>
+      <Provider store={store}>
+        <Root/> 
+      </Provider>
     )
-  }
-  else {
-    return <AppLoading
-    startAsync={fetchFonts}
-    onFinish={()=>setDataLoaded(true)}/>
   }
 }

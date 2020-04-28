@@ -6,12 +6,8 @@ import { Actions } from 'react-native-router-flux';
 import store from "../app/store";
 import { connect } from "react-redux";
 
-const mapStateToProps = (shouldUpdate, prevShouldUpdate) => ({
-  shouldUpdate,
-  prevShouldUpdate
-})
 
-class ConnectedVacationList extends Component {
+class VacationList extends Component {
   constructor(props) {
       super(props);
       this.state  = {
@@ -22,15 +18,7 @@ class ConnectedVacationList extends Component {
       }
     }
 
-  update = () => {
-    if(this.props.shouldUpdate && this.props.shouldUpdate != this.props.prevShouldUpdate) {
-      console.log('vacationList!')
-      this.getVacationList()
-    }
-  }
-
   componentDidMount() {
-    store.subscribe(this.update)
     this.getVacationList();
   }
 
@@ -84,7 +72,5 @@ class ConnectedVacationList extends Component {
     );
   }
 }
-
-const VacationList = connect(mapStateToProps)(ConnectedVacationList);
 
 export default VacationList
