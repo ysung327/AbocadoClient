@@ -64,6 +64,26 @@ class ConnectedLoginOrCreateForm extends Component {
     }, 500)
   }
 
+  onPress1 = () => {
+    if(!this.state.isEndVisible) {
+      if(!this.state.isStartVisible) {
+        this.showStartPicker()
+      } else {
+        this.hideStartPicker()
+      }
+    }
+  }
+
+  onPress2 = () => {
+    if(!this.state.isStartVisible) {
+      if(!this.state.isEndVisible) {
+        this.showEndPicker()
+      } else {
+        this.hideEndPicker()
+      }
+    }
+  }
+
   showStartPicker = () => {
     this.setState({
       isStartVisible: true,
@@ -135,10 +155,10 @@ class ConnectedLoginOrCreateForm extends Component {
   renderCreateForm() {
     if (this.props.create) {
       return (
-        <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
+        <View style={{ flexDirection: 'column' }}>
           <View style={styles.fieldStyle}>
-            <Button onPress={this.showStartPicker} title="입대일" />
-            <Button onPress={this.showEndPicker} title="전역일" />
+            <Button onPress={this.onPress1} title="입대일" />
+            <Button onPress={this.onPress2} title="전역일" />
           </View>
           <View>
             { this.showCalendar() }
@@ -274,7 +294,7 @@ class ConnectedLoginOrCreateForm extends Component {
           </View>
       </View>
       );
-  }
+    }
   }
 
 
@@ -284,6 +304,7 @@ class ConnectedLoginOrCreateForm extends Component {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
+      borderWidth: 1,
   },
   textInputStyle: {
       flex: 1,
@@ -294,9 +315,10 @@ class ConnectedLoginOrCreateForm extends Component {
       justifyContent: 'center'
   },
   buttonContainerStyle: {
-      flex: 1,
+      height: 100,
       justifyContent: 'center',
-      padding: 25
+      padding: 25,
+      borderWidth: 1,
   },
   accountCreateContainerStyle: {
       padding: 25,
