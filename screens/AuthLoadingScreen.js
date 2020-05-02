@@ -3,6 +3,7 @@ import { View, ActivityIndicator, StatusBar, Alert, AsyncStorage } from 'react-n
 import { Actions } from 'react-native-router-flux';
 import { connect } from "react-redux";
 import { login } from '../app/reducer'
+import store from "../app/store";
 
 
 function mapDispatchToProps(dispatch) {

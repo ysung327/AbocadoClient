@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Header from '../components/Header'
 import { connect } from "react-redux";
 import { update } from '../app/reducer'
+import store from "../app/store";
 import { Actions } from 'react-native-router-flux';
 
 

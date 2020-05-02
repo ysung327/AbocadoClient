@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, FlatList, Modal, Dimensions, BackHandler } from 'react-native';
 import { Card, Button, Icon, Input } from 'react-native-elements'
 import Colors from '../constants/Colors'
+import { OutlinedTextField } from 'react-native-material-textfield';
 import { LinearGradient } from 'expo-linear-gradient';
 import Header from '../components/Header'
 import { Actions } from 'react-native-router-flux';

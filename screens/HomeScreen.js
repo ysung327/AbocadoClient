@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet,  View, ScrollView, Dimensions, Animated, Text, Easing, BackHandler } from 'react-native';
 import { Card, Button, Icon } from 'react-native-elements'
 import { LinearGradient } from 'expo-linear-gradient';
-import * as Progress from 'react-native-progress';
+import ProgressBar from 'react-native-progress/Bar';
 import Colors from '../constants/Colors'
 import VacationList from '../components/VacationList';
 import VacationInfo from '../components/VacationInfo';
@@ -11,6 +11,7 @@ import Header from '../components/Header'
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import store from "../app/store";
+import { update } from '../app/reducer'
 
 
 const { height } = Dimensions.get('window');
@@ -205,7 +206,7 @@ class ConnectedHomeScreen extends Component {
                 opacity: dutyOpacity,
               }}>
                 <Text style={{ position:'absolute', left: percentLeft, color: Colors.accentColor1, fontWeight: 'bold' }}>{percent}%</Text>
-                <Progress.Bar unfilledColor={Colors.accentColor2} color={Colors.accentColor1} borderWidth={0} width={300} height={6} progress={this.state.percent} borderRadius={10}/>
+                <ProgressBar unfilledColor={Colors.accentColor2} color={Colors.accentColor1} borderWidth={0} width={300} height={6} progress={this.state.percent} borderRadius={10}/>
               </Animated.View>
               <Animated.View style={{
                 bottom: 0,
